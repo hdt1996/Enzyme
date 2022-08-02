@@ -1,0 +1,67 @@
+{
+  "name": "reactserver",
+  "version": "0.1.0",
+  "private": true,
+  "homepage": "/react/",
+  "dependencies": {
+    "@material-ui/core": "^4.12.3",
+    "@material-ui/icons": "^4.11.2",
+    "@testing-library/jest-dom": "^5.16.1",
+    "@testing-library/react": "^12.1.2",
+    "@testing-library/user-event": "^13.5.0",
+    "antd": "^4.18.5",
+    "bootstrap": "^5.1.3",
+    "certbot": "^5.0.3",
+    "concurrently": "^7.0.0",
+    "download": "^8.0.0",
+    "eiows": "^3.7.3",
+    "ejs": "^3.1.6",
+    "express": "^4.17.2",
+    "fs": "^0.0.1-security",
+    "https": "^1.0.0",
+    "less": "^4.1.2",
+    "mic-recorder-to-mp3": "^2.2.2",
+    "nodemon": "^2.0.15",
+    "openssl": "^2.0.0",
+    "peer": "^0.6.1",
+    "peerjs": "^1.3.2",
+    "peerjs-server": "^0.2.9",
+    "react": "^17.0.2",
+    "react-bootstrap": "^2.2.1",
+    "react-dom": "^17.0.2",
+    "react-router-dom": "^6.2.1",
+    "react-scripts": "^5.0.1",
+    "react-video-thumbnail": "^0.1.3",
+    "request": "^2.79.0",
+    "socket.io": "^4.4.1",
+    "socket.io-client": "^4.4.1",
+    "web-vitals": "^2.1.2",
+    "websocket": "^1.0.34",
+    "yarn": "^1.22.17"
+  },
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build ",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject",
+    "server": "node stream_server.js",
+    "debug": "node stream_server_debug.js",
+    "node_1": "node node_v1.js",
+    "node_2": "node node_v2.js",
+    "node_3": "node node_v3.js",
+    "node_4": "node node_v4.js",
+    "load_balance": "concurrently \"npm run node_1\" \"npm run node_2\" \"npm run node_3\" \"npm run node_4\""
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  }
+}

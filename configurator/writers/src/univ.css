@@ -1,0 +1,19 @@
+.u_fl{
+    display:flex
+}
+.u_fl_row{
+    flex-direction: row;
+}
+.u_fl_col{
+    flex-direction: column;
+}
+
+.u_fl_1{
+    flex:1
+}
+.u_fl_2{
+    flex:2
+}
+.u_fl_3{
+    flex:3
+}
