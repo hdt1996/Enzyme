@@ -1,5 +1,5 @@
-from categories.categories import *
-from modes.modes import *
+from ..categories.categories import *
+from ..modes.modes import *
 
 CATEG_MAP = \
 {

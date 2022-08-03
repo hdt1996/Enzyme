@@ -1,6 +1,6 @@
-from utils.sysadmin.sysadmin import SystemAdmin
+from configurator.apis.Utilities.file_manager import FileManager
 import json
-SA = SystemAdmin()
+SA = FileManager()
 CONFIG_MAP = None
 
 with open("configurator/config/server_config.json") as config_file:

@@ -1,7 +1,4 @@
 import re
-from datetime import datetime
-from sysadmin.sysadmin import SystemAdmin
-
 
 class StringScanner():
     def __init__(self,custom_regex: str, multiple : bool, choose_group: str):
@@ -108,7 +105,7 @@ class StringScanner():
         return comb_regex
         
 
-class Scan(StringScanner, SystemAdmin): #has Category properties Category.__dict__
+class Scan(StringScanner): #has Category properties Category.__dict__
     def __init__(self,categ_attribs:dict, multiple: bool, replace_all: bool, repl_vals: list, open_file: bool, over_write: bool, rename: bool):
         print('\n\n Init Scan')
         self.categ_attribs = categ_attribs # to store for debugging
@@ -124,7 +121,6 @@ class Scan(StringScanner, SystemAdmin): #has Category properties Category.__dict
             except:
                 self.repl_map[keyw]= '' """
         StringScanner.__init__(self,custom_regex = categ_attribs['custom_regex'],  multiple = multiple, choose_group = categ_attribs['choose_group'])
-        SystemAdmin.__init__(self)  #self.open_file = open_file #self.overwrite = overwrite
         
         """ 
         #Parent function only returns same string. Since this is scan. We do not override.
@@ -136,7 +132,7 @@ class Scan(StringScanner, SystemAdmin): #has Category properties Category.__dict
             ...
         """
 
-class Replace(StringScanner, SystemAdmin):
+class Replace(StringScanner):
     do_multiple = False
     def __init__(self,categ_attribs:dict, multiple: bool, replace_all: bool, repl_vals: list, open_file: bool, overwrite: bool, rename: bool):
         print('\n\n Init Replace')
@@ -152,8 +148,6 @@ class Replace(StringScanner, SystemAdmin):
             except:
                 self.repl_map[keyw]= ''
         StringScanner.__init__(self,custom_regex = categ_attribs['custom_regex'], multiple = multiple, choose_group = categ_attribs['choose_group'])
-        SystemAdmin.__init__(self, open_file = open_file, overwrite = overwrite)
-
 
     def evaluateReplace(self,matches:list,search_str:str):
         replace_count = 1

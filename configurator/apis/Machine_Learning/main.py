@@ -1,8 +1,9 @@
-from data.data import *
+from ..Utilities.dataframes import *
+from ..Utilities.file_manager import *
+from ..Utilities.dev import *
 from tensor.tensor import *
-from sysadmin.sysadmin import *
 import shutil as sh
-SA = SystemAdmin()
+SA = FileManager()
 DF_UTIL = DataFrames()
 
 def main(features: list, labels: list, col_names: list, train_url: str, eval_url: str):

@@ -1,4 +1,4 @@
-from globals.globals_regex import *
+from ..locals.globals_regex import *
 class Balance:
     def __init__(self):
         self.keywords=\
