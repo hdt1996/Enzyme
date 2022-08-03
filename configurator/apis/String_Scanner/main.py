@@ -6,7 +6,7 @@ from ..Utilities.logger import Logger
 from .modes.modes import Scan, Replace
 import click, traceback
 
-FS = FileManager()
+
 DEV = Development()
 DEV.makeTestDir('String_Scanner')
 DEV.makeTestDir('String_Scanner/Test_Scans')
@@ -70,8 +70,6 @@ def main(keywords:list,location:str,**kwargs:dict) -> None:
 
         if overwrite == True and open_file == False:
             raise ValueError('Overwrite CLI Argument cannot be True while open_file is False')
-        LOGGER.debug_dict = kwargs
-        LOGGER.addDebugVars(['original_src','location'],[original_location, location])
         regex_category = CATEG_MAP[category]()
 
         if choose_group != '':
@@ -84,30 +82,19 @@ def main(keywords:list,location:str,**kwargs:dict) -> None:
             regex_category.repl_vals = repl_vals
         
         if mode == 'Scan':
-            parser = Scan(categ_attribs = regex_category.__dict__, multiple = multiple)
-            reader = parser.scan
+            parser = Scan(categ_attribs = regex_category.__dict__, multiple = multiple, open_file=open_file, file_type = file_type)
         elif mode == 'Replace':
-            parser = Replace(categ_attribs = regex_category.__dict__, multiple = multiple, replace_all = replace_all, repl_vals = repl_vals)
-            reader = parser.replace
-
-        LOGGER.addDebugVars(['keywords','custom_regex','choose_group', 'repl_vals'], [parser.keywords, parser.custom_regex, parser.choose_group, parser.repl_vals])
-
-        files = []
-        files = FS.findFilesbyExt(location = location, file_type = file_type,open_file=open_file)
-        LOGGER.addDebugVars(['files'],[files])
-
-        if len(files) == 0:
-            reader(txt_or_file = location)
-            #LOGGER.logVars(debug = True,vars = debug_dict, isolate = ['location'])
+            parser = Replace(categ_attribs = regex_category.__dict__, multiple = multiple, replace_all = replace_all, 
+            repl_vals = repl_vals, open_file=open_file, overwrite=overwrite, file_type = file_type)
         else:
-            for file in files:
-                extracted_text = FS.extractText(file = file)
-                modified_text = reader(txt_or_file = extracted_text)
-                FS.writeText(file = file, text = modified_text, overwrite=overwrite) #makes copy or overwrites based on overwrite CLI arg
+            raise ValueError(f'Mode does not exist. Please change to one of the following\n------1) Scan\n2)\nReplace')
+        scan_data = parser.process_files(txt_or_path= location)
+        LOGGER.addArrDBVars(scan_data)
+        LOGGER.logVars()
 
     except BaseException:
         error_log = traceback.format_exc().split('File')
-        LOGGER.traceRelevantErrors(error_log = error_log, script_loc =  __file__, latest = True)
+        LOGGER.traceRelevantErrors(error_log = error_log, script_loc =  __file__, latest = False)
         
 if __name__ == '__main__' or __name__ == 'configurator.apis.String_Scanner.main':
     T= True
@@ -115,7 +102,7 @@ if __name__ == '__main__' or __name__ == 'configurator.apis.String_Scanner.main'
         main(\
             [
                 "--debug", True,
-                "--keywords", "Hello",
+                "--keywords", "HELLO",
                 #"--keywords", '[\s\S]*', #for matching everything including new lines
                 #"--keywords", r'NEW BALANCE ',
                 #"--keywords", 'NOT TESTING',
@@ -135,7 +122,7 @@ if __name__ == '__main__' or __name__ == 'configurator.apis.String_Scanner.main'
                 #"--repl_vals","test4",
                 "--open_file", True,
                 #"--choose_group", 2,
-                "--overwrite", False
+                "--overwrite", True
 
             ])
     else:

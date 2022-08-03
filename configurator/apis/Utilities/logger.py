@@ -7,30 +7,39 @@ class Logger():
     def __init__(self):
         self.debug_dict = {}
     def logVars(self,debug:bool = True, custom:str = '',isolate: list = []) -> None:
-        if debug:
-            vars = self.debug_dict
-            var_log = []
-            vars_length = len(vars)
-            for index, var in enumerate(vars):
-                if len(isolate) >=1 and not var in isolate:
-                    continue
-                if index == vars_length - 1:
-                    var_log.append(f"\r{var} ------------- Type: {type(vars[var])} ---------------------- Value:----------------\n{vars[var]}")
-                    break
-                var_log.append(f"\r{var} ------------- Type: {type(vars[var])} ---------------------- Value:----------------\n{vars[var]}")
-            var_log = '\n'.join(var_log)
-            print(\
-            f"""
-            \r\n------------DEBUG LOGS-------------Time: {datetime.now()}\n
-            {var_log}
-            {custom}
+        if not debug:
+            return
 
-            """)
+        vars = self.debug_dict
+        var_log = []
+        vars_length = len(vars)
+        for index, var in enumerate(vars):
+            if len(isolate) >=1 and not var in isolate:
+                continue
+            if index == vars_length - 1:
+                var_log.append(f"\r{var} ------------- Type: {type(vars[var])} ---------------------- Value:----------------\n{vars[var]}")
+                break
+            var_log.append(f"\r{var} ------------- Type: {type(vars[var])} ---------------------- Value:----------------\n{vars[var]}")
+        var_log = '\n'.join(var_log)
+        print(\
+        f"""
+        \r\n------------DEBUG LOGS-------------Time: {datetime.now()}\n
+        {var_log}
+        {custom}
+
+        """)
     def addDebugVars(self, var_list:list = [], var_values = []):
         if len(var_list) != len(var_values):
             raise ValueError("List arguments passed in must match. Variable Names --> Variable Values")
         for index, name in enumerate(var_list):
             self.debug_dict[name]=var_values[index]
+
+    def addArrDBVars(self, arr: list):
+        if not isinstance(arr, list):
+            raise TypeError('Array is not passed into argument for arr.')
+        for d in arr:
+            for key in d:
+                self.debug_dict[key] = d[key]
 
     def traceRelevantErrors(self,error_log:list,script_loc:os.PathLike,latest = False):
         new_error_log = []

@@ -9,21 +9,39 @@ DEV.makeTestDir('String_Scanner/Test_Scans')
 LOGGER = Logger()
 
 class StringParser():
-    def scan(self, txt_or_file: str):
-        simple_string = txt_or_file
-        LOGGER.addDebugVars(['custom_regex'],[self.buildRegex(keyword = f"############{str(self.keywords)}############", custom_regex = self.custom_regex)])
+    def __init__(self):
+        self.actions=\
+        {
+            'Scan':self.scan,
+            'Replace':self.replace
+        }
+    def parse(self,txt: str, file: str):
+        return self.actions[self.mode](txt = txt, file = file)
+
+    def scan(self, txt: str) -> dict:
+        simple_string = str(txt)
         match = self.evaluateMultiple(search_str= simple_string, keywords = self.keywords) 
-        LOGGER.addDebugVars(['location', 'match'], [simple_string , match])
-        #LOGGER.logVars(debug = True,vars = debug_dict, isolate = ['location'])
-    def replace(self, txt_or_file: str):
-        extracted_text = txt_or_file
-        LOGGER.addDebugVars(['custom_regex'],[self.buildRegex(keyword = f"############{str(self.keywords)}############", custom_regex = self.custom_regex)])
+        return {'match':match, 'source':simple_string}
+    def replace(self, txt: str, file: str) -> dict:
+        extracted_text = str(txt)
         match = self.evaluateMultiple(search_str= extracted_text, keywords = self.keywords)  
         text_modified = self.evaluateReplace(search_str = extracted_text, matches = match)  
-        LOGGER.addDebugVars(['modified text', 'match'], [text_modified , match])
-        LOGGER.logVars(debug = DEV.debug, isolate = ['keywords','repl_vals','location','match','custom_regex'])
-        return text_modified
+        if txt == text_modified:
+            return {'match':match, 'source':txt}
+        FS.writeText(file = file, text = text_modified, overwrite=self.overwrite)
+        return {'match':match, 'source':txt, 'modified':text_modified}
 
+    def process_files(self, txt_or_path: str) -> dict:
+        files = FS.findFilesbyExt(location = txt_or_path, file_type = self.file_type, open_file=self.open_file)
+        processed_data = []
+        if len(files) == 0: #means We received a string a not a directory/filepath
+            processed_data.append(self.parse(txt = txt_or_path))
+        else:
+            for file in files:
+                extracted_text = FS.extractText(file = file,open_file = self.open_file)
+                modified_text= self.parse(txt = extracted_text,file = file)
+                processed_data.append(modified_text)
+        return processed_data
 
 class RegexMatch(StringParser):
     def __init__(self,custom_regex: str, multiple : bool, choose_group: str):
@@ -130,11 +148,14 @@ class RegexMatch(StringParser):
         
 
 class Scan(RegexMatch): #has Category properties Category.__dict__
-    def __init__(self,categ_attribs:dict, multiple: bool):
+    def __init__(self,categ_attribs:dict, multiple: bool, open_file: bool, file_type: str):
         print('\n\n Init Scan')
+        self.mode = 'Scan'
         self.categ_attribs = categ_attribs # to store for debugging
         self.keywords = categ_attribs['keywords']
         self.custom_regex = categ_attribs['custom_regex']
+        self.open_file = open_file
+        self.file_type = file_type
         RegexMatch.__init__(self,custom_regex = categ_attribs['custom_regex'],  multiple = multiple, choose_group = categ_attribs['choose_group'])
         
         """ 
@@ -149,14 +170,18 @@ class Scan(RegexMatch): #has Category properties Category.__dict__
 
 class Replace(RegexMatch):
     do_multiple = False
-    def __init__(self,categ_attribs:dict, multiple: bool, replace_all: bool, repl_vals: list):
+    def __init__(self,categ_attribs:dict, multiple: bool, replace_all: bool, repl_vals: list, open_file: bool, overwrite: bool, file_type: str):
         print('\n\n Init Replace')
+        self.mode =  'Replace'
         self.categ_attribs = categ_attribs # to store for debugging
         self.keywords = categ_attribs['keywords']
         self.custom_regex = categ_attribs['custom_regex']
         self.replace_all = replace_all
         self.repl_vals = repl_vals
         self.repl_map = {}
+        self.open_file = open_file
+        self.overwrite = overwrite
+        self.file_type = file_type
         for index, keyw in enumerate(self.keywords):
             try:
                 self.repl_map[keyw]= self.repl_vals[index]
