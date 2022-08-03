@@ -1,0 +1,1 @@
+start /wait python -i C:\Users\hduon\Documents\Future_Projects-PsuedoCode\String_Scanner\main.py --location "C:\Users\hduon\Documents\Future_Projects-PsuedoCode\test files" --file_type ".txt" --category Balance --mode Replace --replace_all True --multiple True --debug True --repl_vals "rrrrrrrrr" --open_file True
