@@ -1,12 +1,36 @@
 import re
+from ...Utilities.logger import Logger
+from ...Utilities.file_manager import FileManager
+from ...Utilities.dev import Development
+FS = FileManager()
+DEV = Development()
+DEV.makeTestDir('String_Scanner')
+DEV.makeTestDir('String_Scanner/Test_Scans')
+LOGGER = Logger()
 
-class StringScanner():
+class StringParser():
+    def scan(self, txt_or_file: str):
+        simple_string = txt_or_file
+        LOGGER.addDebugVars(['custom_regex'],[self.buildRegex(keyword = f"############{str(self.keywords)}############", custom_regex = self.custom_regex)])
+        match = self.evaluateMultiple(search_str= simple_string, keywords = self.keywords) 
+        LOGGER.addDebugVars(['location', 'match'], [simple_string , match])
+        #LOGGER.logVars(debug = True,vars = debug_dict, isolate = ['location'])
+    def replace(self, txt_or_file: str):
+        extracted_text = txt_or_file
+        LOGGER.addDebugVars(['custom_regex'],[self.buildRegex(keyword = f"############{str(self.keywords)}############", custom_regex = self.custom_regex)])
+        match = self.evaluateMultiple(search_str= extracted_text, keywords = self.keywords)  
+        text_modified = self.evaluateReplace(search_str = extracted_text, matches = match)  
+        LOGGER.addDebugVars(['modified text', 'match'], [text_modified , match])
+        LOGGER.logVars(debug = DEV.debug, isolate = ['keywords','repl_vals','location','match','custom_regex'])
+        return text_modified
+
+
+class RegexMatch(StringParser):
     def __init__(self,custom_regex: str, multiple : bool, choose_group: str):
-        print('\n\n Initing Default')
         self.custom_regex = custom_regex
         self.multiple = multiple
         self.choose_group = choose_group
-
+        super().__init__()
 
     def evaluateMultiple(self, search_str:str, keywords: list = []) -> list:
         if self.multiple == False:
@@ -105,22 +129,13 @@ class StringScanner():
         return comb_regex
         
 
-class Scan(StringScanner): #has Category properties Category.__dict__
-    def __init__(self,categ_attribs:dict, multiple: bool, replace_all: bool, repl_vals: list, open_file: bool, over_write: bool, rename: bool):
+class Scan(RegexMatch): #has Category properties Category.__dict__
+    def __init__(self,categ_attribs:dict, multiple: bool):
         print('\n\n Init Scan')
         self.categ_attribs = categ_attribs # to store for debugging
         self.keywords = categ_attribs['keywords']
         self.custom_regex = categ_attribs['custom_regex']
-        #self.replace_all = replace_all #NOTE Never used for this class
-        #self.repl_vals = repl_vals #NOTE Never used for this class
-        
-        """ self.repl_map = {} NOTE Never used for this class 
-        for index, keyw in enumerate(self.keywords):
-            try:
-                self.repl_map[keyw]= self.repl_vals[index]
-            except:
-                self.repl_map[keyw]= '' """
-        StringScanner.__init__(self,custom_regex = categ_attribs['custom_regex'],  multiple = multiple, choose_group = categ_attribs['choose_group'])
+        RegexMatch.__init__(self,custom_regex = categ_attribs['custom_regex'],  multiple = multiple, choose_group = categ_attribs['choose_group'])
         
         """ 
         #Parent function only returns same string. Since this is scan. We do not override.
@@ -132,9 +147,9 @@ class Scan(StringScanner): #has Category properties Category.__dict__
             ...
         """
 
-class Replace(StringScanner):
+class Replace(RegexMatch):
     do_multiple = False
-    def __init__(self,categ_attribs:dict, multiple: bool, replace_all: bool, repl_vals: list, open_file: bool, overwrite: bool, rename: bool):
+    def __init__(self,categ_attribs:dict, multiple: bool, replace_all: bool, repl_vals: list):
         print('\n\n Init Replace')
         self.categ_attribs = categ_attribs # to store for debugging
         self.keywords = categ_attribs['keywords']
@@ -147,7 +162,7 @@ class Replace(StringScanner):
                 self.repl_map[keyw]= self.repl_vals[index]
             except:
                 self.repl_map[keyw]= ''
-        StringScanner.__init__(self,custom_regex = categ_attribs['custom_regex'], multiple = multiple, choose_group = categ_attribs['choose_group'])
+        RegexMatch.__init__(self,custom_regex = categ_attribs['custom_regex'], multiple = multiple, choose_group = categ_attribs['choose_group'])
 
     def evaluateReplace(self,matches:list,search_str:str):
         replace_count = 1

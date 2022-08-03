@@ -19,7 +19,6 @@ MODE_MAP = \
     'Replace':Replace
 }
 
-RE_ORDER = 'keywords, re_format'
-CLI_ORDER = "debug, category, mode, custom_regex, file_type, cases, multiple, replace_all, repl_vals, open_file, choose_group, overwrite, rename"
+CLI_ORDER = "category, mode, custom_regex, file_type, cases, multiple, replace_all, repl_vals, open_file, choose_group, overwrite, rename"
 
 

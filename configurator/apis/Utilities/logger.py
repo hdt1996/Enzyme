@@ -1,5 +1,7 @@
 import os
 from datetime import datetime
+from ..Utilities.file_manager import FileManager
+FS = FileManager()
 
 class Logger():
     def __init__(self):
@@ -32,7 +34,7 @@ class Logger():
 
     def traceRelevantErrors(self,error_log:list,script_loc:os.PathLike,latest = False):
         new_error_log = []
-        proj_files_dict = self.findFilesbyExt(file_type = '.py',location = script_loc.replace('main.py',''), dict_keys=True)
+        proj_files_dict = FS.findFilesbyExt(file_type = '.py',location = script_loc.replace('main.py',''), dict_keys=True)
         for error_file in error_log:
             file_name = os.path.join(error_file.split(", line")[0].replace(' ','').replace('"',''))
             if file_name.upper() in proj_files_dict:

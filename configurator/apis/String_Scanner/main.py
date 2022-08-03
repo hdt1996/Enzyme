@@ -3,6 +3,7 @@ from ..Utilities.util import kwargsReturnValues, splitStringbyDelim
 from ..Utilities.file_manager import FileManager
 from ..Utilities.dev import Development
 from ..Utilities.logger import Logger
+from .modes.modes import Scan, Replace
 import click, traceback
 
 FS = FileManager()
@@ -60,55 +61,53 @@ Return: None
 # NOTE If rewrite and rename was desired, this main function should be called two times with Scan and Replace Mode in any order desired. Combining both Scan and Replace
 # into one super module for the case above would decrease legibility. If a custom module was desired, there is a cases folder for custom cases for building new super'd classes.
 def main(keywords:list,location:str,**kwargs:dict) -> None:
-    #try:
-        #print(kwargs)
-    print('CAlled')
-    original_location = str(location)
-    var_names = splitStringbyDelim(CLI_ORDER,[','],[' '])
-    debug, category, mode, custom_regex, file_type, cases, multiple, \
-        replace_all, repl_vals, open_file, choose_group, overwrite, rename =\
-        kwargsReturnValues(kwargs = kwargs, var_names = var_names)
-    if overwrite == True and open_file == False:
-        raise ValueError('Overwrite CLI Argument cannot be True while open_file is False')
-    LOGGER.debug_dict = kwargs
-    LOGGER.addDebugVars(['original_src','location'],[original_location, location])
-    categ_obj = CATEG_MAP[category]()
+    try:
+        original_location = str(location)
+        var_names = splitStringbyDelim(CLI_ORDER,[','],[' '])
+        category, mode, custom_regex, file_type, cases, multiple, \
+            replace_all, repl_vals, open_file, choose_group, overwrite, rename =\
+            kwargsReturnValues(kwargs = kwargs, var_names = var_names)
 
-    if choose_group != '':
-        categ_obj.choose_group = choose_group
-    if len(keywords) != 0:
-        categ_obj.keywords = keywords
-    if custom_regex != "":
-        categ_obj.custom_regex = custom_regex
-    if len(repl_vals) != 0:
-        categ_obj.repl_vals = repl_vals
-    mode_obj = MODE_MAP[mode](categ_attribs = categ_obj.__dict__, multiple = multiple, replace_all = replace_all, repl_vals = repl_vals, 
-    open_file = open_file, overwrite = overwrite, rename = rename)
-    LOGGER.addDebugVars(['keywords','custom_regex','choose_group', 'repl_vals'], [mode_obj.keywords, mode_obj.custom_regex, mode_obj.choose_group, mode_obj.repl_vals])
+        if overwrite == True and open_file == False:
+            raise ValueError('Overwrite CLI Argument cannot be True while open_file is False')
+        LOGGER.debug_dict = kwargs
+        LOGGER.addDebugVars(['original_src','location'],[original_location, location])
+        regex_category = CATEG_MAP[category]()
 
-    files = []
-    files = FS.findFilesbyExt(location = location, file_type = file_type,open_file=open_file)
-    LOGGER.addDebugVars(['files'],[files])
+        if choose_group != '':
+            regex_category.choose_group = choose_group
+        if len(keywords) != 0:
+            regex_category.keywords = keywords
+        if custom_regex != "":
+            regex_category.custom_regex = custom_regex
+        if len(repl_vals) != 0:
+            regex_category.repl_vals = repl_vals
+        
+        if mode == 'Scan':
+            parser = Scan(categ_attribs = regex_category.__dict__, multiple = multiple)
+            reader = parser.scan
+        elif mode == 'Replace':
+            parser = Replace(categ_attribs = regex_category.__dict__, multiple = multiple, replace_all = replace_all, repl_vals = repl_vals)
+            reader = parser.replace
 
-    if len(files) == 0:
-        LOGGER.addDebugVars(['custom_regex'],[mode_obj.buildRegex(keyword = f"############{str(mode_obj.keywords)}############", custom_regex = mode_obj.custom_regex)])
-        match = mode_obj.evaluateMultiple(search_str= location, keywords = mode_obj.keywords)
-        location = mode_obj.evaluateReplace(matches = match, search_str = location)   
-        LOGGER.addDebugVars(['location', 'match'], [location , match])
-        #LOGGER.logVars(debug = True,vars = debug_dict, isolate = ['location'])
-    else:
-        for file in files:
-            extracted_text = FS.extractText(file = file)
-            LOGGER.addDebugVars(['custom_regex'],[mode_obj.buildRegex(keyword = f"############{str(mode_obj.keywords)}############", custom_regex = mode_obj.custom_regex)])
-            match = mode_obj.evaluateMultiple(search_str= extracted_text, keywords = mode_obj.keywords)
-            location = mode_obj.evaluateReplace(search_str = extracted_text, matches = match)   
-            LOGGER.addDebugVars(['location', 'match'], [location , match])
-            LOGGER.logVars(debug = debug, isolate = ['keywords','repl_vals','location','match','custom_regex'])
-            FS.writeText(file = file, text = location, overwrite=overwrite) #makes copy or overwrites based on overwrite CLI arg
-    print(DEV.proj_test_dir)
-    """ except BaseException:
+        LOGGER.addDebugVars(['keywords','custom_regex','choose_group', 'repl_vals'], [parser.keywords, parser.custom_regex, parser.choose_group, parser.repl_vals])
+
+        files = []
+        files = FS.findFilesbyExt(location = location, file_type = file_type,open_file=open_file)
+        LOGGER.addDebugVars(['files'],[files])
+
+        if len(files) == 0:
+            reader(txt_or_file = location)
+            #LOGGER.logVars(debug = True,vars = debug_dict, isolate = ['location'])
+        else:
+            for file in files:
+                extracted_text = FS.extractText(file = file)
+                modified_text = reader(txt_or_file = extracted_text)
+                FS.writeText(file = file, text = modified_text, overwrite=overwrite) #makes copy or overwrites based on overwrite CLI arg
+
+    except BaseException:
         error_log = traceback.format_exc().split('File')
-        FS.traceRelevantErrors(error_log = error_log, script_loc =  __file__, latest = True) """
+        LOGGER.traceRelevantErrors(error_log = error_log, script_loc =  __file__, latest = True)
         
 if __name__ == '__main__' or __name__ == 'configurator.apis.String_Scanner.main':
     T= True
