@@ -14,11 +14,6 @@ CATEG_MAP = \
     'Universal':Universal,
     'CSS':CSS
 }
-MODE_MAP = \
-{
-    'Scan':Scan,
-    'Replace':Replace
-}
 
 CLI_ORDER = "debug, custom_regex, multiple, replace_all, export, export_loc, unique, keywords, repl_vals, choose_group, overwrite, rename, df_index, df_col_names, file_type, open_file, df_mult_override"
 
