@@ -2,52 +2,63 @@ import re
 from ...Utilities.logger import Logger
 from ...Utilities.file_manager import FileManager
 from ...Utilities.dev import Development
+from ...Utilities.util import listDictKeyUniques
+from ...Utilities.dataframes import DataFrames
+import os
 FS = FileManager()
 DEV = Development()
 DEV.makeTestDir('String_Scanner')
 DEV.makeTestDir('String_Scanner/Test_Scans')
 LOGGER = Logger()
 
-class StringParser():
-    def __init__(self):
-        self.actions=\
-        {
-            'Scan':self.scan,
-            'Replace':self.replace
-        }
-    def parse(self,txt: str, file: str):
-        return self.actions[self.mode](txt = txt, file = file)
 
-    def scan(self, txt: str) -> dict:
+class StringParser():
+    def parse(self,txt: str, file: str):
+        if self.mode == 'Scan':
+            return self.scan(txt = txt, file = file)
+        if self.mode == 'Replace':
+            return self.replace(txt = txt, file = file)
+
+    def scan(self, txt: str, file: os.PathLike) -> dict:
         simple_string = str(txt)
         match = self.evaluateMultiple(search_str= simple_string, keywords = self.keywords) 
-        return {'match':match, 'source':simple_string}
+        return {'results':match, 'source':simple_string, 'file': file}
     def replace(self, txt: str, file: str) -> dict:
         extracted_text = str(txt)
         match = self.evaluateMultiple(search_str= extracted_text, keywords = self.keywords)  
         text_modified = self.evaluateReplace(search_str = extracted_text, matches = match)  
         if txt == text_modified:
-            return {'match':match, 'source':txt}
-        FS.writeText(file = file, text = text_modified, overwrite=self.overwrite)
-        return {'match':match, 'source':txt, 'modified':text_modified}
+            return {'results':match, 'source':txt, 'file':file}
+        if file:
+            if self.mode in file:
+                FS.writeText(file = file.replace(f"_{self.mode}_",''), text = text_modified, overwrite=self.overwrite,num_prefix = f"_{self.mode}_")
+            else:
+                FS.writeText(file = file, text = text_modified, overwrite=self.overwrite,num_prefix = f"_{self.mode}_")
+        return {'results':match, 'source':txt, 'modified':text_modified, 'file':file}
 
-    def process_files(self, txt_or_path: str) -> dict:
-        files = FS.findFilesbyExt(location = txt_or_path, file_type = self.file_type, open_file=self.open_file)
+    def process_files(self, txt_or_path: str, file_type: list, open_file: bool) -> dict:
+        files = []
+        for ext in file_type:
+            files.extend(FS.findFilesbyExt(location = txt_or_path, file_type = ext, open_file = open_file))
         processed_data = []
         if len(files) == 0: #means We received a string a not a directory/filepath
-            processed_data.append(self.parse(txt = txt_or_path))
+            processed_data.append(self.parse(txt = txt_or_path, file = None))
         else:
-            for file in files:
-                extracted_text = FS.extractText(file = file,open_file = self.open_file)
+            for index, file in enumerate(files):
+                extracted_text = FS.extractText(file = file, open_file = open_file)
                 modified_text= self.parse(txt = extracted_text,file = file)
+                if len(modified_text['results']) == 0:
+                    modified_text['results'] = {'match': 'null'}
                 processed_data.append(modified_text)
+                #print('\n',self.mode, modified_text, ' -- Processed...\n', index)
         return processed_data
 
 class RegexMatch(StringParser):
-    def __init__(self,custom_regex: str, multiple : bool, choose_group: str):
-        self.custom_regex = custom_regex
+    def __init__(self, multiple : bool, categ_attribs: dict):
+        self.custom_regex = categ_attribs['custom_regex']
         self.multiple = multiple
-        self.choose_group = choose_group
+        self.choose_group = categ_attribs['choose_group']
+        self.keywords = categ_attribs['keywords']
         super().__init__()
 
     def evaluateMultiple(self, search_str:str, keywords: list = []) -> list:
@@ -72,8 +83,7 @@ class RegexMatch(StringParser):
                 for mr in match_result:
                     if mr != None:
                         filtered_result.append(mr)
-
-                #Extend with multiple dictionarys [{'match':val},{'match':val},{'match':val},{'match':val},{'match':val}]
+                #Extend with multiple dictionarys [{'results':val},{'results':val},{'results':val},{'results':val},{'results':val}]
                 match_list.extend(filtered_result) #TODO check duplicates too
         return match_list
             
@@ -85,7 +95,6 @@ class RegexMatch(StringParser):
         for kw in keywords:
             comb_regex = self.buildRegex(keyword = kw, custom_regex = self.custom_regex) 
             matches = re.findall(pattern = comb_regex,string = search_str) #returns list with inner tuples for found_groupings
-            #... Logic to parse through match results
             if len(matches) == 1:
                 match_result = self.isolateMatch(matches[0],keyword = kw, choose_group = self.choose_group)
                 if match_result == None:
@@ -99,7 +108,7 @@ class RegexMatch(StringParser):
                 for mr in match_result:
                     if mr != None:
                         filtered_result.append(mr)
-                return filtered_result
+                return filtered_result[0:1] #On multiple False mode: there can only be one match per File. Assume first.
         return [] #Implied no matches here after iterating through all of keywords
 
     def checkDuplicates(self, matches: list) -> list:
@@ -148,15 +157,12 @@ class RegexMatch(StringParser):
         
 
 class Scan(RegexMatch): #has Category properties Category.__dict__
-    def __init__(self,categ_attribs:dict, multiple: bool, open_file: bool, file_type: str):
+    def __init__(self,categ_attribs:dict, multiple: bool):
         print('\n\n Init Scan')
         self.mode = 'Scan'
         self.categ_attribs = categ_attribs # to store for debugging
-        self.keywords = categ_attribs['keywords']
-        self.custom_regex = categ_attribs['custom_regex']
-        self.open_file = open_file
-        self.file_type = file_type
-        RegexMatch.__init__(self,custom_regex = categ_attribs['custom_regex'],  multiple = multiple, choose_group = categ_attribs['choose_group'])
+        RegexMatch.__init__(self,categ_attribs = categ_attribs, multiple = multiple)
+
         
         """ 
         #Parent function only returns same string. Since this is scan. We do not override.
@@ -167,27 +173,38 @@ class Scan(RegexMatch): #has Category properties Category.__dict__
         def isolateMatch(self,match: any, keyword:str = '', choose_group:str = '') -> str: 
             ...
         """
+    def exportResults(self, processed_data: list,  export_loc: os.PathLike, key: str = 'results', unique: bool = False):
+        matches = []
+
+        if unique:
+            matches.extend(listDictKeyUniques(dicts_in_array= processed_data, target_key = key, sub_key = 'match'))
+        else:
+            for data in processed_data:
+                for match in data[key]:
+                    matches.append(match['match'].replace(' ',''))
+        matches.sort()
+        if os.path.isdir(s = export_loc):
+            FS.writeText(file = os.path.join(export_loc,f'{self.mode}.txt'), text = '\n'.join(matches))
+        else:
+            FS.writeText(file = export_loc, text = '\n'.join(matches))
+
 
 class Replace(RegexMatch):
     do_multiple = False
-    def __init__(self,categ_attribs:dict, multiple: bool, replace_all: bool, repl_vals: list, open_file: bool, overwrite: bool, file_type: str):
+    def __init__(self,categ_attribs:dict, multiple: bool, replace_all: bool, repl_vals: list, overwrite: bool):
         print('\n\n Init Replace')
         self.mode =  'Replace'
         self.categ_attribs = categ_attribs # to store for debugging
-        self.keywords = categ_attribs['keywords']
-        self.custom_regex = categ_attribs['custom_regex']
         self.replace_all = replace_all
         self.repl_vals = repl_vals
         self.repl_map = {}
-        self.open_file = open_file
         self.overwrite = overwrite
-        self.file_type = file_type
-        for index, keyw in enumerate(self.keywords):
+        for index, keyw in enumerate(categ_attribs['keywords']):
             try:
                 self.repl_map[keyw]= self.repl_vals[index]
             except:
                 self.repl_map[keyw]= ''
-        RegexMatch.__init__(self,custom_regex = categ_attribs['custom_regex'], multiple = multiple, choose_group = categ_attribs['choose_group'])
+        RegexMatch.__init__(self,categ_attribs = categ_attribs, multiple = multiple)
 
     def evaluateReplace(self,matches:list,search_str:str):
         replace_count = 1
@@ -212,3 +229,4 @@ class Replace(RegexMatch):
         match_dict['match'] = match
         match_dict['replace'] = self.repl_map[keyword]
         return match_dict
+

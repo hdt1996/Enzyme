@@ -10,8 +10,17 @@ class Graphs(): #to many args in matplotlib, #TODO add to this class to manage g
 
 class DataFrames():
     #TODO allow multiple dataframes to be pulled and concated per arguments
-    def __init__(self):
-        self.df = None
+    def __init__(self, df_col_names = [], df_index = ''):
+        self.df = pd.DataFrame()
+        self.col_dict = {}
+        self.df_index = df_index
+        if self.df_index != '':
+            if not self.df_index in df_col_names:
+                raise ValueError('Make sure self.df_index is one of the column names.')
+        for col in df_col_names:
+            self.col_dict[col] = []
+        if len(df_col_names) != len(self.col_dict):
+            raise ValueError('Column_Name list error. One of them are duplicates. Please make each unique.')
     def getDatabyURL(self,url):
         if url == None:
             return pd.DataFrame()
@@ -27,13 +36,27 @@ class DataFrames():
         return df
     def addRow(self, data: list):
         self.df.loc[len(self.df.index)] = data
-    def buildDF(self, data:list = [], columns: list= [], index:list = []):
+    def buildDFbyList(self, data:list = [], columns: list= [], index:list = []):
         if len(index) != 0 and len(index) == len(data):
             self.df = pd.DataFrame(data = data, columns = columns,index = index)
         else:
             self.df = pd.DataFrame(data = data, columns = columns)
     def stats(self, df: pd.DataFrame):
         return  df.describe()
+    def buildDFbyDict(self):
+        max_length = None
+        for file in self.col_dict:
+            arr =  self.col_dict[file]
+            if max_length == None:
+                max_length = len(arr)
+                continue
+            if len(arr) != max_length:
+                raise ValueError(f'Array length -- {len(arr)} -- within {file} does not match current len -- {max_length} --.\nCheck that CLI arg check_multiple = False')
+        if self.df_index == '':
+            self.df = pd.DataFrame(data =  self.col_dict)
+        else:
+            self.df = pd.DataFrame(data =  self.col_dict).set_index(self.df_index)
+        return self.df
 
     def plotHistogram(self, df: pd.DataFrame, column: str, graph_type:str, bins: int = 100, save_loc: os.PathLike = None):
         df[column].hist(bins = bins)

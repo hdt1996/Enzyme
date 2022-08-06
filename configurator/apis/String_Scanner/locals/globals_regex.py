@@ -1,11 +1,16 @@
-ANY_DELIM = "[ \-\.\_\/\,\;]"
-ANY_CHAR = "[a-zA-Z]"
-ANY_NUM = "[\d]"
-
+ANY_DELIM = " \-\.\_\, " #No Semi-colon
+SLASHES = "\/\\"
+ANY_CHAR = "a-zA-Z"
+ANY_CHAR_NUM = "a-zA-Z\d"
+ANY_CH_HY_SP = "a-zA-Z\- "
+STRD_GROUPERS = '\(\)\[\]' #No Curlies
+QUOTES = """\'\""""
+CURLS = '[\{\}]'
+ANY_SPECIAL = '\+\@\$\%\#' #No Colon
 ANY_FLOAT = "(((([\d]+\,?)+)|[\d]+)\.[\d]+)"
-ANY_WORD_PHRASE = f"(({ANY_DELIM}+{ANY_CHAR}+)*{ANY_DELIM}*)"
-ANY_PHRASE = f"(({ANY_DELIM}+({ANY_CHAR}+|{ANY_NUM}+))*{ANY_DELIM}*)"
-NL = r"\n"
 EVERYTHING = "[\s\S]*"
-
-#(([ \-\.\_\/\,\;]+[a-zA-Z]+)*[ \-\.\_\/\,\;]+\\n)
+NEG_LA = "(?!{})"
+ANY_WORD_PHRASE = f"(([{ANY_DELIM}]+[{ANY_CHAR}]+)*[{ANY_DELIM}]*)"
+ANY_PHRASE = f"(([{ANY_DELIM}]+([{ANY_CHAR_NUM}]+))*[{ANY_DELIM}]*)"
+NONGREEDY_WILD = f"""[{ANY_CHAR_NUM}{ANY_SPECIAL}\:{STRD_GROUPERS}{ANY_DELIM}{SLASHES}\!\"\'\:\;]"""
+NON_GR_WILD_NO_NUM = f"""[{ANY_SPECIAL}\:{STRD_GROUPERS}{ANY_DELIM}{SLASHES}\!\"\'\:\;]""" #No Semi-colon No Curly brackets

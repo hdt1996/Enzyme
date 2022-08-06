@@ -159,14 +159,8 @@ class HTML():
         global COUNT
         COUNT +=1
         if isinstance(data, dict) and data.get('type') == 'element':
-
             for key in data:
                 if isinstance(data[key], dict) and data[key].get('type') == 'element':
-                    ch_tag = data[key]['tag']   
-                    ch_props = data[key]['properties']
-                    ch_script = data[key]['scripts']
-                    ch_css = data[key]['css']
-                    ch_text = data[key]['text']
                     ch_el_str = self.recurseBuildJSON(data[key], n = n + 1)
                     elem_list.append(ch_el_str)
         #should be string only if it reaches here

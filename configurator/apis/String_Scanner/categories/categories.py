@@ -1,88 +1,117 @@
+from numpy import choose
 from ..locals.globals_regex import *
-class Balance:
-    def __init__(self):
+
+class Categories:
+    def checkAttribs(self, choose_group: str, keywords: list, custom_regex):
+        if choose_group != '':
+            self.choose_group = choose_group
+        if len(keywords) != 0:
+            self.keywords = keywords
+        if custom_regex != "":
+            self.custom_regex = custom_regex
+
+class Balance(Categories):
+    def __init__(self, keywords: list, choose_group: str, custom_regex: str):
         self.keywords=\
             [
-                'NEW BALANCE '
+                'NEW BALANCE ',
+                'BALANCE AS OF',
+                ''
             ]
-        self.custom_regex = f"(\$?{ANY_FLOAT}{ANY_PHRASE}?{NL})"
-        self.repl_vals = []
+        self.custom_regex = f"(\$?{ANY_FLOAT}{ANY_PHRASE}?\n)"
         self.choose_group = '2'
-#((([\d]{3}\,)+[\d]{3})|[\d]+)(\.[\d]+)
-class Name:
-    def __init__(self):
+        super().__init__()
+        self.checkAttribs(choose_group = choose_group, keywords = keywords, custom_regex = custom_regex)
+
+class Name(Categories):
+    def __init__(self, keywords: list, choose_group: str, custom_regex: str):
         self.keywords=\
             [
                 'Name'
             ]
         self.custom_regex = 'Default'
-        self.repl_vals = []
         self.choose_group = '2'
-
-class Date:
-    def __init__(self):
+        super().__init__()
+        self.checkAttribs(choose_group = choose_group, keywords = keywords, custom_regex = custom_regex)
+class Date(Categories):
+    def __init__(self, keywords: list, choose_group: str, custom_regex: str):
         self.keywords=\
             [
                 'Date'
             ]
         self.custom_regex = 'Default'
-        self.repl_vals = []
         self.choose_group = '2'
-
-class SSN:
-    def __init__(self):
+        super().__init__()
+        self.checkAttribs(choose_group = choose_group, keywords = keywords, custom_regex = custom_regex)
+class SSN(Categories):
+    def __init__(self, keywords: list, choose_group: str, custom_regex: str):
         self.keywords=\
             [
                 'SSN'
             ]
         self.custom_regex = 'Default'
-        self.repl_vals = []
         self.choose_group = '2'
-
-class Address:
-    def __init__(self):
+        super().__init__()
+        self.checkAttribs(choose_group = choose_group, keywords = keywords, custom_regex = custom_regex)
+class Address(Categories):
+    def __init__(self, keywords: list, choose_group: str, custom_regex: str):
         self.keywords=\
             [
                 'Address'
             ]
         self.custom_regex = 'Default'
-        self.repl_vals = []
-
-class CreditCards:
-    def __init__(self):
+        super().__init__()
+        self.checkAttribs(choose_group = choose_group, keywords = keywords, custom_regex = custom_regex)
+class CreditCards(Categories):
+    def __init__(self, keywords: list, choose_group: str, custom_regex: str):
         self.keywords=\
             [
                 'CreditCards'
             ]
         self.custom_regex = 'Default'
-        self.repl_vals = []
         self.choose_group = '2'
-
-class Property_IDs:
-    def __init__(self):
+        super().__init__()
+        self.checkAttribs(choose_group = choose_group, keywords = keywords, custom_regex = custom_regex)
+class Property_IDs(Categories):
+    def __init__(self, keywords: list, choose_group: str, custom_regex: str):
         self.keywords=\
             [
                 'Property_IDs'
             ]
         self.custom_regex = 'Default'
-        self.repl_vals = []
-
-class File_Numbers:
-    def __init__(self):
+        super().__init__()
+        self.checkAttribs(choose_group = choose_group, keywords = keywords, custom_regex = custom_regex)
+class File_Numbers(Categories):
+    def __init__(self, keywords: list, choose_group: str, custom_regex: str):
         self.keywords=\
             [
                 'File_Numbers'
             ]
         self.custom_regex = 'Default'
-        self.repl_vals = []
         self.choose_group = '2'
-
-class Universal:
-    def __init__(self):
+        super().__init__()
+        self.checkAttribs(choose_group = choose_group, keywords = keywords, custom_regex = custom_regex)
+class Universal(Categories):
+    def __init__(self, keywords: list, choose_group: str, custom_regex: str):
         self.keywords=\
             [
                 ''
             ]
         self.custom_regex = ''
-        self.repl_vals = []
         self.choose_group = ''
+        super().__init__()
+        self.checkAttribs(choose_group = choose_group, keywords = keywords, custom_regex = custom_regex)
+class CSS(Categories):
+    def __init__(self, keywords: list, choose_group: str, custom_regex: str):
+        self.keywords=\
+            [
+                ''
+            ]
+        self.custom_regex = fr"((?!{NONGREEDY_WILD}+[\{{\,])([{ANY_CH_HY_SP}]+(?<!(http))\:{NONGREEDY_WILD}+))"
+        self.choose_group = ''
+        super().__init__()
+        self.checkAttribs(choose_group = choose_group, keywords = keywords, custom_regex = custom_regex)
+#((?![a-zA-Z\d[\+\@\$\%\#]\:\(\)\[\] \-\.\_\/\,\\\,]+\{)([a-zA-Z\- ]+\:[a-zA-Z\d[\+\@\$\%\#]\:\(\)\[\] \-\.\_\/\,\\,]+))
+
+#comb_regex
+'(((?![a-zA-Z\d\+\@\$\%\#\:\(\)\[\] \-\.\_\,\,\/\!"\'\:\;]+[\{\,])([a-zA-Z\- ]+(?<!(http)\:[a-zA-Z\d\+\@\$\%\#\:\(\)\[\] \-\.\_\,\,\/\!"\'\:\;]+)))'
