@@ -14,108 +14,119 @@ if __name__ == 'configurator.writers.main' or __name__ == '__main__':
         "layer_0":
         {
             "type": "element",
-            "css": [],
+            "css": {"test_class1":true,"YT_TRSF_2":true},
             "text": "L1",
             "tag": "div",
             "properties": {},
             "scripts": "",
             "api_type":"",
-            "col_0":
+            "style":{"height":"5px"},
+            "0":
             {
                 "type": "element",
-                "css": [],
+                "css": {"test_class1":true,"YT_TRSF_2":true},
                 "text": "L2",
                 "tag": "div",
                 "properties": {},
                 "scripts": "",
                 "api_type":"",
-                "row_0":
+                "style":{"height":"5px"},
+                "0":
                 {
                     "type": "element",
-                    "css": [],
+                    "css": {"test_class1":true,"YT_TRSF_2":true},
                     "text": "L3",
                     "tag": "div",
                     "properties": {},
                     "scripts": "",
                     "api_type":"",
-                    "col_0":
+                    "style":{"height":"5px"},
+                    "0":
                     {
                         "type": "element",
-                        "css": [],
+                        "css": {"test_class1":true,"YT_TRSF_2":true},
                         "text": "L4",
                         "tag": "div",
                         "properties": {},
                         "scripts": "",
                         "api_type":"",
-                        "row_0": 
+                        "style":{"height":"5px"},
+                        "0": 
                         { 
                             "type": "element",
-                            "css": [],
+                            "css": {"test_class1":true,"YT_TRSF_2":true},
                             "text": "TARGET",
                             "tag": "div",
                             "properties": {},
                             "scripts": "",
                             "api_type":"",
-                            "row_0": 
+                            "style":{"height":"5px"},
+                            "0": 
                             { 
                                 "type": "element",
-                                "css": [],
+                                "css": {"test_class1":true,"YT_TRSF_2":true},
                                 "text": "TARGET",
                                 "tag": "div",
                                 "properties": {},
                                 "scripts": "",
                                 "api_type":"",
-                                "row_0": 
+                                "style":{"height":"5px"},
+                                "0": 
                                 { 
                                     "type": "element",
-                                    "css": [],
+                                    "css": {"test_class1":true,"YT_TRSF_2":true},
                                     "text": "DDEEEEEPPP_____TARGET",
                                     "tag": "div",
                                     "properties": {},
                                     "scripts": "",
-                                    "api_type":""
+                                    "api_type":"",
+                                    "style":{"height":"5px"}
                                 }
                             }
                         }
                     }
                 }
             },
-            "col_1":
+            "1":
             {
                 "type": "element",
-                "css": [],
+                "css": {"test_class1":true,"YT_TRSF_2":true},
                 "text": "L2",
                 "tag": "div",
                 "properties": {},
                 "scripts": "",
                 "api_type":"",
-                "row_0":
+                "style":{"height":"5px"},
+                "0":
                 {
                     "type": "element",
-                    "css": [],
+                    "css": {"test_class1":true,"YT_TRSF_2":true},
                     "text": "L3",
                     "tag": "div",
                     "properties": {},
                     "scripts": "",
                     "api_type":"",
-                    "col_0":
+                    "style":{"height":"5px"},
+                    "0":
                     {
                         "type": "element",
-                        "css": [],
+                        "css": {"test_class1":true,"YT_TRSF_2":true},
                         "text": "L4",
                         "tag": "div",
                         "properties": {},
                         "scripts": "",
                         "api_type":"",
-                        "row_0": 
+                        "style":{"height":"5px"},
+                        "0": 
                         { 
                             "type": "element",
-                            "css": [],
+                            "css": {"test_class1":true,"YT_TRSF_2":true},
                             "text": "L5",
                             "tag": "div",
                             "properties": {},
                             "scripts": "",
-                            "api_type":""
+                            "api_type":"",
+                            "style":{"height":"5px"}
                         }
                     }
                 }

@@ -2,7 +2,6 @@ import re
 from ...Utilities.logger import Logger
 from ...Utilities.file_manager import FileManager
 from ...Utilities.dev import Development
-from ...Utilities.util import listDictKeyUniques
 from ...Utilities.dataframes import DataFrames
 import os
 FS = FileManager()
@@ -86,6 +85,24 @@ class RegexMatch(StringParser):
                 #Extend with multiple dictionarys [{'results':val},{'results':val},{'results':val},{'results':val},{'results':val}]
                 match_list.extend(filtered_result) #TODO check duplicates too
         return match_list
+
+    def findUniques(dicts_in_array: list, target_key = str, sub_key = str) -> list:
+        matches = []
+        unique_map = {}
+        for data in dicts_in_array:
+            if isinstance(data[target_key], list):
+                for match in data[target_key]:
+                    if isinstance(match, dict):
+                        match_result = match[sub_key].lstrip()
+                        if match_result == 'null':
+                            continue
+                        if unique_map.get(match_result) == None:
+                            unique_map[match_result] = True
+                            matches.append(match_result)
+            else:
+                matches.append(data[target_key][sub_key])
+                
+        return matches
             
     def getFirstMatch(self, search_str:str, keywords: list = []) -> list:
         """
@@ -177,7 +194,7 @@ class Scan(RegexMatch): #has Category properties Category.__dict__
         matches = []
 
         if unique:
-            matches.extend(listDictKeyUniques(dicts_in_array= processed_data, target_key = key, sub_key = 'match'))
+            matches.extend(self.findUniques(dicts_in_array= processed_data, target_key = key, sub_key = 'match'))
         else:
             for data in processed_data:
                 for match in data[key]:

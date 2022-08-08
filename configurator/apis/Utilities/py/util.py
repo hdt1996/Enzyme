@@ -18,21 +18,14 @@ def splitStringbyDelim(src_string:str,sp_delim:list, cl_delim:list = [],replace:
             arr.append(item)
     return arr
 
-def listDictKeyUniques(dicts_in_array: list, target_key = str, sub_key = str) -> list:
-    matches = []
-    unique_map = {}
-    for data in dicts_in_array:
-        if isinstance(data[target_key], list):
-            for match in data[target_key]:
-                if isinstance(match, dict):
-                    match_result = match[sub_key].lstrip()
-                    if match_result == 'null':
-                        continue
-                    if unique_map.get(match_result) == None:
-                        unique_map[match_result] = True
-                        matches.append(match_result)
-        else:
-            matches.append(data[target_key][sub_key])
-            
-    return matches
+def buildArrfromDict(data: dict = {}, item_type : type = str, item_delim: str = ''):
+    arr = []
+    if item_type == str:
+        for key in data:
+            arr.append(f"{key}{item_delim}{data[key]} ;")
+        return arr
+    elif item_type == list:
+        for key in data:
+            arr.append([key,item_delim,data[key]])
+        return arr
 

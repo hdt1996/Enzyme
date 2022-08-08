@@ -1,5 +1,6 @@
 #TEST
 import json 
+from configurator.apis.Utilities.util import buildArrfromDict
 COUNT = 0
 class HTML():
     def __init__(self):
@@ -112,26 +113,28 @@ class HTML():
             }
 
         }
-          
-        
-
 
         """
 
-    def buildElement(self, elem_type: str = None, prop_dict: dict = {}, css_list: list = [], fetcher: str = None, innerHTML: list = [],rec_tabs: int = 1): 
+        
+
+    def buildElement(self, elem_type: str = None, prop_dict: dict = {}, css_list: dict = {}, fetcher: str = None, innerHTML: list = [], style: dict = [], rec_tabs: int = 1): 
         # For setting up element config. AKA element props, text, or css
         elem_props = []
         inner = []
         elem_build = []
-        css_classes = []
         tab = ''
         if self.main_tags.get(elem_type) == None:
             tab = []
             for num in range(rec_tabs):
                 tab.append('\t')
-            tab = ''.join(tab)
-        for css in css_list:
-            css_classes.append(css)
+            tab = ''.join(tab)  
+        if len(css_list) > 0:
+            elem_props.append(f'classes = "{" ".join(css_list.keys())}"')
+
+        if len(style) > 0:
+            elem_props.append(f'style = "{" ".join(buildArrfromDict(data = style, item_type = str, item_delim= ":"))}"')
+            
         for prop in prop_dict:
             elem_props.append(f"{prop} = {prop_dict[prop]}")
         if fetcher != None:
@@ -155,16 +158,17 @@ class HTML():
         p_script = data['scripts']
         p_css = data['css']
         p_text = data['text']
+        p_style = data['style']
         elem_list.append(p_text)
-        global COUNT
-        COUNT +=1
+
+
         if isinstance(data, dict) and data.get('type') == 'element':
             for key in data:
                 if isinstance(data[key], dict) and data[key].get('type') == 'element':
                     ch_el_str = self.recurseBuildJSON(data[key], n = n + 1)
                     elem_list.append(ch_el_str)
         #should be string only if it reaches here
-        build = self.buildElement(elem_type= p_tag, prop_dict = p_props, css_list = p_css, fetcher = p_script, innerHTML= elem_list, rec_tabs = n + 1)
+        build = self.buildElement(elem_type= p_tag, prop_dict = p_props, css_list = p_css, fetcher = p_script, innerHTML= elem_list, style = p_style, rec_tabs = n + 1)
         #print('Recursion Count: ', COUNT,'\n','build:\n',build)
         return build
         
