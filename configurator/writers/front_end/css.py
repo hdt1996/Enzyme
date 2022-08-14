@@ -1,4 +1,4 @@
-from configurator.apis.Utilities.file_manager import FileManager
+from configurator.apis.Utilities.py.file_manager import FileManager
 import json
 SA = FileManager()
 CONFIG_MAP = None

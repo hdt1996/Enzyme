@@ -1,7 +1,7 @@
 from .front_end.css import CSS
 from .front_end.html import HTML
-from configurator.apis.Utilities.dev import *
-from configurator.apis.Utilities.file_manager import FileManager
+from configurator.apis.Utilities.py.dev import *
+from configurator.apis.Utilities.py.file_manager import FileManager
 import os
 
 DEV = Development()

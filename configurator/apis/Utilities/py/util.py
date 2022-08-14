@@ -29,3 +29,15 @@ def buildArrfromDict(data: dict = {}, item_type : type = str, item_delim: str = 
             arr.append([key,item_delim,data[key]])
         return arr
 
+def buildDictBoolbyArr(arr: list):
+    bool_dict = {}
+    for item in arr:
+        bool_dict[item] = True
+    return bool_dict
+
+def getDictDiffArr(dict_1, dict_2):
+    diff_arr = []
+    for key in dict_2:
+        if key not in dict_1:
+            diff_arr.append(key)
+    return diff_arr

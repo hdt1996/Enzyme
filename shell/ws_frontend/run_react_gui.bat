@@ -1,3 +1,3 @@
-cd C:\Users\hduon\Documents\Enzyme\gui\ws_generator & npm start
+cd C:\Users\hduon\Documents\Enzyme\gui\react_js & npm start & pause
 
 

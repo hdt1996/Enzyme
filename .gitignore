@@ -1,3 +1,6 @@
 *.txt
 *.png
 *.ico
+gui/py_django/app_writer/migrations/
+*.msi
+*.svg
