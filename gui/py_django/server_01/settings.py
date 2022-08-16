@@ -36,6 +36,7 @@ ALLOWED_HOSTS = ['localhost','127.0.0.1',HOST]
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
+    'django.contrib.sites',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
@@ -63,6 +64,7 @@ CORS_ALLOWED_ORIGINS = [
     'http://localhost:3000',
 ]
 
+SITE_ID = 1
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',

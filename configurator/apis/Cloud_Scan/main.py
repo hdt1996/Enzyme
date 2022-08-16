@@ -3,7 +3,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.common.by import By
 from selenium.webdriver.chrome.options import Options
 import os, pandas as pd
-from ..Utilities.py.dev import Development
+from Utilities.py.dev import Development
 from ..Utilities.py.dataframes import DataFrames
 from ..Utilities.py.util import *
 from ..Utilities.py.psql import PSQL
