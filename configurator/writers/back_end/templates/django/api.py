@@ -3,13 +3,29 @@ from ...utils.regex import StringModify
 
 class ChoiceAPI():
     def __init__(self):
+        print('Initialized ChoiceAPI')
         self.imports = \
-        [
-            'from rest_framework.response import Response',
-            'from rest_framework.views import APIView',
-            'from .models import *',
-            'from .serializer import *'
-        ]
+        {
+            "default":
+            [
+                'from rest_framework.response import Response',
+                'from rest_framework.views import APIView',
+                'from .models import *',
+                'from .serializer import *'
+            ],
+            "csrf":
+            [
+                "from django.utils.decorators import method_decorator",
+                "from django.views.decorators.csrf import ensure_csrf_cookie, csrf_protect, csrf_exempt"
+            ],
+            "oauth":
+            [
+                "import django.contrib.auth as auth",
+                "from rest_framework import status, permissions",
+                "from rest_framework.permissions import IsAuthenticated"
+            ]
+        }
+
         self.auth = \
         (inspect.cleandoc(
         """ 
@@ -42,9 +58,7 @@ class ChoiceAPI():
                 """),[]),
             }
 
-
-
-class ChoiceSerializer(StringModify):
+class ChoiceSerializer():
     def __init__(self):
         self.auth = \
         (inspect.cleandoc("""
@@ -78,8 +92,6 @@ class ChoiceSerializer(StringModify):
                     exclude = {fields}
             """),[]),
         }
-        super().__init__()
-        
 
 class ChoiceORM():
     def __init__(self):

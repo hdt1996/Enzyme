@@ -1,7 +1,7 @@
 import re
 
 class WriterRegex():
-    def matchListVar(self,var_name: str, txt: str):
+    def matchListVar(var_name: str, txt: str):
         match = re.findall("({var_name}[ ]*\=[ ]*\[([ a-zA-Z\'\.\n\,\_\d\n\t]*[ ]*)\])".format(var_name = var_name),txt)
         if len(match) > 0:
             match = match[0]
@@ -18,7 +18,7 @@ class WriterRegex():
                 app_list.append(app)
         return match, app_list
 
-    def matchStrVar(self,var_name, txt: str):
+    def matchStrVar(var_name, txt: str):
         match = re.findall("""({var_name}[ ]*\=[ ]*[\"\']([ \:\d\_a-zA-Z\'\.\n\t\,\/]*)[ ]*[\"\'])""".format(var_name = var_name),txt)
         if len(match) > 0:
             match = match[0]
@@ -26,7 +26,7 @@ class WriterRegex():
             return False
         return match
 
-    def matchCallFunction(self,declar:str, txt:str):
+    def matchCallFunction(declar:str, txt:str):
         match = re.findall("""({declar} ([a-zA-Z\_\d]*)(\(([a-zA-Z\_\d\t\: ]+\,?)*\)))""".format(declar = declar),txt)
         if len(match) > 0:
             match = match[0][1]

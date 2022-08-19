@@ -2,7 +2,8 @@ import inspect, re
 
 class ChoiceSettings():
     def __init__(self):
-        self.db = \
+        print('Initialized Choice Settings')
+        self.databases = \
             inspect.cleandoc(
             """
             DATABASES = {{
@@ -16,7 +17,7 @@ class ChoiceSettings():
                 }}
             }}
             """)
-        self.apps = \
+        self.installed_apps = \
             [
                 "\n    'django.contrib.admin'",
                 "'django.contrib.auth'",
@@ -35,7 +36,7 @@ class ChoiceSettings():
                 "'django.contrib.messages.middleware.MessageMiddleware'",
                 "'django.middleware.clickjacking.XFrameOptionsMiddleware'",
             ]
-        self.oauth = \
+        self.rest_framework = \
             inspect.cleandoc(
             """
                 REST_FRAMEWORK = {{
@@ -47,6 +48,7 @@ class ChoiceSettings():
                     ]
                 }}      
             """)
+        super().__init__()
 
     def matchDBSetting(self,txt:str):
         match = re.findall("""(DATABASES[ ]*\=[ ]*\{([ a-zA-Z\'\.\n\,\/\:\{\d\_\#\@]*[ ]*\})[\n ]*\})""",txt)

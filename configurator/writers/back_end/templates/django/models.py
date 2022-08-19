@@ -1,7 +1,8 @@
 import inspect
 from ...utils.regex import StringModify
-class ChoiceFunctions():
+class ChoiceTableFunctions():
     def __init__(self):
+        super().__init__()
         self.file = \
             {
                 'servable': (inspect.cleandoc(
@@ -65,7 +66,6 @@ class ChoiceFunctions():
                             return unique_code
                 """),[])
             }
-        super().__init__()
 
     def processFileArgs(self, field:str, f_dict: dict):
         servable = f_dict['servable']
@@ -100,12 +100,9 @@ class ChoiceFunctions():
             imports.extend(self.defaults[f_type][1])
         return instance_methods, imports
 
-
-    
-
-
-class ChoiceFields():
+class ChoiceTableFields():
     def __init__(self):
+        print('Initialized ChoiceTableFields')
         self.fields = \
             {
                 'char':"models.CharField(max_length={length},null={null},blank={blank},default={default}, primary_key = {pk})", #add function for generating uniques
@@ -117,6 +114,7 @@ class ChoiceFields():
                 "fk":"models.ForeignKey({attached},on_delete=models.{on_delete},blank={blank},null={null})",
                 "time":"models.DateTimeField(auto_now_add={on_update}, auto_now={on_created})",
                 'file':"models.FileField(null={null}, blank={blank}, upload_to={upload_to})", #add function to check filesize per kwa and where to upload by structure per kwa
-                'json':"models.JSONField(default = {default})"
+                'json':"models.JSONField(default = {default})",
+                "user":"models.OneToOneField(User,on_delete=models.CASCADE)"
             }
             

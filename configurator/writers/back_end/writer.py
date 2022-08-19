@@ -13,6 +13,7 @@ FM = FileManager()
 
 class WebServerWriter():
     def __init__(self, config_loc: os.PathLike):
+        print('Initialized WebServerWriter')
         with open(file = config_loc,mode = 'r') as f:
             txt = f.read()
             self.config_data = json.loads(s = txt)
