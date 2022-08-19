@@ -214,7 +214,7 @@ class DjangoSettings(WriterRegex):
         return txt
 
 
-class DjangoAPI(WriterRegex):
+class DjangoAPI(WriterRegex, StringModify):
     def __init__(self):
         self.v_templates = ChoiceAPI()
         self.ser_templates = ChoiceSerializer()
@@ -318,6 +318,19 @@ class DjangoAPI(WriterRegex):
         s_class = [class_dec]
         s_class.append(StringModify.addTabs(txt = self.ser_templates.meta[validate][0].format(table = table, fields = trgt_fields),num_tabs = 1))
         return '\n'.join(s_class), imps, ser_call
+    
+    def addSelector(self, crud: str = None, by_input: bool = False, selector: dict = None):
+        lines = []
+        if by_input:
+            if crud == 'GET':
+                lines.append(f"    selectors =  request.GET.get('selector_value')")
+            elif crud == 'DELETE':
+                pass
+            else:
+                lines.append("    selectors =  request.data.get('selector_value')")
+        else:
+            lines.append(f"    selectors =  {selector}")
+        return lines
 
     def apiFunctions(self, api_dict: dict):
         glbs, props, imps, all_functs = [], [], [], []
@@ -337,50 +350,107 @@ class DjangoAPI(WriterRegex):
         props = getDictUniques(dict_1 = buildDictBoolbyArr(props))
         return imps, glbs, props, all_functs
 
-class DjangoORM(ChoiceORM):
+class DjangoORM():
     def __init__(self, table:str, by_input: bool, selectors: list, selector_values: list, crud: str):
         self.table = table
         self.by_input = by_input
         self.selectors = selectors
         self.selector_values = selector_values
         self.crud = crud
+        self.globals = []
+        self.functions = [f"def {crud.lower()}(self, request):"]
         self.props = []
         self.lines = []
-        super().__init__()
+        self.templates = \
+        {
+            'queryOPs':
+                (inspect.cleandoc(
+                """
+                    QUERY_OPTIONS = \\
+                    {{
+                        'greater':'__gt',
+                        'greater-equal':'__gte',
+                        'lesser':'__lt',
+                        'lesser-equal':'__lte',
+                    }}
+                """),[]),
+            'input':
+                (inspect.cleandoc(
+                """
+                    if selectors == None:
+                        return Response({{'Selector_Error':'No Search Parameters passed in'}})
+                    allowed_fields = {fields}
+            
+                    sel_dict = {{}}
+                    if isinstance(selectors, dict):
+                        for field in selectors:
+                            oper = selectors[field]['operation']
+                            if oper in QUERY_OPTIONS:
+                                sel_dict[f"{{field}}{{QUERY_OPTIONS[oper]}}"] = selectors[field]['value']
+                            if field not in allowed_fields:
+                                return Response({{'Selector_Error':'Unallowed field passed in'}})
+                    else:
+                        return Response({{'Selector_Error':f'{{type(selectors)}} is not allowed. Dict object only'}})
+                    del selectors
+                    table_query = {table}.objects.filter(**sel_dict)
+                """),[]),
+            'user':
+                (inspect.cleandoc(
+                """
+                    table_query = {table}.objects.filter(user = request.user)
+                """
+                ),[]),
+            'base':
+                (inspect.cleandoc(
+                """
+                    sel_dict = {{}}
+                    if isinstance(self.selectors, dict):
+                        for field in self.selectors:
+                            oper = self.selectors[field]['operation']
+                            if oper in QUERY_OPTIONS:
+                                sel_dict[f"{{field}}{{QUERY_OPTIONS[oper]}}"] = self.selectors[field]['value']
+                    else:
+                        return Response({{'Core_Logic_Error':f'{{type(self.selectors)}} is not allowed. Dict object only'}})
+                    table_query = {table}.objects.filter(**sel_dict)
+                """),[]),
+        }   
 
     def addSelector(self, crud: str = None, by_input: bool = False, selector: dict = None):
         lines = []
         if by_input:
-            var = self.vars['selectors'][crud][0]
+            if crud == 'GET':
+                lines.append(f"    selectors =  request.GET.get('selector_value')")
+            elif crud == 'DELETE':
+                pass
+            else:
+                lines.append("    selectors =  request.data.get('selector_value')")
         else:
-            var = f"selectors =  {selector}"
-        lines.append(StringModify.addTabs(txt = var, num_tabs = 1))
+            lines.append(f"    selectors =  {selector}")
         return lines
 
     def createQuery(self):
-        glbs, functs = [],[f"def {self.crud.lower()}(self, request):"]
         if self.by_input or self.selector_values:
-            glbs.append(self.globals['queryOPs'][0])
+            self.globals.append(self.templates['queryOPs'][0])
         if self.by_input:
             self.processVariableInputs()
         else:
             self.processStaticInputs()
-        functs.append('\n'.join(self.lines))
-        functs = '\n'.join(functs)
-        return glbs, self.props, functs
+        self.functions.append('\n'.join(self.lines))
+        self.functions = '\n'.join(self.functions)
+        return self.globals, self.props, self.functions
     def processVariableInputs(self):
         self.lines.extend(self.addSelector(crud = self.crud, by_input = self.by_input))
         selector_dict = str(buildDictBoolbyArr(arr = self.selectors))
-        selector_line = self.queries['input'][0].format(table = self.table, fields = selector_dict)
+        selector_line = self.templates['input'][0].format(table = self.table, fields = selector_dict)
         self.lines.append(StringModify.addTabs(txt = selector_line,num_tabs = 1))
 
     def processStaticInputs(self):
         if len(self.selectors) == 1 and self.selectors[0] == 'user': 
-            self.lines.append(StringModify.addTabs(txt = self.queries['user'][0].format(table = self.table),num_tabs = 1))
+            self.lines.append(StringModify.addTabs(txt = self.templates['user'][0].format(table = self.table),num_tabs = 1))
         else:
             selector_dict = buildDictfromArrs(key_arr = self.selectors, value_arr = self.selector_values)
             self.props.extend(self.addSelector(by_input= self.by_input, selector = selector_dict))
-            self.lines.append(StringModify.addTabs(txt = self.queries['base'][0].format(table = self.table),num_tabs = 1))
+            self.lines.append(StringModify.addTabs(txt = self.templates['base'][0].format(table = self.table),num_tabs = 1))
 
 class DjangoWriter(DjangoSettings, DjangoTables, DjangoAPI):
     def __init__(self, server_name: str, config_data: dict):

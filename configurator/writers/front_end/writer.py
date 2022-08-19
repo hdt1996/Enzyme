@@ -1,5 +1,5 @@
-from .front_end.css import CSS
-from .front_end.html import HTML
+from .css import CSS
+from .html import HTML
 from configurator.apis.Utilities.py.dev import *
 from configurator.apis.Utilities.py.file_manager import FileManager
 import os

@@ -18,8 +18,12 @@ def splitStringbyDelim(src_string:str,sp_delim:list, cl_delim:list = [],replace:
             arr.append(item)
     return arr
 
-def buildArrfromDict(data: dict = {}, item_type : type = str, item_delim: str = ''):
+def buildArrfromDict(data: dict = {}, item_type : type = str, item_delim: str = '', kv:bool = True):
     arr = []
+    if not kv:
+        for key in data:
+            arr.append(data[key])
+        return arr
     if item_type == str:
         for key in data:
             arr.append(f"{key}{item_delim}{data[key]} ;")
@@ -35,9 +39,24 @@ def buildDictBoolbyArr(arr: list):
         bool_dict[item] = True
     return bool_dict
 
-def getDictDiffArr(dict_1, dict_2):
+def getDictDiffArr(dict_1:dict, dict_2:dict):
     diff_arr = []
     for key in dict_2:
         if key not in dict_1:
             diff_arr.append(key)
     return diff_arr
+
+def getDictUniques(dict_1:dict):
+    diff_arr = []
+    new_dict = {}
+    for key in dict_1:
+        if new_dict.get(key) == None:
+            new_dict[key] = True
+            diff_arr.append(key)
+    return diff_arr
+
+def buildDictfromArrs(key_arr: list, value_arr: list):
+    new_dict = {}
+    for index, item in enumerate(key_arr):
+        new_dict[item] = value_arr[index]
+    return new_dict

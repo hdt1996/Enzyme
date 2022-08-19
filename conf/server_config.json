@@ -2,13 +2,13 @@
     "Root_Path":"C:\\IT\\",
     "Back_End_Path":"C:\\IT\\Back_End",
     "Front_End_Path":"C:\\IT\\Front_End",
-    "Servers":
+    "Server_Locations":
     {
         "server_01":"C:\\IT\\Back_End\\server_01",
         "node_01":"C:\\IT\\Back_End\\node_01",
         "node_02":"C:\\IT\\Back_End\\node_02"
     },
-    "Apps":
+    "App_Locations":
     {
         "server_01":
         {
@@ -52,18 +52,19 @@
         }
     },
 
-    "Back_End_Settings":
+    "Server_Settings":
     {
         "server_01":
         {
-            "PORT":8000,
+            "port":8000,
             "framework":"python django",
-            "Cors":true,
-            "OAUTH":true,
-            "CSRF":true,
-            "Allowed_Hosts":["localhost","192.168.1.86","127.0.0.1"],
-            "Containerization":false,
-            "Storage":
+            "cors":true,
+            "oauth":true,
+            "auth_type":"session|token",
+            "csrf":true,
+            "allowed_hosts":["localhost","192.168.1.86","127.0.0.1"],
+            "containers":false,
+            "storage":
             {
                 "media":
                 {
@@ -85,15 +86,16 @@
         },
         "node_01":
         {
-            "PORT":8001,
+            "port":8001,
             "framework":"node express",
             "Cors":true,
-            "OAUTH":true,
-            "CSRF":true,
-            "Allowed_Hosts":["localhost","192.168.1.86","127.0.0.1"],
-            "Containerization":false,
-            "Socket":false,
-            "Storage":
+            "oauth":true,
+            "auth_type":"session|token",
+            "csrf":true,
+            "allowed_hosts":["localhost","192.168.1.86","127.0.0.1"],
+            "containers":false,
+            "socket":false,
+            "storage":
             {
                 "media":
                 {
@@ -109,14 +111,15 @@
         },
         "node_02":
         {
-            "PORT":8002,
+            "port":8002,
             "framework":"node express",
             "Cors":true,
-            "OAUTH":true,
-            "Allowed_Hosts":["localhost","192.168.1.86","127.0.0.1"],
-            "Containerization":false,
-            "Socket":false,
-            "Storage":
+            "oauth":true,
+            "auth_type":"session|token",
+            "allowed_hosts":["localhost","192.168.1.86","127.0.0.1"],
+            "containers":false,
+            "socket":false,
+            "storage":
             {
                 "media":
                 {
@@ -134,8 +137,8 @@
     "Front_End_Settings":
     {
         "Framework":"React",
-        "Allowed_Hosts":["localhost","192.168.1.86","127.0.0.1"],
-        "Containerization":false,
+        "allowed_hosts":["localhost","192.168.1.86","127.0.0.1"],
+        "containers":false,
         "Hosted_Server":
         {
             "http://192.168.1.86:8001":false,
@@ -153,282 +156,432 @@
     {
         "server_01":
         {
-            "Engine":"postgres",
-            "Name":"DB_1",
-            "User":"Admin",
-            "Password":"MrPho1219@",
-            "Host": "192.168.1.86",
-            "PORT":5432,
+            "engine":"postgres",
+            "name":"DB_1",
+            "user":"Admin",
+            "password":"MrPho1219@",
+            "host": "192.168.1.86",
+            "port":5432,
             "tables":
             {
                 "App_01":
                 {
-                    "Table_1":
+                    "Customers":
                     {
-                        "field_1":{"type":"Char","null":true,"blank":true,"length":1000,"unique":false,"attached":false},
-                        "field_2":{"type":"Char","null":true,"blank":true,"length":1000,"unique":false,"attached":"Table_2.field_4"},
-                        "field_3":{"type":"Char","null":true,"blank":true,"length":1000,"unique":false,"attached":false},
-                        "field_4":{"type":"Char","null":true,"blank":true,"length":1000,"unique":false,"attached":false},
-                        "field_5":{"type":"Char","null":true,"blank":true,"length":1000,"unique":false,"attached":false}
+                        "field_1":{"type":"bool","null":true,"blank":true},
+                        "field_3":{"type":"char","null":true,"blank":true,"length":255,"random":true, "pk":true, "default":""},
+                        "field_8":{"type":"text","null":true,"blank":true,"length":1000,"random":false, "pk":false, "default":""},
+                        "field_2":{"type":"int","null":true,"blank":true,"length":1000,"random":false, "pk":false, "default":5},
+                        "field_10":{"type":"float","null":true,"blank":true,"length":1000,"random":false, "pk":false, "default":5.55},
+                        "field_4":{"type":"img","null":true,"blank":true, "max_size":"100mb", "upload_to":"media", "structure":"user", "servable":true},
+                        "field_7":{"type":"file","null":true,"blank":true,"max_size":"100mb", "upload_to":"media", "structure":"user", "servable":true},
+                        "field_5":{"type":"fk", "null":true,"blank":true, "attached":"Table_2.field_4","on_delete":"cascade"},
+                        "field_6":{"type":"time", "auto_now_add":false, "auto_now":true},
+                        "field_9":{"type":"json", "default":{}}
                     },
                     "Table_2":
                     {
-                        "field_1":{"type":"Char","null":true,"blank":true,"length":1000,"unique":false,"attached":false},
-                        "field_2":{"type":"Char","null":true,"blank":true,"length":1000,"unique":false,"attached":false},
-                        "field_3":{"type":"Char","null":true,"blank":true,"length":1000,"unique":false,"attached":false},
-                        "field_4":{"type":"Char","null":true,"blank":true,"length":1000,"unique":false,"attached":false},
-                        "field_5":{"type":"Char","null":true,"blank":true,"length":1000,"unique":false,"attached":false}
+                        "field_3":{"type":"bool","null":true,"blank":true},
+                        "field_1":{"type":"char","null":true,"blank":true,"length":255,"random":false, "pk":true, "default":""},
+                        "field_8":{"type":"text","null":true,"blank":true,"length":1000,"random":false, "pk":false, "default":""},
+                        "field_2":{"type":"int","null":true,"blank":true,"length":1000,"random":false, "pk":false, "default":5},
+                        "field_10":{"type":"float","null":true,"blank":true,"length":1000,"random":false, "pk":false, "default":5.55},
+                        "field_4":{"type":"img","null":true,"blank":true, "max_size":"100mb", "upload_to":"media", "structure":"user", "servable":true},
+                        "field_7":{"type":"file","null":true,"blank":true,"max_size":"100mb", "upload_to":"media", "structure":"user", "servable":true},
+                        "field_5":{"type":"fk", "null":true,"blank":true, "attached":"Table_2.field_4","on_delete":"cascade"},
+                        "field_6":{"type":"time", "auto_now_add":false, "auto_now":true},
+                        "field_9":{"type":"json", "default":{}}
                     },
                     "Table_3":
                     {
-                        "field_1":{"type":"Char","null":true,"blank":true,"length":1000,"unique":false,"attached":false},
-                        "field_2":{"type":"Char","null":true,"blank":true,"length":1000,"unique":false,"attached":"Table_1.field_5"},
-                        "field_3":{"type":"Char","null":true,"blank":true,"length":1000,"unique":false,"attached":false},
-                        "field_4":{"type":"Char","null":true,"blank":true,"length":1000,"unique":false,"attached":false},
-                        "field_5":{"type":"Char","null":true,"blank":true,"length":1000,"unique":false,"attached":false}
+                        "field_3":{"type":"bool","null":true,"blank":true},
+                        "field_1":{"type":"char","null":true,"blank":true,"length":255,"random":false, "pk":true, "default":""},
+                        "field_8":{"type":"text","null":true,"blank":true,"length":1000,"random":false, "pk":false, "default":""},
+                        "field_2":{"type":"int","null":true,"blank":true,"length":1000,"random":false, "pk":false, "default":5},
+                        "field_10":{"type":"float","null":true,"blank":true,"length":1000,"random":false, "pk":false, "default":5.55},
+                        "field_4":{"type":"img","null":true,"blank":true, "max_size":"100mb", "upload_to":"media", "structure":"user", "servable":true},
+                        "field_7":{"type":"file","null":true,"blank":true,"max_size":"100mb", "upload_to":"media", "structure":"user", "servable":true},
+                        "field_5":{"type":"fk", "null":true,"blank":true, "attached":"Table_2.field_4","on_delete":"cascade"},
+                        "field_6":{"type":"time", "auto_now_add":false, "auto_now":true},
+                        "field_9":{"type":"json", "default":{}}
                     }
                 },
                 "App_02":
                 {
                     "Table_1":
                     {
-                        "field_1":{"type":"Char","null":true,"blank":true,"length":1000,"unique":false,"attached":false},
-                        "field_2":{"type":"Char","null":true,"blank":true,"length":1000,"unique":false,"attached":"Table_2.field_4"},
-                        "field_3":{"type":"Char","null":true,"blank":true,"length":1000,"unique":false,"attached":false},
-                        "field_4":{"type":"Char","null":true,"blank":true,"length":1000,"unique":false,"attached":false},
-                        "field_5":{"type":"Char","null":true,"blank":true,"length":1000,"unique":false,"attached":false}
+                        "field_3":{"type":"bool","null":true,"blank":true},
+                        "field_1":{"type":"char","null":true,"blank":true,"length":255,"random":false, "pk":true, "default":""},
+                        "field_8":{"type":"text","null":true,"blank":true,"length":1000,"random":false, "pk":false, "default":""},
+                        "field_2":{"type":"int","null":true,"blank":true,"length":1000,"random":false, "pk":false, "default":5},
+                        "field_10":{"type":"float","null":true,"blank":true,"length":1000,"random":false, "pk":false, "default":5.55},
+                        "field_4":{"type":"img","null":true,"blank":true, "max_size":"100mb", "upload_to":"media", "structure":"user", "servable":true},
+                        "field_7":{"type":"file","null":true,"blank":true,"max_size":"100mb", "upload_to":"media", "structure":"user", "servable":true},
+                        "field_5":{"type":"fk", "null":true,"blank":true, "attached":"Table_2.field_4","on_delete":"cascade"},
+                        "field_6":{"type":"time", "auto_now_add":false, "auto_now":true},
+                        "field_9":{"type":"json", "default":{}}
                     },
                     "Table_2":
                     {
-                        "field_1":{"type":"Char","null":true,"blank":true,"length":1000,"unique":false,"attached":false},
-                        "field_2":{"type":"Char","null":true,"blank":true,"length":1000,"unique":false,"attached":false},
-                        "field_3":{"type":"Char","null":true,"blank":true,"length":1000,"unique":false,"attached":false},
-                        "field_4":{"type":"Char","null":true,"blank":true,"length":1000,"unique":false,"attached":false},
-                        "field_5":{"type":"Char","null":true,"blank":true,"length":1000,"unique":false,"attached":false}
+                        "field_3":{"type":"bool","null":true,"blank":true},
+                        "field_1":{"type":"char","null":true,"blank":true,"length":255,"random":false, "pk":true, "default":""},
+                        "field_8":{"type":"text","null":true,"blank":true,"length":1000,"random":false, "pk":false, "default":""},
+                        "field_2":{"type":"int","null":true,"blank":true,"length":1000,"random":false, "pk":false, "default":5},
+                        "field_10":{"type":"float","null":true,"blank":true,"length":1000,"random":false, "pk":false, "default":5.55},
+                        "field_4":{"type":"img","null":true,"blank":true, "max_size":"100mb", "upload_to":"media", "structure":"user", "servable":true},
+                        "field_7":{"type":"file","null":true,"blank":true,"max_size":"100mb", "upload_to":"media", "structure":"user", "servable":true},
+                        "field_5":{"type":"fk", "null":true,"blank":true, "attached":"Table_2.field_4","on_delete":"cascade"},
+                        "field_6":{"type":"time", "auto_now_add":false, "auto_now":true},
+                        "field_9":{"type":"json", "default":{}}
                     },
                     "Table_3":
                     {
-                        "field_1":{"type":"Char","null":true,"blank":true,"length":1000,"unique":false,"attached":false},
-                        "field_2":{"type":"Char","null":true,"blank":true,"length":1000,"unique":false,"attached":"Table_1.field_5"},
-                        "field_3":{"type":"Char","null":true,"blank":true,"length":1000,"unique":false,"attached":false},
-                        "field_4":{"type":"Char","null":true,"blank":true,"length":1000,"unique":false,"attached":false},
-                        "field_5":{"type":"Char","null":true,"blank":true,"length":1000,"unique":false,"attached":false}
+                        "field_3":{"type":"bool","null":true,"blank":true},
+                        "field_1":{"type":"char","null":true,"blank":true,"length":255,"random":false, "pk":true, "default":""},
+                        "field_8":{"type":"text","null":true,"blank":true,"length":1000,"random":false, "pk":false, "default":""},
+                        "field_2":{"type":"int","null":true,"blank":true,"length":1000,"random":false, "pk":false, "default":5},
+                        "field_10":{"type":"float","null":true,"blank":true,"length":1000,"random":false, "pk":false, "default":5.55},
+                        "field_4":{"type":"img","null":true,"blank":true, "max_size":"100mb", "upload_to":"media", "structure":"user", "servable":true},
+                        "field_7":{"type":"file","null":true,"blank":true,"max_size":"100mb", "upload_to":"media", "structure":"user", "servable":true},
+                        "field_5":{"type":"fk", "null":true,"blank":true, "attached":"Table_2.field_4","on_delete":"cascade"},
+                        "field_6":{"type":"time", "auto_now_add":false, "auto_now":true},
+                        "field_9":{"type":"json", "default":{}}
                     }
                 },
                 "App_03":
                 {
                     "Table_1":
                     {
-                        "field_1":{"type":"Char","null":true,"blank":true,"length":1000,"unique":false,"attached":false},
-                        "field_2":{"type":"Char","null":true,"blank":true,"length":1000,"unique":false,"attached":"Table_2.field_4"},
-                        "field_3":{"type":"Char","null":true,"blank":true,"length":1000,"unique":false,"attached":false},
-                        "field_4":{"type":"Char","null":true,"blank":true,"length":1000,"unique":false,"attached":false},
-                        "field_5":{"type":"Char","null":true,"blank":true,"length":1000,"unique":false,"attached":false}
+                        "field_3":{"type":"bool","null":true,"blank":true},
+                        "field_1":{"type":"char","null":true,"blank":true,"length":255,"random":false, "pk":true, "default":""},
+                        "field_8":{"type":"text","null":true,"blank":true,"length":1000,"random":false, "pk":false, "default":""},
+                        "field_2":{"type":"int","null":true,"blank":true,"length":1000,"random":false, "pk":false, "default":5},
+                        "field_10":{"type":"float","null":true,"blank":true,"length":1000,"random":false, "pk":false, "default":5.55},
+                        "field_4":{"type":"img","null":true,"blank":true, "max_size":"100mb", "upload_to":"media", "structure":"user", "servable":true},
+                        "field_7":{"type":"file","null":true,"blank":true,"max_size":"100mb", "upload_to":"media", "structure":"user", "servable":true},
+                        "field_5":{"type":"fk", "null":true,"blank":true, "attached":"Table_2.field_4","on_delete":"cascade"},
+                        "field_6":{"type":"time", "auto_now_add":false, "auto_now":true},
+                        "field_9":{"type":"json", "default":{}}
                     },
                     "Table_2":
                     {
-                        "field_1":{"type":"Char","null":true,"blank":true,"length":1000,"unique":false,"attached":false},
-                        "field_2":{"type":"Char","null":true,"blank":true,"length":1000,"unique":false,"attached":false},
-                        "field_3":{"type":"Char","null":true,"blank":true,"length":1000,"unique":false,"attached":false},
-                        "field_4":{"type":"Char","null":true,"blank":true,"length":1000,"unique":false,"attached":false},
-                        "field_5":{"type":"Char","null":true,"blank":true,"length":1000,"unique":false,"attached":false}
+                        "field_3":{"type":"bool","null":true,"blank":true},
+                        "field_1":{"type":"char","null":true,"blank":true,"length":255,"random":false, "pk":true, "default":""},
+                        "field_8":{"type":"text","null":true,"blank":true,"length":1000,"random":false, "pk":false, "default":""},
+                        "field_2":{"type":"int","null":true,"blank":true,"length":1000,"random":false, "pk":false, "default":5},
+                        "field_10":{"type":"float","null":true,"blank":true,"length":1000,"random":false, "pk":false, "default":5.55},
+                        "field_4":{"type":"img","null":true,"blank":true, "max_size":"100mb", "upload_to":"media", "structure":"user", "servable":true},
+                        "field_7":{"type":"file","null":true,"blank":true,"max_size":"100mb", "upload_to":"media", "structure":"user", "servable":true},
+                        "field_5":{"type":"fk", "null":true,"blank":true, "attached":"Table_2.field_4","on_delete":"cascade"},
+                        "field_6":{"type":"time", "auto_now_add":false, "auto_now":true},
+                        "field_9":{"type":"json", "default":{}}
                     },
                     "Table_3":
                     {
-                        "field_1":{"type":"Char","null":true,"blank":true,"length":1000,"unique":false,"attached":false},
-                        "field_2":{"type":"Char","null":true,"blank":true,"length":1000,"unique":false,"attached":"Table_1.field_5"},
-                        "field_3":{"type":"Char","null":true,"blank":true,"length":1000,"unique":false,"attached":false},
-                        "field_4":{"type":"Char","null":true,"blank":true,"length":1000,"unique":false,"attached":false},
-                        "field_5":{"type":"Char","null":true,"blank":true,"length":1000,"unique":false,"attached":false}
+                        "field_3":{"type":"bool","null":true,"blank":true},
+                        "field_1":{"type":"char","null":true,"blank":true,"length":255,"random":false, "pk":true, "default":""},
+                        "field_8":{"type":"text","null":true,"blank":true,"length":1000,"random":false, "pk":false, "default":""},
+                        "field_2":{"type":"int","null":true,"blank":true,"length":1000,"random":false, "pk":false, "default":5},
+                        "field_10":{"type":"float","null":true,"blank":true,"length":1000,"random":false, "pk":false, "default":5.55},
+                        "field_4":{"type":"img","null":true,"blank":true, "max_size":"100mb", "upload_to":"media", "structure":"user", "servable":true},
+                        "field_7":{"type":"file","null":true,"blank":true,"max_size":"100mb", "upload_to":"media", "structure":"user", "servable":true},
+                        "field_5":{"type":"fk", "null":true,"blank":true, "attached":"Table_2.field_4","on_delete":"cascade"},
+                        "field_6":{"type":"time", "auto_now_add":false, "auto_now":true},
+                        "field_9":{"type":"json", "default":{}}
                     }
                 },
                 "App_04":
                 {
                     "Table_1":
                     {
-                        "field_1":{"type":"Char","null":true,"blank":true,"length":1000,"unique":false,"attached":false},
-                        "field_2":{"type":"Char","null":true,"blank":true,"length":1000,"unique":false,"attached":"Table_2.field_4"},
-                        "field_3":{"type":"Char","null":true,"blank":true,"length":1000,"unique":false,"attached":false},
-                        "field_4":{"type":"Char","null":true,"blank":true,"length":1000,"unique":false,"attached":false},
-                        "field_5":{"type":"Char","null":true,"blank":true,"length":1000,"unique":false,"attached":false}
+                        "field_3":{"type":"bool","null":true,"blank":true},
+                        "field_1":{"type":"char","null":true,"blank":true,"length":255,"random":false, "pk":true, "default":""},
+                        "field_8":{"type":"text","null":true,"blank":true,"length":1000,"random":false, "pk":false, "default":""},
+                        "field_2":{"type":"int","null":true,"blank":true,"length":1000,"random":false, "pk":false, "default":5},
+                        "field_10":{"type":"float","null":true,"blank":true,"length":1000,"random":false, "pk":false, "default":5.55},
+                        "field_4":{"type":"img","null":true,"blank":true, "max_size":"100mb", "upload_to":"media", "structure":"user", "servable":true},
+                        "field_7":{"type":"file","null":true,"blank":true,"max_size":"100mb", "upload_to":"media", "structure":"user", "servable":true},
+                        "field_5":{"type":"fk", "null":true,"blank":true, "attached":"Table_2.field_4","on_delete":"cascade"},
+                        "field_6":{"type":"time", "auto_now_add":false, "auto_now":true},
+                        "field_9":{"type":"json", "default":{}}
                     },
                     "Table_2":
                     {
-                        "field_1":{"type":"Char","null":true,"blank":true,"length":1000,"unique":false,"attached":false},
-                        "field_2":{"type":"Char","null":true,"blank":true,"length":1000,"unique":false,"attached":false},
-                        "field_3":{"type":"Char","null":true,"blank":true,"length":1000,"unique":false,"attached":false},
-                        "field_4":{"type":"Char","null":true,"blank":true,"length":1000,"unique":false,"attached":false},
-                        "field_5":{"type":"Char","null":true,"blank":true,"length":1000,"unique":false,"attached":false}
+                        "field_3":{"type":"bool","null":true,"blank":true},
+                        "field_1":{"type":"char","null":true,"blank":true,"length":255,"random":false, "pk":true, "default":""},
+                        "field_8":{"type":"text","null":true,"blank":true,"length":1000,"random":false, "pk":false, "default":""},
+                        "field_2":{"type":"int","null":true,"blank":true,"length":1000,"random":false, "pk":false, "default":5},
+                        "field_10":{"type":"float","null":true,"blank":true,"length":1000,"random":false, "pk":false, "default":5.55},
+                        "field_4":{"type":"img","null":true,"blank":true, "max_size":"100mb", "upload_to":"media", "structure":"user", "servable":true},
+                        "field_7":{"type":"file","null":true,"blank":true,"max_size":"100mb", "upload_to":"media", "structure":"user", "servable":true},
+                        "field_5":{"type":"fk", "null":true,"blank":true, "attached":"Table_2.field_4","on_delete":"cascade"},
+                        "field_6":{"type":"time", "auto_now_add":false, "auto_now":true},
+                        "field_9":{"type":"json", "default":{}}
                     },
                     "Table_3":
                     {
-                        "field_1":{"type":"Char","null":true,"blank":true,"length":1000,"unique":false,"attached":false},
-                        "field_2":{"type":"Char","null":true,"blank":true,"length":1000,"unique":false,"attached":"Table_1.field_5"},
-                        "field_3":{"type":"Char","null":true,"blank":true,"length":1000,"unique":false,"attached":false},
-                        "field_4":{"type":"Char","null":true,"blank":true,"length":1000,"unique":false,"attached":false},
-                        "field_5":{"type":"Char","null":true,"blank":true,"length":1000,"unique":false,"attached":false}
+                        "field_3":{"type":"bool","null":true,"blank":true},
+                        "field_1":{"type":"char","null":true,"blank":true,"length":255,"random":false, "pk":true, "default":""},
+                        "field_8":{"type":"text","null":true,"blank":true,"length":1000,"random":false, "pk":false, "default":""},
+                        "field_2":{"type":"int","null":true,"blank":true,"length":1000,"random":false, "pk":false, "default":5},
+                        "field_10":{"type":"float","null":true,"blank":true,"length":1000,"random":false, "pk":false, "default":5.55},
+                        "field_4":{"type":"img","null":true,"blank":true, "max_size":"100mb", "upload_to":"media", "structure":"user", "servable":true},
+                        "field_7":{"type":"file","null":true,"blank":true,"max_size":"100mb", "upload_to":"media", "structure":"user", "servable":true},
+                        "field_5":{"type":"fk", "null":true,"blank":true, "attached":"Table_2.field_4","on_delete":"cascade"},
+                        "field_6":{"type":"time", "auto_now_add":false, "auto_now":true},
+                        "field_9":{"type":"json", "default":{}}
                     }
                 },
                 "App_05":
                 {
                     "Table_1":
                     {
-                        "field_1":{"type":"Char","null":true,"blank":true,"length":1000,"unique":false,"attached":false},
-                        "field_2":{"type":"Char","null":true,"blank":true,"length":1000,"unique":false,"attached":"Table_2.field_4"},
-                        "field_3":{"type":"Char","null":true,"blank":true,"length":1000,"unique":false,"attached":false},
-                        "field_4":{"type":"Char","null":true,"blank":true,"length":1000,"unique":false,"attached":false},
-                        "field_5":{"type":"Char","null":true,"blank":true,"length":1000,"unique":false,"attached":false}
+                        "field_3":{"type":"bool","null":true,"blank":true},
+                        "field_1":{"type":"char","null":true,"blank":true,"length":255,"random":false, "pk":true, "default":""},
+                        "field_8":{"type":"text","null":true,"blank":true,"length":1000,"random":false, "pk":false, "default":""},
+                        "field_2":{"type":"int","null":true,"blank":true,"length":1000,"random":false, "pk":false, "default":5},
+                        "field_10":{"type":"float","null":true,"blank":true,"length":1000,"random":false, "pk":false, "default":5.55},
+                        "field_4":{"type":"img","null":true,"blank":true, "max_size":"100mb", "upload_to":"media", "structure":"user", "servable":true},
+                        "field_7":{"type":"file","null":true,"blank":true,"max_size":"100mb", "upload_to":"media", "structure":"user", "servable":true},
+                        "field_5":{"type":"fk", "null":true,"blank":true, "attached":"Table_2.field_4","on_delete":"cascade"},
+                        "field_6":{"type":"time", "auto_now_add":false, "auto_now":true},
+                        "field_9":{"type":"json", "default":{}}
                     },
                     "Table_2":
                     {
-                        "field_1":{"type":"Char","null":true,"blank":true,"length":1000,"unique":false,"attached":false},
-                        "field_2":{"type":"Char","null":true,"blank":true,"length":1000,"unique":false,"attached":false},
-                        "field_3":{"type":"Char","null":true,"blank":true,"length":1000,"unique":false,"attached":false},
-                        "field_4":{"type":"Char","null":true,"blank":true,"length":1000,"unique":false,"attached":false},
-                        "field_5":{"type":"Char","null":true,"blank":true,"length":1000,"unique":false,"attached":false}
+                        "field_3":{"type":"bool","null":true,"blank":true},
+                        "field_1":{"type":"char","null":true,"blank":true,"length":255,"random":false, "pk":true, "default":""},
+                        "field_8":{"type":"text","null":true,"blank":true,"length":1000,"random":false, "pk":false, "default":""},
+                        "field_2":{"type":"int","null":true,"blank":true,"length":1000,"random":false, "pk":false, "default":5},
+                        "field_10":{"type":"float","null":true,"blank":true,"length":1000,"random":false, "pk":false, "default":5.55},
+                        "field_4":{"type":"img","null":true,"blank":true, "max_size":"100mb", "upload_to":"media", "structure":"user", "servable":true},
+                        "field_7":{"type":"file","null":true,"blank":true,"max_size":"100mb", "upload_to":"media", "structure":"user", "servable":true},
+                        "field_5":{"type":"fk", "null":true,"blank":true, "attached":"Table_2.field_4","on_delete":"cascade"},
+                        "field_6":{"type":"time", "auto_now_add":false, "auto_now":true},
+                        "field_9":{"type":"json", "default":{}}
                     },
                     "Table_3":
                     {
-                        "field_1":{"type":"Char","null":true,"blank":true,"length":1000,"unique":false,"attached":false},
-                        "field_2":{"type":"Char","null":true,"blank":true,"length":1000,"unique":false,"attached":"Table_1.field_5"},
-                        "field_3":{"type":"Char","null":true,"blank":true,"length":1000,"unique":false,"attached":false},
-                        "field_4":{"type":"Char","null":true,"blank":true,"length":1000,"unique":false,"attached":false},
-                        "field_5":{"type":"Char","null":true,"blank":true,"length":1000,"unique":false,"attached":false}
+                        "field_3":{"type":"bool","null":true,"blank":true},
+                        "field_1":{"type":"char","null":true,"blank":true,"length":255,"random":false, "pk":true, "default":""},
+                        "field_8":{"type":"text","null":true,"blank":true,"length":1000,"random":false, "pk":false, "default":""},
+                        "field_2":{"type":"int","null":true,"blank":true,"length":1000,"random":false, "pk":false, "default":5},
+                        "field_10":{"type":"float","null":true,"blank":true,"length":1000,"random":false, "pk":false, "default":5.55},
+                        "field_4":{"type":"img","null":true,"blank":true, "max_size":"100mb", "upload_to":"media", "structure":"user", "servable":true},
+                        "field_7":{"type":"file","null":true,"blank":true,"max_size":"100mb", "upload_to":"media", "structure":"user", "servable":true},
+                        "field_5":{"type":"fk", "null":true,"blank":true, "attached":"Table_2.field_4","on_delete":"cascade"},
+                        "field_6":{"type":"time", "auto_now_add":false, "auto_now":true},
+                        "field_9":{"type":"json", "default":{}}
                     }
                 },
                 "App_06":
                 {
                     "Table_1":
                     {
-                        "field_1":{"type":"Char","null":true,"blank":true,"length":1000,"unique":false,"attached":false},
-                        "field_2":{"type":"Char","null":true,"blank":true,"length":1000,"unique":false,"attached":"Table_2.field_4"},
-                        "field_3":{"type":"Char","null":true,"blank":true,"length":1000,"unique":false,"attached":false},
-                        "field_4":{"type":"Char","null":true,"blank":true,"length":1000,"unique":false,"attached":false},
-                        "field_5":{"type":"Char","null":true,"blank":true,"length":1000,"unique":false,"attached":false}
+                        "field_3":{"type":"bool","null":true,"blank":true},
+                        "field_1":{"type":"char","null":true,"blank":true,"length":255,"random":false, "pk":true, "default":""},
+                        "field_8":{"type":"text","null":true,"blank":true,"length":1000,"random":false, "pk":false, "default":""},
+                        "field_2":{"type":"int","null":true,"blank":true,"length":1000,"random":false, "pk":false, "default":5},
+                        "field_10":{"type":"float","null":true,"blank":true,"length":1000,"random":false, "pk":false, "default":5.55},
+                        "field_4":{"type":"img","null":true,"blank":true, "max_size":"100mb", "upload_to":"media", "structure":"user", "servable":true},
+                        "field_7":{"type":"file","null":true,"blank":true,"max_size":"100mb", "upload_to":"media", "structure":"user", "servable":true},
+                        "field_5":{"type":"fk", "null":true,"blank":true, "attached":"Table_2.field_4","on_delete":"cascade"},
+                        "field_6":{"type":"time", "auto_now_add":false, "auto_now":true},
+                        "field_9":{"type":"json", "default":{}}
                     },
                     "Table_2":
                     {
-                        "field_1":{"type":"Char","null":true,"blank":true,"length":1000,"unique":false,"attached":false},
-                        "field_2":{"type":"Char","null":true,"blank":true,"length":1000,"unique":false,"attached":false},
-                        "field_3":{"type":"Char","null":true,"blank":true,"length":1000,"unique":false,"attached":false},
-                        "field_4":{"type":"Char","null":true,"blank":true,"length":1000,"unique":false,"attached":false},
-                        "field_5":{"type":"Char","null":true,"blank":true,"length":1000,"unique":false,"attached":false}
+                        "field_3":{"type":"bool","null":true,"blank":true},
+                        "field_1":{"type":"char","null":true,"blank":true,"length":255,"random":false, "pk":true, "default":""},
+                        "field_8":{"type":"text","null":true,"blank":true,"length":1000,"random":false, "pk":false, "default":""},
+                        "field_2":{"type":"int","null":true,"blank":true,"length":1000,"random":false, "pk":false, "default":5},
+                        "field_10":{"type":"float","null":true,"blank":true,"length":1000,"random":false, "pk":false, "default":5.55},
+                        "field_4":{"type":"img","null":true,"blank":true, "max_size":"100mb", "upload_to":"media", "structure":"user", "servable":true},
+                        "field_7":{"type":"file","null":true,"blank":true,"max_size":"100mb", "upload_to":"media", "structure":"user", "servable":true},
+                        "field_5":{"type":"fk", "null":true,"blank":true, "attached":"Table_2.field_4","on_delete":"cascade"},
+                        "field_6":{"type":"time", "auto_now_add":false, "auto_now":true},
+                        "field_9":{"type":"json", "default":{}}
                     },
                     "Table_3":
                     {
-                        "field_1":{"type":"Char","null":true,"blank":true,"length":1000,"unique":false,"attached":false},
-                        "field_2":{"type":"Char","null":true,"blank":true,"length":1000,"unique":false,"attached":"Table_1.field_5"},
-                        "field_3":{"type":"Char","null":true,"blank":true,"length":1000,"unique":false,"attached":false},
-                        "field_4":{"type":"Char","null":true,"blank":true,"length":1000,"unique":false,"attached":false},
-                        "field_5":{"type":"Char","null":true,"blank":true,"length":1000,"unique":false,"attached":false}
+                        "field_3":{"type":"bool","null":true,"blank":true},
+                        "field_1":{"type":"char","null":true,"blank":true,"length":255,"random":false, "pk":true, "default":""},
+                        "field_8":{"type":"text","null":true,"blank":true,"length":1000,"random":false, "pk":false, "default":""},
+                        "field_2":{"type":"int","null":true,"blank":true,"length":1000,"random":false, "pk":false, "default":5},
+                        "field_10":{"type":"float","null":true,"blank":true,"length":1000,"random":false, "pk":false, "default":5.55},
+                        "field_4":{"type":"img","null":true,"blank":true, "max_size":"100mb", "upload_to":"media", "structure":"user", "servable":true},
+                        "field_7":{"type":"file","null":true,"blank":true,"max_size":"100mb", "upload_to":"media", "structure":"user", "servable":true},
+                        "field_5":{"type":"fk", "null":true,"blank":true, "attached":"Table_2.field_4","on_delete":"cascade"},
+                        "field_6":{"type":"time", "auto_now_add":false, "auto_now":true},
+                        "field_9":{"type":"json", "default":{}}
                     }
                 },
                 "App_07":
                 {
                     "Table_1":
                     {
-                        "field_1":{"type":"Char","null":true,"blank":true,"length":1000,"unique":false,"attached":false},
-                        "field_2":{"type":"Char","null":true,"blank":true,"length":1000,"unique":false,"attached":"Table_2.field_4"},
-                        "field_3":{"type":"Char","null":true,"blank":true,"length":1000,"unique":false,"attached":false},
-                        "field_4":{"type":"Char","null":true,"blank":true,"length":1000,"unique":false,"attached":false},
-                        "field_5":{"type":"Char","null":true,"blank":true,"length":1000,"unique":false,"attached":false}
+                        "field_3":{"type":"bool","null":true,"blank":true},
+                        "field_1":{"type":"char","null":true,"blank":true,"length":255,"random":false, "pk":true, "default":""},
+                        "field_8":{"type":"text","null":true,"blank":true,"length":1000,"random":false, "pk":false, "default":""},
+                        "field_2":{"type":"int","null":true,"blank":true,"length":1000,"random":false, "pk":false, "default":5},
+                        "field_10":{"type":"float","null":true,"blank":true,"length":1000,"random":false, "pk":false, "default":5.55},
+                        "field_4":{"type":"img","null":true,"blank":true, "max_size":"100mb", "upload_to":"media", "structure":"user", "servable":true},
+                        "field_7":{"type":"file","null":true,"blank":true,"max_size":"100mb", "upload_to":"media", "structure":"user", "servable":true},
+                        "field_5":{"type":"fk", "null":true,"blank":true, "attached":"Table_2.field_4","on_delete":"cascade"},
+                        "field_6":{"type":"time", "auto_now_add":false, "auto_now":true},
+                        "field_9":{"type":"json", "default":{}}
                     },
                     "Table_2":
                     {
-                        "field_1":{"type":"Char","null":true,"blank":true,"length":1000,"unique":false,"attached":false},
-                        "field_2":{"type":"Char","null":true,"blank":true,"length":1000,"unique":false,"attached":false},
-                        "field_3":{"type":"Char","null":true,"blank":true,"length":1000,"unique":false,"attached":false},
-                        "field_4":{"type":"Char","null":true,"blank":true,"length":1000,"unique":false,"attached":false},
-                        "field_5":{"type":"Char","null":true,"blank":true,"length":1000,"unique":false,"attached":false}
+                        "field_3":{"type":"bool","null":true,"blank":true},
+                        "field_1":{"type":"char","null":true,"blank":true,"length":255,"random":false, "pk":true, "default":""},
+                        "field_8":{"type":"text","null":true,"blank":true,"length":1000,"random":false, "pk":false, "default":""},
+                        "field_2":{"type":"int","null":true,"blank":true,"length":1000,"random":false, "pk":false, "default":5},
+                        "field_10":{"type":"float","null":true,"blank":true,"length":1000,"random":false, "pk":false, "default":5.55},
+                        "field_4":{"type":"img","null":true,"blank":true, "max_size":"100mb", "upload_to":"media", "structure":"user", "servable":true},
+                        "field_7":{"type":"file","null":true,"blank":true,"max_size":"100mb", "upload_to":"media", "structure":"user", "servable":true},
+                        "field_5":{"type":"fk", "null":true,"blank":true, "attached":"Table_2.field_4","on_delete":"cascade"},
+                        "field_6":{"type":"time", "auto_now_add":false, "auto_now":true},
+                        "field_9":{"type":"json", "default":{}}
                     },
                     "Table_3":
                     {
-                        "field_1":{"type":"Char","null":true,"blank":true,"length":1000,"unique":false,"attached":false},
-                        "field_2":{"type":"Char","null":true,"blank":true,"length":1000,"unique":false,"attached":"Table_1.field_5"},
-                        "field_3":{"type":"Char","null":true,"blank":true,"length":1000,"unique":false,"attached":false},
-                        "field_4":{"type":"Char","null":true,"blank":true,"length":1000,"unique":false,"attached":false},
-                        "field_5":{"type":"Char","null":true,"blank":true,"length":1000,"unique":false,"attached":false}
+                        "field_3":{"type":"bool","null":true,"blank":true},
+                        "field_1":{"type":"char","null":true,"blank":true,"length":255,"random":false, "pk":true, "default":""},
+                        "field_8":{"type":"text","null":true,"blank":true,"length":1000,"random":false, "pk":false, "default":""},
+                        "field_2":{"type":"int","null":true,"blank":true,"length":1000,"random":false, "pk":false, "default":5},
+                        "field_10":{"type":"float","null":true,"blank":true,"length":1000,"random":false, "pk":false, "default":5.55},
+                        "field_4":{"type":"img","null":true,"blank":true, "max_size":"100mb", "upload_to":"media", "structure":"user", "servable":true},
+                        "field_7":{"type":"file","null":true,"blank":true,"max_size":"100mb", "upload_to":"media", "structure":"user", "servable":true},
+                        "field_5":{"type":"fk", "null":true,"blank":true, "attached":"Table_2.field_4","on_delete":"cascade"},
+                        "field_6":{"type":"time", "auto_now_add":false, "auto_now":true},
+                        "field_9":{"type":"json", "default":{}}
                     }
                 },
                 "App_08":
                 {
                     "Table_1":
                     {
-                        "field_1":{"type":"Char","null":true,"blank":true,"length":1000,"unique":false,"attached":false},
-                        "field_2":{"type":"Char","null":true,"blank":true,"length":1000,"unique":false,"attached":"Table_2.field_4"},
-                        "field_3":{"type":"Char","null":true,"blank":true,"length":1000,"unique":false,"attached":false},
-                        "field_4":{"type":"Char","null":true,"blank":true,"length":1000,"unique":false,"attached":false},
-                        "field_5":{"type":"Char","null":true,"blank":true,"length":1000,"unique":false,"attached":false}
+                        "field_3":{"type":"bool","null":true,"blank":true},
+                        "field_1":{"type":"char","null":true,"blank":true,"length":255,"random":false, "pk":true, "default":""},
+                        "field_8":{"type":"text","null":true,"blank":true,"length":1000,"random":false, "pk":false, "default":""},
+                        "field_2":{"type":"int","null":true,"blank":true,"length":1000,"random":false, "pk":false, "default":5},
+                        "field_10":{"type":"float","null":true,"blank":true,"length":1000,"random":false, "pk":false, "default":5.55},
+                        "field_4":{"type":"img","null":true,"blank":true, "max_size":"100mb", "upload_to":"media", "structure":"user", "servable":true},
+                        "field_7":{"type":"file","null":true,"blank":true,"max_size":"100mb", "upload_to":"media", "structure":"user", "servable":true},
+                        "field_5":{"type":"fk", "null":true,"blank":true, "attached":"Table_2.field_4","on_delete":"cascade"},
+                        "field_6":{"type":"time", "auto_now_add":false, "auto_now":true},
+                        "field_9":{"type":"json", "default":{}}
                     },
                     "Table_2":
                     {
-                        "field_1":{"type":"Char","null":true,"blank":true,"length":1000,"unique":false,"attached":false},
-                        "field_2":{"type":"Char","null":true,"blank":true,"length":1000,"unique":false,"attached":false},
-                        "field_3":{"type":"Char","null":true,"blank":true,"length":1000,"unique":false,"attached":false},
-                        "field_4":{"type":"Char","null":true,"blank":true,"length":1000,"unique":false,"attached":false},
-                        "field_5":{"type":"Char","null":true,"blank":true,"length":1000,"unique":false,"attached":false}
+                        "field_3":{"type":"bool","null":true,"blank":true},
+                        "field_1":{"type":"char","null":true,"blank":true,"length":255,"random":false, "pk":true, "default":""},
+                        "field_8":{"type":"text","null":true,"blank":true,"length":1000,"random":false, "pk":false, "default":""},
+                        "field_2":{"type":"int","null":true,"blank":true,"length":1000,"random":false, "pk":false, "default":5},
+                        "field_10":{"type":"float","null":true,"blank":true,"length":1000,"random":false, "pk":false, "default":5.55},
+                        "field_4":{"type":"img","null":true,"blank":true, "max_size":"100mb", "upload_to":"media", "structure":"user", "servable":true},
+                        "field_7":{"type":"file","null":true,"blank":true,"max_size":"100mb", "upload_to":"media", "structure":"user", "servable":true},
+                        "field_5":{"type":"fk", "null":true,"blank":true, "attached":"Table_2.field_4","on_delete":"cascade"},
+                        "field_6":{"type":"time", "auto_now_add":false, "auto_now":true},
+                        "field_9":{"type":"json", "default":{}}
                     },
                     "Table_3":
                     {
-                        "field_1":{"type":"Char","null":true,"blank":true,"length":1000,"unique":false,"attached":false},
-                        "field_2":{"type":"Char","null":true,"blank":true,"length":1000,"unique":false,"attached":"Table_1.field_5"},
-                        "field_3":{"type":"Char","null":true,"blank":true,"length":1000,"unique":false,"attached":false},
-                        "field_4":{"type":"Char","null":true,"blank":true,"length":1000,"unique":false,"attached":false},
-                        "field_5":{"type":"Char","null":true,"blank":true,"length":1000,"unique":false,"attached":false}
+                        "field_3":{"type":"bool","null":true,"blank":true},
+                        "field_1":{"type":"char","null":true,"blank":true,"length":255,"random":false, "pk":true, "default":""},
+                        "field_8":{"type":"text","null":true,"blank":true,"length":1000,"random":false, "pk":false, "default":""},
+                        "field_2":{"type":"int","null":true,"blank":true,"length":1000,"random":false, "pk":false, "default":5},
+                        "field_10":{"type":"float","null":true,"blank":true,"length":1000,"random":false, "pk":false, "default":5.55},
+                        "field_4":{"type":"img","null":true,"blank":true, "max_size":"100mb", "upload_to":"media", "structure":"user", "servable":true},
+                        "field_7":{"type":"file","null":true,"blank":true,"max_size":"100mb", "upload_to":"media", "structure":"user", "servable":true},
+                        "field_5":{"type":"fk", "null":true,"blank":true, "attached":"Table_2.field_4","on_delete":"cascade"},
+                        "field_6":{"type":"time", "auto_now_add":false, "auto_now":true},
+                        "field_9":{"type":"json", "default":{}}
                     }
                 },
                 "App_09":
                 {
                     "Table_1":
                     {
-                        "field_1":{"type":"Char","null":true,"blank":true,"length":1000,"unique":false,"attached":false},
-                        "field_2":{"type":"Char","null":true,"blank":true,"length":1000,"unique":false,"attached":"Table_2.field_4"},
-                        "field_3":{"type":"Char","null":true,"blank":true,"length":1000,"unique":false,"attached":false},
-                        "field_4":{"type":"Char","null":true,"blank":true,"length":1000,"unique":false,"attached":false},
-                        "field_5":{"type":"Char","null":true,"blank":true,"length":1000,"unique":false,"attached":false}
+                        "field_3":{"type":"bool","null":true,"blank":true},
+                        "field_1":{"type":"char","null":true,"blank":true,"length":255,"random":false, "pk":true, "default":""},
+                        "field_8":{"type":"text","null":true,"blank":true,"length":1000,"random":false, "pk":false, "default":""},
+                        "field_2":{"type":"int","null":true,"blank":true,"length":1000,"random":false, "pk":false, "default":5},
+                        "field_10":{"type":"float","null":true,"blank":true,"length":1000,"random":false, "pk":false, "default":5.55},
+                        "field_4":{"type":"img","null":true,"blank":true, "max_size":"100mb", "upload_to":"media", "structure":"user", "servable":true},
+                        "field_7":{"type":"file","null":true,"blank":true,"max_size":"100mb", "upload_to":"media", "structure":"user", "servable":true},
+                        "field_5":{"type":"fk", "null":true,"blank":true, "attached":"Table_2.field_4","on_delete":"cascade"},
+                        "field_6":{"type":"time", "auto_now_add":false, "auto_now":true},
+                        "field_9":{"type":"json", "default":{}}
                     },
                     "Table_2":
                     {
-                        "field_1":{"type":"Char","null":true,"blank":true,"length":1000,"unique":false,"attached":false},
-                        "field_2":{"type":"Char","null":true,"blank":true,"length":1000,"unique":false,"attached":false},
-                        "field_3":{"type":"Char","null":true,"blank":true,"length":1000,"unique":false,"attached":false},
-                        "field_4":{"type":"Char","null":true,"blank":true,"length":1000,"unique":false,"attached":false},
-                        "field_5":{"type":"Char","null":true,"blank":true,"length":1000,"unique":false,"attached":false}
+                        "field_3":{"type":"bool","null":true,"blank":true},
+                        "field_1":{"type":"char","null":true,"blank":true,"length":255,"random":false, "pk":true, "default":""},
+                        "field_8":{"type":"text","null":true,"blank":true,"length":1000,"random":false, "pk":false, "default":""},
+                        "field_2":{"type":"int","null":true,"blank":true,"length":1000,"random":false, "pk":false, "default":5},
+                        "field_10":{"type":"float","null":true,"blank":true,"length":1000,"random":false, "pk":false, "default":5.55},
+                        "field_4":{"type":"img","null":true,"blank":true, "max_size":"100mb", "upload_to":"media", "structure":"user", "servable":true},
+                        "field_7":{"type":"file","null":true,"blank":true,"max_size":"100mb", "upload_to":"media", "structure":"user", "servable":true},
+                        "field_5":{"type":"fk", "null":true,"blank":true, "attached":"Table_2.field_4","on_delete":"cascade"},
+                        "field_6":{"type":"time", "auto_now_add":false, "auto_now":true},
+                        "field_9":{"type":"json", "default":{}}
                     },
                     "Table_3":
                     {
-                        "field_1":{"type":"Char","null":true,"blank":true,"length":1000,"unique":false,"attached":false},
-                        "field_2":{"type":"Char","null":true,"blank":true,"length":1000,"unique":false,"attached":"Table_1.field_5"},
-                        "field_3":{"type":"Char","null":true,"blank":true,"length":1000,"unique":false,"attached":false},
-                        "field_4":{"type":"Char","null":true,"blank":true,"length":1000,"unique":false,"attached":false},
-                        "field_5":{"type":"Char","null":true,"blank":true,"length":1000,"unique":false,"attached":false}
+                        "field_3":{"type":"bool","null":true,"blank":true},
+                        "field_1":{"type":"char","null":true,"blank":true,"length":255,"random":false, "pk":true, "default":""},
+                        "field_8":{"type":"text","null":true,"blank":true,"length":1000,"random":false, "pk":false, "default":""},
+                        "field_2":{"type":"int","null":true,"blank":true,"length":1000,"random":false, "pk":false, "default":5},
+                        "field_10":{"type":"float","null":true,"blank":true,"length":1000,"random":false, "pk":false, "default":5.55},
+                        "field_4":{"type":"img","null":true,"blank":true, "max_size":"100mb", "upload_to":"media", "structure":"user", "servable":true},
+                        "field_7":{"type":"file","null":true,"blank":true,"max_size":"100mb", "upload_to":"media", "structure":"user", "servable":true},
+                        "field_5":{"type":"fk", "null":true,"blank":true, "attached":"Table_2.field_4","on_delete":"cascade"},
+                        "field_6":{"type":"time", "auto_now_add":false, "auto_now":true},
+                        "field_9":{"type":"json", "default":{}}
                     }
                 },
                 "App_10":
                 {
                     "Table_1":
                     {
-                        "field_1":{"type":"Char","null":true,"blank":true,"length":1000,"unique":false,"attached":false},
-                        "field_2":{"type":"Char","null":true,"blank":true,"length":1000,"unique":false,"attached":"Table_2.field_4"},
-                        "field_3":{"type":"Char","null":true,"blank":true,"length":1000,"unique":false,"attached":false},
-                        "field_4":{"type":"Char","null":true,"blank":true,"length":1000,"unique":false,"attached":false},
-                        "field_5":{"type":"Char","null":true,"blank":true,"length":1000,"unique":false,"attached":false}
+                        "field_3":{"type":"bool","null":true,"blank":true},
+                        "field_1":{"type":"char","null":true,"blank":true,"length":255,"random":false, "pk":true, "default":""},
+                        "field_8":{"type":"text","null":true,"blank":true,"length":1000,"random":false, "pk":false, "default":""},
+                        "field_2":{"type":"int","null":true,"blank":true,"length":1000,"random":false, "pk":false, "default":5},
+                        "field_10":{"type":"float","null":true,"blank":true,"length":1000,"random":false, "pk":false, "default":5.55},
+                        "field_4":{"type":"img","null":true,"blank":true, "max_size":"100mb", "upload_to":"media", "structure":"user", "servable":true},
+                        "field_7":{"type":"file","null":true,"blank":true,"max_size":"100mb", "upload_to":"media", "structure":"user", "servable":true},
+                        "field_5":{"type":"fk", "null":true,"blank":true, "attached":"Table_2.field_4","on_delete":"cascade"},
+                        "field_6":{"type":"time", "auto_now_add":false, "auto_now":true},
+                        "field_9":{"type":"json", "default":{}}
                     },
                     "Table_2":
                     {
-                        "field_1":{"type":"Char","null":true,"blank":true,"length":1000,"unique":false,"attached":false},
-                        "field_2":{"type":"Char","null":true,"blank":true,"length":1000,"unique":false,"attached":false},
-                        "field_3":{"type":"Char","null":true,"blank":true,"length":1000,"unique":false,"attached":false},
-                        "field_4":{"type":"Char","null":true,"blank":true,"length":1000,"unique":false,"attached":false},
-                        "field_5":{"type":"Char","null":true,"blank":true,"length":1000,"unique":false,"attached":false}
+                        "field_3":{"type":"bool","null":true,"blank":true},
+                        "field_1":{"type":"char","null":true,"blank":true,"length":255,"random":false, "pk":true, "default":""},
+                        "field_8":{"type":"text","null":true,"blank":true,"length":1000,"random":false, "pk":false, "default":""},
+                        "field_2":{"type":"int","null":true,"blank":true,"length":1000,"random":false, "pk":false, "default":5},
+                        "field_10":{"type":"float","null":true,"blank":true,"length":1000,"random":false, "pk":false, "default":5.55},
+                        "field_4":{"type":"img","null":true,"blank":true, "max_size":"100mb", "upload_to":"media", "structure":"user", "servable":true},
+                        "field_7":{"type":"file","null":true,"blank":true,"max_size":"100mb", "upload_to":"media", "structure":"user", "servable":true},
+                        "field_5":{"type":"fk", "null":true,"blank":true, "attached":"Table_2.field_4","on_delete":"cascade"},
+                        "field_6":{"type":"time", "auto_now_add":false, "auto_now":true},
+                        "field_9":{"type":"json", "default":{}}
                     },
                     "Table_3":
                     {
-                        "field_1":{"type":"Char","null":true,"blank":true,"length":1000,"unique":false,"attached":false},
-                        "field_2":{"type":"Char","null":true,"blank":true,"length":1000,"unique":false,"attached":"Table_1.field_5"},
-                        "field_3":{"type":"Char","null":true,"blank":true,"length":1000,"unique":false,"attached":false},
-                        "field_4":{"type":"Char","null":true,"blank":true,"length":1000,"unique":false,"attached":false},
-                        "field_5":{"type":"Char","null":true,"blank":true,"length":1000,"unique":false,"attached":false}
+                        "field_3":{"type":"bool","null":true,"blank":true},
+                        "field_1":{"type":"char","null":true,"blank":true,"length":255,"random":false, "pk":true, "default":""},
+                        "field_8":{"type":"text","null":true,"blank":true,"length":1000,"random":false, "pk":false, "default":""},
+                        "field_2":{"type":"int","null":true,"blank":true,"length":1000,"random":false, "pk":false, "default":5},
+                        "field_10":{"type":"float","null":true,"blank":true,"length":1000,"random":false, "pk":false, "default":5.55},
+                        "field_4":{"type":"img","null":true,"blank":true, "max_size":"100mb", "upload_to":"media", "structure":"user", "servable":true},
+                        "field_7":{"type":"file","null":true,"blank":true,"max_size":"100mb", "upload_to":"media", "structure":"user", "servable":true},
+                        "field_5":{"type":"fk", "null":true,"blank":true, "attached":"Table_2.field_4","on_delete":"cascade"},
+                        "field_6":{"type":"time", "auto_now_add":false, "auto_now":true},
+                        "field_9":{"type":"json", "default":{}}
                     }
                 }
 
@@ -437,68 +590,58 @@
         },
         "node_01":
         {
-            "Engine":"postgres",
-            "Name":"DB_1",
-            "User":"Admin",
-            "Password":"MrPho1219@",
-            "Host": "192.168.1.86",
-            "PORT":5432,
-            "Table_1":
+            "engine":"postgres",
+            "name":"DB_1",
+            "user":"Admin",
+            "password":"MrPho1219@",
+            "host": "192.168.1.86",
+            "port":8432,
+            "tables":
             {
-                "field_1":{"type":"Char","null":true,"blank":true,"length":1000,"unique":false,"attached":false},
-                "field_2":{"type":"Char","null":true,"blank":true,"length":1000,"unique":false,"attached":"Table_2.field_4"},
-                "field_3":{"type":"Char","null":true,"blank":true,"length":1000,"unique":false,"attached":false},
-                "field_4":{"type":"Char","null":true,"blank":true,"length":1000,"unique":false,"attached":false},
-                "field_5":{"type":"Char","null":true,"blank":true,"length":1000,"unique":false,"attached":false}
-            },
-            "Table_2":
-            {
-                "field_1":{"type":"Char","null":true,"blank":true,"length":1000,"unique":false,"attached":false},
-                "field_2":{"type":"Char","null":true,"blank":true,"length":1000,"unique":false,"attached":false},
-                "field_3":{"type":"Char","null":true,"blank":true,"length":1000,"unique":false,"attached":false},
-                "field_4":{"type":"Char","null":true,"blank":true,"length":1000,"unique":false,"attached":false},
-                "field_5":{"type":"Char","null":true,"blank":true,"length":1000,"unique":false,"attached":false}
-            },
-            "Table_3":
-            {
-                "field_1":{"type":"Char","null":true,"blank":true,"length":1000,"unique":false,"attached":false},
-                "field_2":{"type":"Char","null":true,"blank":true,"length":1000,"unique":false,"attached":"Table_1.field_5"},
-                "field_3":{"type":"Char","null":true,"blank":true,"length":1000,"unique":false,"attached":false},
-                "field_4":{"type":"Char","null":true,"blank":true,"length":1000,"unique":false,"attached":false},
-                "field_5":{"type":"Char","null":true,"blank":true,"length":1000,"unique":false,"attached":false}
+                "app_01":
+                {
+                    "table_01":
+                    {
+                        "field_3":{"type":"bool","null":true,"blank":true},
+                        "field_1":{"type":"char","null":true,"blank":true,"length":255,"random":false, "pk":true, "default":""},
+                        "field_8":{"type":"text","null":true,"blank":true,"length":1000,"random":false, "pk":false, "default":""},
+                        "field_2":{"type":"int","null":true,"blank":true,"length":1000,"random":false, "pk":false, "default":5},
+                        "field_10":{"type":"float","null":true,"blank":true,"length":1000,"random":false, "pk":false, "default":5.55},
+                        "field_4":{"type":"img","null":true,"blank":true, "max_size":"100mb", "upload_to":"media", "structure":"user", "servable":true},
+                        "field_7":{"type":"file","null":true,"blank":true,"max_size":"100mb", "upload_to":"media", "structure":"user", "servable":true},
+                        "field_5":{"type":"fk", "null":true,"blank":true, "attached":"Table_2.field_4","on_delete":"cascade"},
+                        "field_6":{"type":"time", "auto_now_add":false, "auto_now":true},
+                        "field_9":{"type":"json", "default":{}}
+                    }
+                }
             }
         },
         "node_02":
         {
-            "Engine":"postgres",
-            "Name":"DB_1",
-            "User":"Admin",
-            "Password":"MrPho1219@",
-            "Host": "192.168.1.86",
-            "PORT":5432,
-            "Table_1":
+            "engine":"postgres",
+            "name":"DB_1",
+            "user":"Admin",
+            "password":"MrPho1219@",
+            "host": "192.168.1.86",
+            "port":8433,
+            "tables":
             {
-                "field_1":{"type":"Char","null":true,"blank":true,"length":1000,"unique":false,"attached":false},
-                "field_2":{"type":"Char","null":true,"blank":true,"length":1000,"unique":false,"attached":"Table_2.field_4"},
-                "field_3":{"type":"Char","null":true,"blank":true,"length":1000,"unique":false,"attached":false},
-                "field_4":{"type":"Char","null":true,"blank":true,"length":1000,"unique":false,"attached":false},
-                "field_5":{"type":"Char","null":true,"blank":true,"length":1000,"unique":false,"attached":false}
-            },
-            "Table_2":
-            {
-                "field_1":{"type":"Char","null":true,"blank":true,"length":1000,"unique":false,"attached":false},
-                "field_2":{"type":"Char","null":true,"blank":true,"length":1000,"unique":false,"attached":false},
-                "field_3":{"type":"Char","null":true,"blank":true,"length":1000,"unique":false,"attached":false},
-                "field_4":{"type":"Char","null":true,"blank":true,"length":1000,"unique":false,"attached":false},
-                "field_5":{"type":"Char","null":true,"blank":true,"length":1000,"unique":false,"attached":false}
-            },
-            "Table_3":
-            {
-                "field_1":{"type":"Char","null":true,"blank":true,"length":1000,"unique":false,"attached":false},
-                "field_2":{"type":"Char","null":true,"blank":true,"length":1000,"unique":false,"attached":"Table_1.field_5"},
-                "field_3":{"type":"Char","null":true,"blank":true,"length":1000,"unique":false,"attached":false},
-                "field_4":{"type":"Char","null":true,"blank":true,"length":1000,"unique":false,"attached":false},
-                "field_5":{"type":"Char","null":true,"blank":true,"length":1000,"unique":false,"attached":false}
+                "app_01":
+                {
+                    "table_01":
+                    {
+                        "field_3":{"type":"bool","null":true,"blank":true},
+                        "field_1":{"type":"char","null":true,"blank":true,"length":255,"random":true, "pk":true, "default":""},
+                        "field_8":{"type":"text","null":true,"blank":true,"length":1000,"random":false, "pk":false, "default":""},
+                        "field_2":{"type":"int","null":true,"blank":true,"length":1000,"random":false, "pk":false, "default":5},
+                        "field_10":{"type":"float","null":true,"blank":true,"length":1000,"random":false, "pk":false, "default":5.55},
+                        "field_4":{"type":"img","null":true,"blank":true, "max_size":"100mb", "upload_to":"media", "structure":"user", "servable":true},
+                        "field_7":{"type":"file","null":true,"blank":true,"max_size":"100mb", "upload_to":"media", "structure":"user", "servable":true},
+                        "field_5":{"type":"fk", "null":true,"blank":true, "attached":"Table_2.field_4","on_delete":"cascade"},
+                        "field_6":{"type":"time", "auto_now_add":false, "auto_now":true},
+                        "field_9":{"type":"json", "default":{}}
+                    }
+                }
             }
         }
     },
@@ -506,103 +649,1900 @@
     {
         "server_01":
         {
-            "API_1":
+            "App_01":
             {
-                "Database":"DB_1",
-                "Table":"Table_3",
-                "Fields_Affected":["field_1","field_3","field_5"],
-                "CRUD":"POST",
-                "ENTRY_LIMIT":500,
-                "EXPIRATION":"1H",
-                "OAUTH":false
+                "oauth":true,
+                "auth_type":"session|token",
+                "csrf":false,
+                "apis":
+                {
+                    "API_1":
+                    {
+                        "table":"Table_3",
+                        "fields":["field_1","field_3","field_5"],
+                        "validate":"include",
+                        "selector":["field_1","field_3"],
+                        "selector_by_input":true,
+                        "selector_value":
+                        [
+                            {"operator":"greater","value":5},
+                            {"operator":"greater","value":5}
+                        ],
+                        "crud":["POST","GET"],
+                        "entry_limit":500,
+                        "expiration":"1H",
+                        "csrf":"protect",
+                        "auth_required": false
+                    },
+                    "API_2":
+                    {
+                        "table":"Customers",
+                        "fields":["field_2","field_3","field_5"],
+                        "validate":"include",
+                        "selector":["field_1","field_3"],
+                        "selector_by_input":false,
+                        "selector_value":
+                        [
+                            {"operator":"greater","value":5},
+                            {"operator":"greater","value":5}
+                        ],
+                        "crud":["GET","POST"],
+                        "entry_limit":500,
+                        "expiration":"1H",
+                        "csrf":"ensure",
+                        "auth_required": true
+                    },
+                    "API_3":
+                    {
+                        "table":"Customers",
+                        "fields":["field_1","field_2","field_5"],
+                        "validate":"include",
+                        "selector":["user"],
+                        "selector_by_input":false,
+                        "selector_value":
+                        [],
+                        "crud":["PUT"],
+                        "entry_limit":500,
+                        "expiration":"1H",
+                        "csrf":"ensure",
+                        "auth_required": true
+                    }
+                }
             },
-            "API_2":
+            "App_02":
             {
-                "Database":"DB_1",
-                "Table":"Table_4",
-                "Fields_Affected":["field_2","field_3","field_5"],
-                "CRUD":"GET",
-                "ENTRY_LIMIT":500,
-                "EXPIRATION":"1H",
-                "OAUTH":false
+                "oauth":true,
+                "auth_type":"session|token",
+                "csrf":true,
+                "apis":
+                {
+                    "API_1":
+                    {
+                        "table":"Table_3",
+                        "fields":["field_1","field_3","field_5"],
+                        "validate":"include",
+                        "selector":["field_1","field_3"],
+                        "selector_by_input":false,
+                        "selector_value":
+                        [
+                            {"operator":"greater","value":5},
+                            {"operator":"greater","value":5}
+                        ],
+                        "crud":["POST","GET"],
+                        "entry_limit":500,
+                        "expiration":"1H",
+                        "csrf":"protect",
+                        "auth_required": true
+                    },
+                    "API_2":
+                    {
+                        "table":"Table_1",
+                        "fields":["field_2","field_3","field_5"],
+                        "validate":"include",
+                        "selector":["field_1","field_3"],
+                        "selector_by_input":false,
+                        "selector_value":
+                        [
+                            {"operator":"greater","value":5},
+                            {"operator":"greater","value":5}
+                        ],
+                        "crud":["GET"],
+                        "entry_limit":500,
+                        "expiration":"1H",
+                        "csrf":"ensure",
+                        "auth_required": true
+                    },
+                    "API_3":
+                    {
+                        "table":"Table_1",
+                        "fields":["field_1","field_2","field_5"],
+                        "validate":"include",
+                        "selector":["field_1","field_3"],
+                        "selector_by_input":false,
+                        "selector_value":
+                        [
+                            {"operator":"greater","value":5},
+                            {"operator":"greater","value":5}
+                        ],
+                        "crud":["PUT"],
+                        "entry_limit":500,
+                        "expiration":"1H",
+                        "csrf":"ensure",
+                        "auth_required": true
+                    }
+                }
             },
-            "API_3":
+            "App_03":
             {
-                "Database":"DB_1",
-                "Table":"Table_1",
-                "Fields_Affected":["field_1","field_2","field_5"],
-                "CRUD":"PUT",
-                "ENTRY_LIMIT":500,
-                "EXPIRATION":"1H",
-                "OAUTH":false
+                "oauth":true,
+                "auth_type":"session|token",
+                "csrf":true,
+                "apis":
+                {
+                    "API_1":
+                    {
+                        "table":"Table_3",
+                        "fields":["field_1","field_3","field_5"],
+                        "validate":"include",
+                        "selector":["field_1","field_3"],
+                        "selector_by_input":false,
+                        "selector_value":
+                        [
+                            {"operator":"greater","value":5},
+                            {"operator":"greater","value":5}
+                        ],
+                        "crud":["POST","GET"],
+                        "entry_limit":500,
+                        "expiration":"1H",
+                        "csrf":"protect",
+                        "auth_required": true
+                    },
+                    "API_2":
+                    {
+                        "table":"Table_1",
+                        "fields":["field_2","field_3","field_5"],
+                        "validate":"include",
+                        "selector":["field_1","field_3"],
+                        "selector_by_input":false,
+                        "selector_value":
+                        [
+                            {"operator":"greater","value":5},
+                            {"operator":"greater","value":5}
+                        ],
+                        "crud":["GET"],
+                        "entry_limit":500,
+                        "expiration":"1H",
+                        "csrf":"ensure",
+                        "auth_required": true
+                    },
+                    "API_3":
+                    {
+                        "table":"Table_1",
+                        "fields":["field_1","field_2","field_5"],
+                        "validate":"include",
+                        "selector":["field_1","field_3"],
+                        "selector_by_input":false,
+                        "selector_value":
+                        [
+                            {"operator":"greater","value":5},
+                            {"operator":"greater","value":5}
+                        ],
+                        "crud":["PUT"],
+                        "entry_limit":500,
+                        "expiration":"1H",
+                        "csrf":"ensure",
+                        "auth_required": true
+                    }
+                }
+            },
+            "App_04":
+            {
+                "oauth":true,
+                "auth_type":"session|token",
+                "csrf":true,
+                "apis":
+                {
+                    "API_1":
+                    {
+                        "table":"Table_3",
+                        "fields":["field_1","field_3","field_5"],
+                        "validate":"include",
+                        "selector":["field_1","field_3"],
+                        "selector_by_input":false,
+                        "selector_value":
+                        [
+                            {"operator":"greater","value":5},
+                            {"operator":"greater","value":5}
+                        ],
+                        "crud":["POST","GET"],
+                        "entry_limit":500,
+                        "expiration":"1H",
+                        "csrf":"protect",
+                        "auth_required": true
+                    },
+                    "API_2":
+                    {
+                        "table":"Table_1",
+                        "fields":["field_2","field_3","field_5"],
+                        "validate":"include",
+                        "selector":["field_1","field_3"],
+                        "selector_by_input":false,
+                        "selector_value":
+                        [
+                            {"operator":"greater","value":5},
+                            {"operator":"greater","value":5}
+                        ],
+                        "crud":["GET"],
+                        "entry_limit":500,
+                        "expiration":"1H",
+                        "csrf":"ensure",
+                        "auth_required": true
+                    },
+                    "API_3":
+                    {
+                        "table":"Table_1",
+                        "fields":["field_1","field_2","field_5"],
+                        "validate":"include",
+                        "selector":["field_1","field_3"],
+                        "selector_by_input":false,
+                        "selector_value":
+                        [
+                            {"operator":"greater","value":5},
+                            {"operator":"greater","value":5}
+                        ],
+                        "crud":["PUT"],
+                        "entry_limit":500,
+                        "expiration":"1H",
+                        "csrf":"ensure",
+                        "auth_required": true
+                    }
+                }
+            },
+            "App_05":
+            {
+                "oauth":true,
+                "auth_type":"session|token",
+                "csrf":true,
+                "apis":
+                {
+                    "API_1":
+                    {
+                        "table":"Table_3",
+                        "fields":["field_1","field_3","field_5"],
+                        "validate":"include",
+                        "selector":["field_1","field_3"],
+                        "selector_by_input":false,
+                        "selector_value":
+                        [
+                            {"operator":"greater","value":5},
+                            {"operator":"greater","value":5}
+                        ],
+                        "crud":["POST","GET"],
+                        "entry_limit":500,
+                        "expiration":"1H",
+                        "csrf":"protect",
+                        "auth_required": true
+                    },
+                    "API_2":
+                    {
+                        "table":"Table_1",
+                        "fields":["field_2","field_3","field_5"],
+                        "validate":"include",
+                        "selector":["field_1","field_3"],
+                        "selector_by_input":false,
+                        "selector_value":
+                        [
+                            {"operator":"greater","value":5},
+                            {"operator":"greater","value":5}
+                        ],
+                        "crud":["GET"],
+                        "entry_limit":500,
+                        "expiration":"1H",
+                        "csrf":"ensure",
+                        "auth_required": true
+                    },
+                    "API_3":
+                    {
+                        "table":"Table_1",
+                        "fields":["field_1","field_2","field_5"],
+                        "validate":"include",
+                        "selector":["field_1","field_3"],
+                        "selector_by_input":false,
+                        "selector_value":
+                        [
+                            {"operator":"greater","value":5},
+                            {"operator":"greater","value":5}
+                        ],
+                        "crud":["PUT"],
+                        "entry_limit":500,
+                        "expiration":"1H",
+                        "csrf":"ensure",
+                        "auth_required": true
+                    }
+                }
+            },
+            "App_06":
+            {
+                "oauth":true,
+                "auth_type":"session|token",
+                "csrf":true,
+                "apis":
+                {
+                    "API_1":
+                    {
+                        "table":"Table_3",
+                        "fields":["field_1","field_3","field_5"],
+                        "validate":"include",
+                        "selector":["field_1","field_3"],
+                        "selector_by_input":false,
+                        "selector_value":
+                        [
+                            {"operator":"greater","value":5},
+                            {"operator":"greater","value":5}
+                        ],
+                        "crud":["POST","GET"],
+                        "entry_limit":500,
+                        "expiration":"1H",
+                        "csrf":"protect",
+                        "auth_required": true
+                    },
+                    "API_2":
+                    {
+                        "table":"Table_1",
+                        "fields":["field_2","field_3","field_5"],
+                        "validate":"include",
+                        "selector":["field_1","field_3"],
+                        "selector_by_input":false,
+                        "selector_value":
+                        [
+                            {"operator":"greater","value":5},
+                            {"operator":"greater","value":5}
+                        ],
+                        "crud":["GET"],
+                        "entry_limit":500,
+                        "expiration":"1H",
+                        "csrf":"ensure",
+                        "auth_required": true
+                    },
+                    "API_3":
+                    {
+                        "table":"Table_1",
+                        "fields":["field_1","field_2","field_5"],
+                        "validate":"include",
+                        "selector":["field_1","field_3"],
+                        "selector_by_input":false,
+                        "selector_value":
+                        [
+                            {"operator":"greater","value":5},
+                            {"operator":"greater","value":5}
+                        ],
+                        "crud":["PUT"],
+                        "entry_limit":500,
+                        "expiration":"1H",
+                        "csrf":"ensure",
+                        "auth_required": true
+                    }
+                }
+            },
+            "App_07":
+            {
+                "oauth":true,
+                "auth_type":"session|token",
+                "csrf":true,
+                "apis":
+                {
+                    "API_1":
+                    {
+                        "table":"Table_3",
+                        "fields":["field_1","field_3","field_5"],
+                        "validate":"include",
+                        "selector":["field_1","field_3"],
+                        "selector_by_input":false,
+                        "selector_value":
+                        [
+                            {"operator":"greater","value":5},
+                            {"operator":"greater","value":5}
+                        ],
+                        "crud":["POST","GET"],
+                        "entry_limit":500,
+                        "expiration":"1H",
+                        "csrf":"protect",
+                        "auth_required": true
+                    },
+                    "API_2":
+                    {
+                        "table":"Table_1",
+                        "fields":["field_2","field_3","field_5"],
+                        "validate":"include",
+                        "selector":["field_1","field_3"],
+                        "selector_by_input":false,
+                        "selector_value":
+                        [
+                            {"operator":"greater","value":5},
+                            {"operator":"greater","value":5}
+                        ],
+                        "crud":["GET"],
+                        "entry_limit":500,
+                        "expiration":"1H",
+                        "csrf":"ensure",
+                        "auth_required": true
+                    },
+                    "API_3":
+                    {
+                        "table":"Table_1",
+                        "fields":["field_1","field_2","field_5"],
+                        "validate":"include",
+                        "selector":["field_1","field_3"],
+                        "selector_by_input":false,
+                        "selector_value":
+                        [
+                            {"operator":"greater","value":5},
+                            {"operator":"greater","value":5}
+                        ],
+                        "crud":["PUT"],
+                        "entry_limit":500,
+                        "expiration":"1H",
+                        "csrf":"ensure",
+                        "auth_required": true
+                    }
+                }
+            },
+            "App_08":
+            {
+                "oauth":true,
+                "auth_type":"session|token",
+                "csrf":true,
+                "apis":
+                {
+                    "API_1":
+                    {
+                        "table":"Table_3",
+                        "fields":["field_1","field_3","field_5"],
+                        "validate":"include",
+                        "selector":["field_1","field_3"],
+                        "selector_by_input":false,
+                        "selector_value":
+                        [
+                            {"operator":"greater","value":5},
+                            {"operator":"greater","value":5}
+                        ],
+                        "crud":["POST","GET"],
+                        "entry_limit":500,
+                        "expiration":"1H",
+                        "csrf":"protect",
+                        "auth_required": true
+                    },
+                    "API_2":
+                    {
+                        "table":"Table_1",
+                        "fields":["field_2","field_3","field_5"],
+                        "validate":"include",
+                        "selector":["field_1","field_3"],
+                        "selector_by_input":false,
+                        "selector_value":
+                        [
+                            {"operator":"greater","value":5},
+                            {"operator":"greater","value":5}
+                        ],
+                        "crud":["GET"],
+                        "entry_limit":500,
+                        "expiration":"1H",
+                        "csrf":"ensure",
+                        "auth_required": true
+                    },
+                    "API_3":
+                    {
+                        "table":"Table_1",
+                        "fields":["field_1","field_2","field_5"],
+                        "validate":"include",
+                        "selector":["field_1","field_3"],
+                        "selector_by_input":false,
+                        "selector_value":
+                        [
+                            {"operator":"greater","value":5},
+                            {"operator":"greater","value":5}
+                        ],
+                        "crud":["PUT"],
+                        "entry_limit":500,
+                        "expiration":"1H",
+                        "csrf":"ensure",
+                        "auth_required": true
+                    }
+                }
+            },
+            "App_09":
+            {
+                "oauth":true,
+                "auth_type":"session|token",
+                "csrf":true,
+                "apis":
+                {
+                    "API_1":
+                    {
+                        "table":"Table_3",
+                        "fields":["field_1","field_3","field_5"],
+                        "validate":"include",
+                        "selector":["field_1","field_3"],
+                        "selector_by_input":false,
+                        "selector_value":
+                        [
+                            {"operator":"greater","value":5},
+                            {"operator":"greater","value":5}
+                        ],
+                        "crud":["POST","GET"],
+                        "entry_limit":500,
+                        "expiration":"1H",
+                        "csrf":"protect",
+                        "auth_required": true
+                    },
+                    "API_2":
+                    {
+                        "table":"Table_1",
+                        "fields":["field_2","field_3","field_5"],
+                        "validate":"include",
+                        "selector":["field_1","field_3"],
+                        "selector_by_input":false,
+                        "selector_value":
+                        [
+                            {"operator":"greater","value":5},
+                            {"operator":"greater","value":5}
+                        ],
+                        "crud":["GET"],
+                        "entry_limit":500,
+                        "expiration":"1H",
+                        "csrf":"ensure",
+                        "auth_required": true
+                    },
+                    "API_3":
+                    {
+                        "table":"Table_1",
+                        "fields":["field_1","field_2","field_5"],
+                        "validate":"include",
+                        "selector":["field_1","field_3"],
+                        "selector_by_input":false,
+                        "selector_value":
+                        [
+                            {"operator":"greater","value":5},
+                            {"operator":"greater","value":5}
+                        ],
+                        "crud":["PUT"],
+                        "entry_limit":500,
+                        "expiration":"1H",
+                        "csrf":"ensure",
+                        "auth_required": true
+                    }
+                }
+            },
+            "App_10":
+            {
+                "oauth":true,
+                "auth_type":"session|token",
+                "csrf":true,
+                "apis":
+                {
+                    "API_1":
+                    {
+                        "table":"Table_3",
+                        "fields":["field_1","field_3","field_5"],
+                        "validate":"include",
+                        "selector":["field_1","field_3"],
+                        "selector_by_input":false,
+                        "selector_value":
+                        [
+                            {"operator":"greater","value":5},
+                            {"operator":"greater","value":5}
+                        ],
+                        "crud":["POST","GET"],
+                        "entry_limit":500,
+                        "expiration":"1H",
+                        "csrf":"protect",
+                        "auth_required": true
+                    },
+                    "API_2":
+                    {
+                        "table":"Table_1",
+                        "fields":["field_2","field_3","field_5"],
+                        "validate":"include",
+                        "selector":["field_1","field_3"],
+                        "selector_by_input":false,
+                        "selector_value":
+                        [
+                            {"operator":"greater","value":5},
+                            {"operator":"greater","value":5}
+                        ],
+                        "crud":["GET"],
+                        "entry_limit":500,
+                        "expiration":"1H",
+                        "csrf":"ensure",
+                        "auth_required": true
+                    },
+                    "API_3":
+                    {
+                        "table":"Table_1",
+                        "fields":["field_1","field_2","field_5"],
+                        "validate":"include",
+                        "selector":["field_1","field_3"],
+                        "selector_by_input":false,
+                        "selector_value":
+                        [
+                            {"operator":"greater","value":5},
+                            {"operator":"greater","value":5}
+                        ],
+                        "crud":["PUT"],
+                        "entry_limit":500,
+                        "expiration":"1H",
+                        "csrf":"ensure",
+                        "auth_required": true
+                    }
+                }
             }
         },
         "node_01":
         {
-            "API_1":
+            "App_01":
             {
-                "Database":"DB_1",
-                "Table":"Table_3",
-                "Fields_Affected":["field_1","field_3","field_5"],
-                "CRUD":"POST",
-                "ENTRY_LIMIT":500,
-                "EXPIRATION":"1H",
-                "OAUTH":false
+                "oauth":true,
+                "auth_type":"session|token",
+                "csrf":true,
+                "apis":
+                {
+                    "API_1":
+                    {
+                        "table":"Table_3",
+                        "fields":["field_1","field_3","field_5"],
+                        "validate":"include",
+                        "selector":["field_1","field_3"],
+                        "selector_by_input":false,
+                        "selector_value":
+                        [
+                            {"operator":"greater","value":5},
+                            {"operator":"greater","value":5}
+                        ],
+                        "crud":["POST","GET"],
+                        "entry_limit":500,
+                        "expiration":"1H",
+                        "csrf":"protect",
+                        "auth_required": true
+                    },
+                    "API_2":
+                    {
+                        "table":"Table_1",
+                        "fields":["field_2","field_3","field_5"],
+                        "validate":"include",
+                        "selector":["field_1","field_3"],
+                        "selector_by_input":false,
+                        "selector_value":
+                        [
+                            {"operator":"greater","value":5},
+                            {"operator":"greater","value":5}
+                        ],
+                        "crud":["GET"],
+                        "entry_limit":500,
+                        "expiration":"1H",
+                        "csrf":"ensure",
+                        "auth_required": true
+                    },
+                    "API_3":
+                    {
+                        "table":"Table_1",
+                        "fields":["field_1","field_2","field_5"],
+                        "validate":"include",
+                        "selector":["field_1","field_3"],
+                        "selector_by_input":false,
+                        "selector_value":
+                        [
+                            {"operator":"greater","value":5},
+                            {"operator":"greater","value":5}
+                        ],
+                        "crud":["PUT"],
+                        "entry_limit":500,
+                        "expiration":"1H",
+                        "csrf":"ensure",
+                        "auth_required": true
+                    }
+                }
             },
-            "API_2":
+            "App_02":
             {
-                "Database":"DB_1",
-                "Table":"Table_4",
-                "Fields_Affected":["field_2","field_3","field_5"],
-                "CRUD":"GET",
-                "ENTRY_LIMIT":500,
-                "EXPIRATION":"1H",
-                "OAUTH":false
+                "oauth":true,
+                "auth_type":"session|token",
+                "csrf":true,
+                "apis":
+                {
+                    "API_1":
+                    {
+                        "table":"Table_3",
+                        "fields":["field_1","field_3","field_5"],
+                        "validate":"include",
+                        "selector":["field_1","field_3"],
+                        "selector_by_input":false,
+                        "selector_value":
+                        [
+                            {"operator":"greater","value":5},
+                            {"operator":"greater","value":5}
+                        ],
+                        "crud":["POST","GET"],
+                        "entry_limit":500,
+                        "expiration":"1H",
+                        "csrf":"protect",
+                        "auth_required": true
+                    },
+                    "API_2":
+                    {
+                        "table":"Table_1",
+                        "fields":["field_2","field_3","field_5"],
+                        "validate":"include",
+                        "selector":["field_1","field_3"],
+                        "selector_by_input":false,
+                        "selector_value":
+                        [
+                            {"operator":"greater","value":5},
+                            {"operator":"greater","value":5}
+                        ],
+                        "crud":["GET"],
+                        "entry_limit":500,
+                        "expiration":"1H",
+                        "csrf":"ensure",
+                        "auth_required": true
+                    },
+                    "API_3":
+                    {
+                        "table":"Table_1",
+                        "fields":["field_1","field_2","field_5"],
+                        "validate":"include",
+                        "selector":["field_1","field_3"],
+                        "selector_by_input":false,
+                        "selector_value":
+                        [
+                            {"operator":"greater","value":5},
+                            {"operator":"greater","value":5}
+                        ],
+                        "crud":["PUT"],
+                        "entry_limit":500,
+                        "expiration":"1H",
+                        "csrf":"ensure",
+                        "auth_required": true
+                    }
+                }
             },
-            "API_3":
+            "App_03":
             {
-                "Database":"DB_1",
-                "Table":"Table_1",
-                "Fields_Affected":["field_1","field_2","field_5"],
-                "CRUD":"PUT",
-                "ENTRY_LIMIT":500,
-                "EXPIRATION":"1H",
-                "OAUTH":false
+                "oauth":true,
+                "auth_type":"session|token",
+                "csrf":true,
+                "apis":
+                {
+                    "API_1":
+                    {
+                        "table":"Table_3",
+                        "fields":["field_1","field_3","field_5"],
+                        "validate":"include",
+                        "selector":["field_1","field_3"],
+                        "selector_by_input":false,
+                        "selector_value":
+                        [
+                            {"operator":"greater","value":5},
+                            {"operator":"greater","value":5}
+                        ],
+                        "crud":["POST","GET"],
+                        "entry_limit":500,
+                        "expiration":"1H",
+                        "csrf":"protect",
+                        "auth_required": true
+                    },
+                    "API_2":
+                    {
+                        "table":"Table_1",
+                        "fields":["field_2","field_3","field_5"],
+                        "validate":"include",
+                        "selector":["field_1","field_3"],
+                        "selector_by_input":false,
+                        "selector_value":
+                        [
+                            {"operator":"greater","value":5},
+                            {"operator":"greater","value":5}
+                        ],
+                        "crud":["GET"],
+                        "entry_limit":500,
+                        "expiration":"1H",
+                        "csrf":"ensure",
+                        "auth_required": true
+                    },
+                    "API_3":
+                    {
+                        "table":"Table_1",
+                        "fields":["field_1","field_2","field_5"],
+                        "validate":"include",
+                        "selector":["field_1","field_3"],
+                        "selector_by_input":false,
+                        "selector_value":
+                        [
+                            {"operator":"greater","value":5},
+                            {"operator":"greater","value":5}
+                        ],
+                        "crud":["PUT"],
+                        "entry_limit":500,
+                        "expiration":"1H",
+                        "csrf":"ensure",
+                        "auth_required": true
+                    }
+                }
+            },
+            "App_04":
+            {
+                "oauth":true,
+                "auth_type":"session|token",
+                "csrf":true,
+                "apis":
+                {
+                    "API_1":
+                    {
+                        "table":"Table_3",
+                        "fields":["field_1","field_3","field_5"],
+                        "validate":"include",
+                        "selector":["field_1","field_3"],
+                        "selector_by_input":false,
+                        "selector_value":
+                        [
+                            {"operator":"greater","value":5},
+                            {"operator":"greater","value":5}
+                        ],
+                        "crud":["POST","GET"],
+                        "entry_limit":500,
+                        "expiration":"1H",
+                        "csrf":"protect",
+                        "auth_required": true
+                    },
+                    "API_2":
+                    {
+                        "table":"Table_1",
+                        "fields":["field_2","field_3","field_5"],
+                        "validate":"include",
+                        "selector":["field_1","field_3"],
+                        "selector_by_input":false,
+                        "selector_value":
+                        [
+                            {"operator":"greater","value":5},
+                            {"operator":"greater","value":5}
+                        ],
+                        "crud":["GET"],
+                        "entry_limit":500,
+                        "expiration":"1H",
+                        "csrf":"ensure",
+                        "auth_required": true
+                    },
+                    "API_3":
+                    {
+                        "table":"Table_1",
+                        "fields":["field_1","field_2","field_5"],
+                        "validate":"include",
+                        "selector":["field_1","field_3"],
+                        "selector_by_input":false,
+                        "selector_value":
+                        [
+                            {"operator":"greater","value":5},
+                            {"operator":"greater","value":5}
+                        ],
+                        "crud":["PUT"],
+                        "entry_limit":500,
+                        "expiration":"1H",
+                        "csrf":"ensure",
+                        "auth_required": true
+                    }
+                }
+            },
+            "App_05":
+            {
+                "oauth":true,
+                "auth_type":"session|token",
+                "csrf":true,
+                "apis":
+                {
+                    "API_1":
+                    {
+                        "table":"Table_3",
+                        "fields":["field_1","field_3","field_5"],
+                        "validate":"include",
+                        "selector":["field_1","field_3"],
+                        "selector_by_input":false,
+                        "selector_value":
+                        [
+                            {"operator":"greater","value":5},
+                            {"operator":"greater","value":5}
+                        ],
+                        "crud":["POST","GET"],
+                        "entry_limit":500,
+                        "expiration":"1H",
+                        "csrf":"protect",
+                        "auth_required": true
+                    },
+                    "API_2":
+                    {
+                        "table":"Table_1",
+                        "fields":["field_2","field_3","field_5"],
+                        "validate":"include",
+                        "selector":["field_1","field_3"],
+                        "selector_by_input":false,
+                        "selector_value":
+                        [
+                            {"operator":"greater","value":5},
+                            {"operator":"greater","value":5}
+                        ],
+                        "crud":["GET"],
+                        "entry_limit":500,
+                        "expiration":"1H",
+                        "csrf":"ensure",
+                        "auth_required": true
+                    },
+                    "API_3":
+                    {
+                        "table":"Table_1",
+                        "fields":["field_1","field_2","field_5"],
+                        "validate":"include",
+                        "selector":["field_1","field_3"],
+                        "selector_by_input":false,
+                        "selector_value":
+                        [
+                            {"operator":"greater","value":5},
+                            {"operator":"greater","value":5}
+                        ],
+                        "crud":["PUT"],
+                        "entry_limit":500,
+                        "expiration":"1H",
+                        "csrf":"ensure",
+                        "auth_required": true
+                    }
+                }
+            },
+            "App_06":
+            {
+                "oauth":true,
+                "auth_type":"session|token",
+                "csrf":true,
+                "apis":
+                {
+                    "API_1":
+                    {
+                        "table":"Table_3",
+                        "fields":["field_1","field_3","field_5"],
+                        "validate":"include",
+                        "selector":["field_1","field_3"],
+                        "selector_by_input":false,
+                        "selector_value":
+                        [
+                            {"operator":"greater","value":5},
+                            {"operator":"greater","value":5}
+                        ],
+                        "crud":["POST","GET"],
+                        "entry_limit":500,
+                        "expiration":"1H",
+                        "csrf":"protect",
+                        "auth_required": true
+                    },
+                    "API_2":
+                    {
+                        "table":"Table_1",
+                        "fields":["field_2","field_3","field_5"],
+                        "validate":"include",
+                        "selector":["field_1","field_3"],
+                        "selector_by_input":false,
+                        "selector_value":
+                        [
+                            {"operator":"greater","value":5},
+                            {"operator":"greater","value":5}
+                        ],
+                        "crud":["GET"],
+                        "entry_limit":500,
+                        "expiration":"1H",
+                        "csrf":"ensure",
+                        "auth_required": true
+                    },
+                    "API_3":
+                    {
+                        "table":"Table_1",
+                        "fields":["field_1","field_2","field_5"],
+                        "validate":"include",
+                        "selector":["field_1","field_3"],
+                        "selector_by_input":false,
+                        "selector_value":
+                        [
+                            {"operator":"greater","value":5},
+                            {"operator":"greater","value":5}
+                        ],
+                        "crud":["PUT"],
+                        "entry_limit":500,
+                        "expiration":"1H",
+                        "csrf":"ensure",
+                        "auth_required": true
+                    }
+                }
+            },
+            "App_07":
+            {
+                "oauth":true,
+                "auth_type":"session|token",
+                "csrf":true,
+                "apis":
+                {
+                    "API_1":
+                    {
+                        "table":"Table_3",
+                        "fields":["field_1","field_3","field_5"],
+                        "validate":"include",
+                        "selector":["field_1","field_3"],
+                        "selector_by_input":false,
+                        "selector_value":
+                        [
+                            {"operator":"greater","value":5},
+                            {"operator":"greater","value":5}
+                        ],
+                        "crud":["POST","GET"],
+                        "entry_limit":500,
+                        "expiration":"1H",
+                        "csrf":"protect",
+                        "auth_required": true
+                    },
+                    "API_2":
+                    {
+                        "table":"Table_1",
+                        "fields":["field_2","field_3","field_5"],
+                        "validate":"include",
+                        "selector":["field_1","field_3"],
+                        "selector_by_input":false,
+                        "selector_value":
+                        [
+                            {"operator":"greater","value":5},
+                            {"operator":"greater","value":5}
+                        ],
+                        "crud":["GET"],
+                        "entry_limit":500,
+                        "expiration":"1H",
+                        "csrf":"ensure",
+                        "auth_required": true
+                    },
+                    "API_3":
+                    {
+                        "table":"Table_1",
+                        "fields":["field_1","field_2","field_5"],
+                        "validate":"include",
+                        "selector":["field_1","field_3"],
+                        "selector_by_input":false,
+                        "selector_value":
+                        [
+                            {"operator":"greater","value":5},
+                            {"operator":"greater","value":5}
+                        ],
+                        "crud":["PUT"],
+                        "entry_limit":500,
+                        "expiration":"1H",
+                        "csrf":"ensure",
+                        "auth_required": true
+                    }
+                }
+            },
+            "App_08":
+            {
+                "oauth":true,
+                "auth_type":"session|token",
+                "csrf":true,
+                "apis":
+                {
+                    "API_1":
+                    {
+                        "table":"Table_3",
+                        "fields":["field_1","field_3","field_5"],
+                        "validate":"include",
+                        "selector":["field_1","field_3"],
+                        "selector_by_input":false,
+                        "selector_value":
+                        [
+                            {"operator":"greater","value":5},
+                            {"operator":"greater","value":5}
+                        ],
+                        "crud":["POST","GET"],
+                        "entry_limit":500,
+                        "expiration":"1H",
+                        "csrf":"protect",
+                        "auth_required": true
+                    },
+                    "API_2":
+                    {
+                        "table":"Table_1",
+                        "fields":["field_2","field_3","field_5"],
+                        "validate":"include",
+                        "selector":["field_1","field_3"],
+                        "selector_by_input":false,
+                        "selector_value":
+                        [
+                            {"operator":"greater","value":5},
+                            {"operator":"greater","value":5}
+                        ],
+                        "crud":["GET"],
+                        "entry_limit":500,
+                        "expiration":"1H",
+                        "csrf":"ensure",
+                        "auth_required": true
+                    },
+                    "API_3":
+                    {
+                        "table":"Table_1",
+                        "fields":["field_1","field_2","field_5"],
+                        "validate":"include",
+                        "selector":["field_1","field_3"],
+                        "selector_by_input":false,
+                        "selector_value":
+                        [
+                            {"operator":"greater","value":5},
+                            {"operator":"greater","value":5}
+                        ],
+                        "crud":["PUT"],
+                        "entry_limit":500,
+                        "expiration":"1H",
+                        "csrf":"ensure",
+                        "auth_required": true
+                    }
+                }
+            },
+            "App_09":
+            {
+                "oauth":true,
+                "auth_type":"session|token",
+                "csrf":true,
+                "apis":
+                {
+                    "API_1":
+                    {
+                        "table":"Table_3",
+                        "fields":["field_1","field_3","field_5"],
+                        "validate":"include",
+                        "selector":["field_1","field_3"],
+                        "selector_by_input":false,
+                        "selector_value":
+                        [
+                            {"operator":"greater","value":5},
+                            {"operator":"greater","value":5}
+                        ],
+                        "crud":["POST","GET"],
+                        "entry_limit":500,
+                        "expiration":"1H",
+                        "csrf":"protect",
+                        "auth_required": true
+                    },
+                    "API_2":
+                    {
+                        "table":"Table_1",
+                        "fields":["field_2","field_3","field_5"],
+                        "validate":"include",
+                        "selector":["field_1","field_3"],
+                        "selector_by_input":false,
+                        "selector_value":
+                        [
+                            {"operator":"greater","value":5},
+                            {"operator":"greater","value":5}
+                        ],
+                        "crud":["GET"],
+                        "entry_limit":500,
+                        "expiration":"1H",
+                        "csrf":"ensure",
+                        "auth_required": true
+                    },
+                    "API_3":
+                    {
+                        "table":"Table_1",
+                        "fields":["field_1","field_2","field_5"],
+                        "validate":"include",
+                        "selector":["field_1","field_3"],
+                        "selector_by_input":false,
+                        "selector_value":
+                        [
+                            {"operator":"greater","value":5},
+                            {"operator":"greater","value":5}
+                        ],
+                        "crud":["PUT"],
+                        "entry_limit":500,
+                        "expiration":"1H",
+                        "csrf":"ensure",
+                        "auth_required": true
+                    }
+                }
+            },
+            "App_10":
+            {
+                "oauth":true,
+                "auth_type":"session|token",
+                "csrf":true,
+                "apis":
+                {
+                    "API_1":
+                    {
+                        "table":"Table_3",
+                        "fields":["field_1","field_3","field_5"],
+                        "validate":"include",
+                        "selector":["field_1","field_3"],
+                        "selector_by_input":false,
+                        "selector_value":
+                        [
+                            {"operator":"greater","value":5},
+                            {"operator":"greater","value":5}
+                        ],
+                        "crud":["POST","GET"],
+                        "entry_limit":500,
+                        "expiration":"1H",
+                        "csrf":"protect",
+                        "auth_required": true
+                    },
+                    "API_2":
+                    {
+                        "table":"Table_1",
+                        "fields":["field_2","field_3","field_5"],
+                        "validate":"include",
+                        "selector":["field_1","field_3"],
+                        "selector_by_input":false,
+                        "selector_value":
+                        [
+                            {"operator":"greater","value":5},
+                            {"operator":"greater","value":5}
+                        ],
+                        "crud":["GET"],
+                        "entry_limit":500,
+                        "expiration":"1H",
+                        "csrf":"ensure",
+                        "auth_required": true
+                    },
+                    "API_3":
+                    {
+                        "table":"Table_1",
+                        "fields":["field_1","field_2","field_5"],
+                        "validate":"include",
+                        "selector":["field_1","field_3"],
+                        "selector_by_input":false,
+                        "selector_value":
+                        [
+                            {"operator":"greater","value":5},
+                            {"operator":"greater","value":5}
+                        ],
+                        "crud":["PUT"],
+                        "entry_limit":500,
+                        "expiration":"1H",
+                        "csrf":"ensure",
+                        "auth_required": true
+                    }
+                }
             }
         },
         "node_02":
         {
-            "API_1":
+            "App_01":
             {
-                "Database":"DB_1",
-                "Table":"Table_3",
-                "Fields_Affected":["field_1","field_3","field_5"],
-                "CRUD":"POST",
-                "ENTRY_LIMIT":500,
-                "EXPIRATION":"1H",
-                "OAUTH":false
+                "oauth":true,
+                "auth_type":"session|token",
+                "csrf":true,
+                "apis":
+                {
+                    "API_1":
+                    {
+                        "table":"Table_3",
+                        "fields":["field_1","field_3","field_5"],
+                        "validate":"include",
+                        "selector":["field_1","field_3"],
+                        "selector_by_input":false,
+                        "selector_value":
+                        [
+                            {"operator":"greater","value":5},
+                            {"operator":"greater","value":5}
+                        ],
+                        "crud":["POST","GET"],
+                        "entry_limit":500,
+                        "expiration":"1H",
+                        "csrf":"protect",
+                        "auth_required": true
+                    },
+                    "API_2":
+                    {
+                        "table":"Table_1",
+                        "fields":["field_2","field_3","field_5"],
+                        "validate":"include",
+                        "selector":["field_1","field_3"],
+                        "selector_by_input":false,
+                        "selector_value":
+                        [
+                            {"operator":"greater","value":5},
+                            {"operator":"greater","value":5}
+                        ],
+                        "crud":["GET"],
+                        "entry_limit":500,
+                        "expiration":"1H",
+                        "csrf":"ensure",
+                        "auth_required": true
+                    },
+                    "API_3":
+                    {
+                        "table":"Table_1",
+                        "fields":["field_1","field_2","field_5"],
+                        "validate":"include",
+                        "selector":["field_1","field_3"],
+                        "selector_by_input":false,
+                        "selector_value":
+                        [
+                            {"operator":"greater","value":5},
+                            {"operator":"greater","value":5}
+                        ],
+                        "crud":["PUT"],
+                        "entry_limit":500,
+                        "expiration":"1H",
+                        "csrf":"ensure",
+                        "auth_required": true
+                    }
+                }
             },
-            "API_2":
+            "App_02":
             {
-                "Database":"DB_1",
-                "Table":"Table_4",
-                "Fields_Affected":["field_2","field_3","field_5"],
-                "CRUD":"GET",
-                "ENTRY_LIMIT":500,
-                "EXPIRATION":"1H",
-                "OAUTH":false
+                "oauth":true,
+                "auth_type":"session|token",
+                "csrf":true,
+                "apis":
+                {
+                    "API_1":
+                    {
+                        "table":"Table_3",
+                        "fields":["field_1","field_3","field_5"],
+                        "validate":"include",
+                        "selector":["field_1","field_3"],
+                        "selector_by_input":false,
+                        "selector_value":
+                        [
+                            {"operator":"greater","value":5},
+                            {"operator":"greater","value":5}
+                        ],
+                        "crud":["POST","GET"],
+                        "entry_limit":500,
+                        "expiration":"1H",
+                        "csrf":"protect",
+                        "auth_required": true
+                    },
+                    "API_2":
+                    {
+                        "table":"Table_1",
+                        "fields":["field_2","field_3","field_5"],
+                        "validate":"include",
+                        "selector":["field_1","field_3"],
+                        "selector_by_input":false,
+                        "selector_value":
+                        [
+                            {"operator":"greater","value":5},
+                            {"operator":"greater","value":5}
+                        ],
+                        "crud":["GET"],
+                        "entry_limit":500,
+                        "expiration":"1H",
+                        "csrf":"ensure",
+                        "auth_required": true
+                    },
+                    "API_3":
+                    {
+                        "table":"Table_1",
+                        "fields":["field_1","field_2","field_5"],
+                        "validate":"include",
+                        "selector":["field_1","field_3"],
+                        "selector_by_input":false,
+                        "selector_value":
+                        [
+                            {"operator":"greater","value":5},
+                            {"operator":"greater","value":5}
+                        ],
+                        "crud":["PUT"],
+                        "entry_limit":500,
+                        "expiration":"1H",
+                        "csrf":"ensure",
+                        "auth_required": true
+                    }
+                }
             },
-            "API_3":
+            "App_03":
             {
-                "Database":"DB_1",
-                "Table":"Table_1",
-                "Fields_Affected":["field_1","field_2","field_5"],
-                "CRUD":"PUT",
-                "ENTRY_LIMIT":500,
-                "EXPIRATION":"1H",
-                "OAUTH":false
+                "oauth":true,
+                "auth_type":"session|token",
+                "csrf":true,
+                "apis":
+                {
+                    "API_1":
+                    {
+                        "table":"Table_3",
+                        "fields":["field_1","field_3","field_5"],
+                        "validate":"include",
+                        "selector":["field_1","field_3"],
+                        "selector_by_input":false,
+                        "selector_value":
+                        [
+                            {"operator":"greater","value":5},
+                            {"operator":"greater","value":5}
+                        ],
+                        "crud":["POST","GET"],
+                        "entry_limit":500,
+                        "expiration":"1H",
+                        "csrf":"protect",
+                        "auth_required": true
+                    },
+                    "API_2":
+                    {
+                        "table":"Table_1",
+                        "fields":["field_2","field_3","field_5"],
+                        "validate":"include",
+                        "selector":["field_1","field_3"],
+                        "selector_by_input":false,
+                        "selector_value":
+                        [
+                            {"operator":"greater","value":5},
+                            {"operator":"greater","value":5}
+                        ],
+                        "crud":["GET"],
+                        "entry_limit":500,
+                        "expiration":"1H",
+                        "csrf":"ensure",
+                        "auth_required": true
+                    },
+                    "API_3":
+                    {
+                        "table":"Table_1",
+                        "fields":["field_1","field_2","field_5"],
+                        "validate":"include",
+                        "selector":["field_1","field_3"],
+                        "selector_by_input":false,
+                        "selector_value":
+                        [
+                            {"operator":"greater","value":5},
+                            {"operator":"greater","value":5}
+                        ],
+                        "crud":["PUT"],
+                        "entry_limit":500,
+                        "expiration":"1H",
+                        "csrf":"ensure",
+                        "auth_required": true
+                    }
+                }
+            },
+            "App_04":
+            {
+                "oauth":true,
+                "auth_type":"session|token",
+                "csrf":true,
+                "apis":
+                {
+                    "API_1":
+                    {
+                        "table":"Table_3",
+                        "fields":["field_1","field_3","field_5"],
+                        "validate":"include",
+                        "selector":["field_1","field_3"],
+                        "selector_by_input":false,
+                        "selector_value":
+                        [
+                            {"operator":"greater","value":5},
+                            {"operator":"greater","value":5}
+                        ],
+                        "crud":["POST","GET"],
+                        "entry_limit":500,
+                        "expiration":"1H",
+                        "csrf":"protect",
+                        "auth_required": true
+                    },
+                    "API_2":
+                    {
+                        "table":"Table_1",
+                        "fields":["field_2","field_3","field_5"],
+                        "validate":"include",
+                        "selector":["field_1","field_3"],
+                        "selector_by_input":false,
+                        "selector_value":
+                        [
+                            {"operator":"greater","value":5},
+                            {"operator":"greater","value":5}
+                        ],
+                        "crud":["GET"],
+                        "entry_limit":500,
+                        "expiration":"1H",
+                        "csrf":"ensure",
+                        "auth_required": true
+                    },
+                    "API_3":
+                    {
+                        "table":"Table_1",
+                        "fields":["field_1","field_2","field_5"],
+                        "validate":"include",
+                        "selector":["field_1","field_3"],
+                        "selector_by_input":false,
+                        "selector_value":
+                        [
+                            {"operator":"greater","value":5},
+                            {"operator":"greater","value":5}
+                        ],
+                        "crud":["PUT"],
+                        "entry_limit":500,
+                        "expiration":"1H",
+                        "csrf":"ensure",
+                        "auth_required": true
+                    }
+                }
+            },
+            "App_05":
+            {
+                "oauth":true,
+                "auth_type":"session|token",
+                "csrf":true,
+                "apis":
+                {
+                    "API_1":
+                    {
+                        "table":"Table_3",
+                        "fields":["field_1","field_3","field_5"],
+                        "validate":"include",
+                        "selector":["field_1","field_3"],
+                        "selector_by_input":false,
+                        "selector_value":
+                        [
+                            {"operator":"greater","value":5},
+                            {"operator":"greater","value":5}
+                        ],
+                        "crud":["POST","GET"],
+                        "entry_limit":500,
+                        "expiration":"1H",
+                        "csrf":"protect",
+                        "auth_required": true
+                    },
+                    "API_2":
+                    {
+                        "table":"Table_1",
+                        "fields":["field_2","field_3","field_5"],
+                        "validate":"include",
+                        "selector":["field_1","field_3"],
+                        "selector_by_input":false,
+                        "selector_value":
+                        [
+                            {"operator":"greater","value":5},
+                            {"operator":"greater","value":5}
+                        ],
+                        "crud":["GET"],
+                        "entry_limit":500,
+                        "expiration":"1H",
+                        "csrf":"ensure",
+                        "auth_required": true
+                    },
+                    "API_3":
+                    {
+                        "table":"Table_1",
+                        "fields":["field_1","field_2","field_5"],
+                        "validate":"include",
+                        "selector":["field_1","field_3"],
+                        "selector_by_input":false,
+                        "selector_value":
+                        [
+                            {"operator":"greater","value":5},
+                            {"operator":"greater","value":5}
+                        ],
+                        "crud":["PUT"],
+                        "entry_limit":500,
+                        "expiration":"1H",
+                        "csrf":"ensure",
+                        "auth_required": true
+                    }
+                }
+            },
+            "App_06":
+            {
+                "oauth":true,
+                "auth_type":"session|token",
+                "csrf":true,
+                "apis":
+                {
+                    "API_1":
+                    {
+                        "table":"Table_3",
+                        "fields":["field_1","field_3","field_5"],
+                        "validate":"include",
+                        "selector":["field_1","field_3"],
+                        "selector_by_input":false,
+                        "selector_value":
+                        [
+                            {"operator":"greater","value":5},
+                            {"operator":"greater","value":5}
+                        ],
+                        "crud":["POST","GET"],
+                        "entry_limit":500,
+                        "expiration":"1H",
+                        "csrf":"protect",
+                        "auth_required": true
+                    },
+                    "API_2":
+                    {
+                        "table":"Table_1",
+                        "fields":["field_2","field_3","field_5"],
+                        "validate":"include",
+                        "selector":["field_1","field_3"],
+                        "selector_by_input":false,
+                        "selector_value":
+                        [
+                            {"operator":"greater","value":5},
+                            {"operator":"greater","value":5}
+                        ],
+                        "crud":["GET"],
+                        "entry_limit":500,
+                        "expiration":"1H",
+                        "csrf":"ensure",
+                        "auth_required": true
+                    },
+                    "API_3":
+                    {
+                        "table":"Table_1",
+                        "fields":["field_1","field_2","field_5"],
+                        "validate":"include",
+                        "selector":["field_1","field_3"],
+                        "selector_by_input":false,
+                        "selector_value":
+                        [
+                            {"operator":"greater","value":5},
+                            {"operator":"greater","value":5}
+                        ],
+                        "crud":["PUT"],
+                        "entry_limit":500,
+                        "expiration":"1H",
+                        "csrf":"ensure",
+                        "auth_required": true
+                    }
+                }
+            },
+            "App_07":
+            {
+                "oauth":true,
+                "auth_type":"session|token",
+                "csrf":true,
+                "apis":
+                {
+                    "API_1":
+                    {
+                        "table":"Table_3",
+                        "fields":["field_1","field_3","field_5"],
+                        "validate":"include",
+                        "selector":["field_1","field_3"],
+                        "selector_by_input":false,
+                        "selector_value":
+                        [
+                            {"operator":"greater","value":5},
+                            {"operator":"greater","value":5}
+                        ],
+                        "crud":["POST","GET"],
+                        "entry_limit":500,
+                        "expiration":"1H",
+                        "csrf":"protect",
+                        "auth_required": true
+                    },
+                    "API_2":
+                    {
+                        "table":"Table_1",
+                        "fields":["field_2","field_3","field_5"],
+                        "validate":"include",
+                        "selector":["field_1","field_3"],
+                        "selector_by_input":false,
+                        "selector_value":
+                        [
+                            {"operator":"greater","value":5},
+                            {"operator":"greater","value":5}
+                        ],
+                        "crud":["GET"],
+                        "entry_limit":500,
+                        "expiration":"1H",
+                        "csrf":"ensure",
+                        "auth_required": true
+                    },
+                    "API_3":
+                    {
+                        "table":"Table_1",
+                        "fields":["field_1","field_2","field_5"],
+                        "validate":"include",
+                        "selector":["field_1","field_3"],
+                        "selector_by_input":false,
+                        "selector_value":
+                        [
+                            {"operator":"greater","value":5},
+                            {"operator":"greater","value":5}
+                        ],
+                        "crud":["PUT"],
+                        "entry_limit":500,
+                        "expiration":"1H",
+                        "csrf":"ensure",
+                        "auth_required": true
+                    }
+                }
+            },
+            "App_08":
+            {
+                "oauth":true,
+                "auth_type":"session|token",
+                "csrf":true,
+                "apis":
+                {
+                    "API_1":
+                    {
+                        "table":"Table_3",
+                        "fields":["field_1","field_3","field_5"],
+                        "validate":"include",
+                        "selector":["field_1","field_3"],
+                        "selector_by_input":false,
+                        "selector_value":
+                        [
+                            {"operator":"greater","value":5},
+                            {"operator":"greater","value":5}
+                        ],
+                        "crud":["POST","GET"],
+                        "entry_limit":500,
+                        "expiration":"1H",
+                        "csrf":"protect",
+                        "auth_required": true
+                    },
+                    "API_2":
+                    {
+                        "table":"Table_1",
+                        "fields":["field_2","field_3","field_5"],
+                        "validate":"include",
+                        "selector":["field_1","field_3"],
+                        "selector_by_input":false,
+                        "selector_value":
+                        [
+                            {"operator":"greater","value":5},
+                            {"operator":"greater","value":5}
+                        ],
+                        "crud":["GET"],
+                        "entry_limit":500,
+                        "expiration":"1H",
+                        "csrf":"ensure",
+                        "auth_required": true
+                    },
+                    "API_3":
+                    {
+                        "table":"Table_1",
+                        "fields":["field_1","field_2","field_5"],
+                        "validate":"include",
+                        "selector":["field_1","field_3"],
+                        "selector_by_input":false,
+                        "selector_value":
+                        [
+                            {"operator":"greater","value":5},
+                            {"operator":"greater","value":5}
+                        ],
+                        "crud":["PUT"],
+                        "entry_limit":500,
+                        "expiration":"1H",
+                        "csrf":"ensure",
+                        "auth_required": true
+                    }
+                }
+            },
+            "App_09":
+            {
+                "oauth":true,
+                "auth_type":"session|token",
+                "csrf":true,
+                "apis":
+                {
+                    "API_1":
+                    {
+                        "table":"Table_3",
+                        "fields":["field_1","field_3","field_5"],
+                        "validate":"include",
+                        "selector":["field_1","field_3"],
+                        "selector_by_input":false,
+                        "selector_value":
+                        [
+                            {"operator":"greater","value":5},
+                            {"operator":"greater","value":5}
+                        ],
+                        "crud":["POST","GET"],
+                        "entry_limit":500,
+                        "expiration":"1H",
+                        "csrf":"protect",
+                        "auth_required": true
+                    },
+                    "API_2":
+                    {
+                        "table":"Table_1",
+                        "fields":["field_2","field_3","field_5"],
+                        "validate":"include",
+                        "selector":["field_1","field_3"],
+                        "selector_by_input":false,
+                        "selector_value":
+                        [
+                            {"operator":"greater","value":5},
+                            {"operator":"greater","value":5}
+                        ],
+                        "crud":["GET"],
+                        "entry_limit":500,
+                        "expiration":"1H",
+                        "csrf":"ensure",
+                        "auth_required": true
+                    },
+                    "API_3":
+                    {
+                        "table":"Table_1",
+                        "fields":["field_1","field_2","field_5"],
+                        "validate":"include",
+                        "selector":["field_1","field_3"],
+                        "selector_by_input":false,
+                        "selector_value":
+                        [
+                            {"operator":"greater","value":5},
+                            {"operator":"greater","value":5}
+                        ],
+                        "crud":["PUT"],
+                        "entry_limit":500,
+                        "expiration":"1H",
+                        "csrf":"ensure",
+                        "auth_required": true
+                    }
+                }
+            },
+            "App_10":
+            {
+                "oauth":true,
+                "auth_type":"session|token",
+                "csrf":true,
+                "apis":
+                {
+                    "API_1":
+                    {
+                        "table":"Table_3",
+                        "fields":["field_1","field_3","field_5"],
+                        "validate":"include",
+                        "selector":["field_1","field_3"],
+                        "selector_by_input":false,
+                        "selector_value":
+                        [
+                            {"operator":"greater","value":5},
+                            {"operator":"greater","value":5}
+                        ],
+                        "crud":["POST","GET"],
+                        "entry_limit":500,
+                        "expiration":"1H",
+                        "csrf":"protect",
+                        "auth_required": true
+                    },
+                    "API_2":
+                    {
+                        "table":"Table_1",
+                        "fields":["field_2","field_3","field_5"],
+                        "validate":"include",
+                        "selector":["field_1","field_3"],
+                        "selector_by_input":false,
+                        "selector_value":
+                        [
+                            {"operator":"greater","value":5},
+                            {"operator":"greater","value":5}
+                        ],
+                        "crud":["GET"],
+                        "entry_limit":500,
+                        "expiration":"1H",
+                        "csrf":"ensure",
+                        "auth_required": true
+                    },
+                    "API_3":
+                    {
+                        "table":"Table_1",
+                        "fields":["field_1","field_2","field_5"],
+                        "validate":"include",
+                        "selector":["field_1","field_3"],
+                        "selector_by_input":false,
+                        "selector_value":
+                        [
+                            {"operator":"greater","value":5},
+                            {"operator":"greater","value":5}
+                        ],
+                        "crud":["PUT"],
+                        "entry_limit":500,
+                        "expiration":"1H",
+                        "csrf":"ensure",
+                        "auth_required": true
+                    }
+                }
             }
         }
-
+        
     }
 }

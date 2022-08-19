@@ -1,4 +1,3 @@
-from distutils.command.build import build
 import json
 import os
 
@@ -18,13 +17,12 @@ class WebServerWriter():
             txt = f.read()
             self.config_data = json.loads(s = txt)
             f.close()
-        self.be_settings = self.config_data['Back_End_Settings']
+        self.be_settings = self.config_data['Server_Settings']
         self.parser = None
         
     def processBackEnds(self):
         for server in self.be_settings:
             framework = self.be_settings[server]['framework']
-
             if framework == 'python django':
                 self.parser = DjangoWriter(server_name = server, config_data = self.config_data)
             elif framework == 'node express':
