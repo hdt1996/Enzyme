@@ -1,4 +1,4 @@
-from array import array
+
 
 
 def kwargsReturnValues(kwargs:dict,var_names: list) -> tuple:
@@ -49,7 +49,7 @@ def getDictDiffArr(dict_1:dict, dict_2:dict):
             diff_arr.append(key)
     return diff_arr
 
-def getArrUniquesByDict(dict_1:dict) -> array:
+def getArrUniquesByDict(dict_1:dict) -> list:
     diff_arr = []
     new_dict = {}
     for key in dict_1:

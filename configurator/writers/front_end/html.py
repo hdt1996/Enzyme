@@ -1,6 +1,6 @@
 #TEST
 import json 
-from configurator.apis.Utilities.py.util import buildArrfromDict
+from configurator.modules.Utilities.py.util import buildArrfromDict
 COUNT = 0
 class HTML():
     def __init__(self):

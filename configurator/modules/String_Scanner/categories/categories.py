@@ -1,4 +1,3 @@
-from numpy import choose
 from ..locals.globals_regex import *
 
 class Categories:

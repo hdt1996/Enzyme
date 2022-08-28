@@ -9,6 +9,7 @@ class PSQL():
     def __init__(self, host: str = "192.168.1.86", port: str = "5432", db: str = 'ws_generator', user: str = 'postgres', password: str = 'MrPho1219@'):
         self.engine = create_engine(f'postgresql+psycopg2://{user}:%s@{host}:{port}/{db}' %urlquote(password))
         self.session = sessionmaker(bind = self.engine)()
+        
     def addColtoTable(self, table: str, col_name: str, dtype:str = "VARCHAR(2000)"):
         self.engine.execute(statement = f'ALTER TABLE "{table}" ADD "{col_name}" {dtype};')
 

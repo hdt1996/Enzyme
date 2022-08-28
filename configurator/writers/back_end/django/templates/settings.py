@@ -50,17 +50,3 @@ class ChoiceSettings():
             """)
         super().__init__()
 
-    def matchDBSetting(self,txt:str):
-        match = re.findall("""(DATABASES[ ]*\=[ ]*\{([ a-zA-Z\'\.\n\,\/\:\{\d\_\#\@]*[ ]*\})[\n ]*\})""",txt)
-        if len(match) > 0:
-            match = match[0][0]
-        else: 
-            return False
-        return match
-    def matchAuthSetting(self,txt:str):
-        match = re.findall("""(REST_FRAMEWORK[ ]*\=[ ]*(\{[ a-zA-Z\'\.\n\,\t\/\:\{\d\_\#\[\]]*[ ]*[\n ]*\}))""",txt)
-        if len(match) > 0:
-            match = match[0][0]
-        else: 
-            return False
-        return match

@@ -1,6 +1,5 @@
 import re
-
-class WriterRegex():
+class DjangoRegex():
     def matchListVar(var_name: str, txt: str):
         match = re.findall("({var_name}[ ]*\=[ ]*\[([ a-zA-Z\'\.\n\,\_\d\n\t]*[ ]*)\])".format(var_name = var_name),txt)
         if len(match) > 0:
@@ -27,9 +26,23 @@ class WriterRegex():
         return match
 
     def matchCallFunction(declar:str, txt:str):
-        match = re.findall("""({declar} ([a-zA-Z\_\d]*)(\(([a-zA-Z\_\d\t\: ]+\,?)*\)))""".format(declar = declar),txt)
+        match = re.findall("""({declar}([a-zA-Z\_\d ]*)(\(([\=a-zA-Z\_\d\t\: ]+\,?)*\)))""".format(declar = declar),txt)
         if len(match) > 0:
             match = match[0][1]
+        else: 
+            return False
+        return match
+    def matchDBSetting(txt:str):
+        match = re.findall("""(DATABASES[ ]*\=[ ]*\{([ a-zA-Z\'\.\n\,\/\:\{\d\_\#\@]*[ ]*\})[\n ]*\})""",txt)
+        if len(match) > 0:
+            match = match[0][0]
+        else: 
+            return False
+        return match
+    def matchAuthSetting(txt:str):
+        match = re.findall("""(REST_FRAMEWORK[ ]*\=[ ]*(\{[ a-zA-Z\'\.\n\,\t\/\:\{\d\_\#\[\]]*[ ]*[\n ]*\}))""",txt)
+        if len(match) > 0:
+            match = match[0][0]
         else: 
             return False
         return match

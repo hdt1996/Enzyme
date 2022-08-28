@@ -305,3 +305,21 @@
 .YT_FNTBLK{
   color:black
 }
+
+.TY_DD{
+  display:flex;
+  flex-direction: column;
+  background-color: rgb(72, 125, 125);
+}
+
+.TY_HID{
+  display:none !important
+}
+
+.TY_DI{
+  background-color: lightblue;
+}
+
+.TY_DII{
+  font-size:.75em;
+}

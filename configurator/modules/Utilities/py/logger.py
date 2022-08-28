@@ -1,8 +1,8 @@
 import os
 from datetime import datetime
-from ..Utilities.file_manager import FileManager
-from ..Utilities.dev import Development
-from ..Utilities.directory import *
+from .file_manager import FileManager
+from .dev import Development
+from .directory import *
 from datetime import datetime
 FS = FileManager()
 DEV = Development()

@@ -1,11 +1,11 @@
 from msilib.schema import File
-from configurator.apis.Utilities.py.util import *
-from configurator.apis.Utilities.py.file_manager import FileManager
-from ..utils.regex import WriterRegex
+from configurator.modules.Utilities.py.util import *
+from configurator.modules.Utilities.py.file_manager import FileManager
+from ..utils.utils import DjangoRegex
 import os
 FM = FileManager()
 
-class Node(WriterRegex):
+class Node(DjangoRegex):
     def __init__(self, server_name: str,  config_data: dict):
         self.server_name = server_name
         self.server_loc = config_data['Server_Locations'][self.server_name]

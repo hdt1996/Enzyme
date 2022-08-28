@@ -10,6 +10,17 @@ class FileManager():
     def __init__(self):
         print('\n\n Init FileManager')
 
+    def copyDir(self, src: os.PathLike, dst: os.PathLike):
+        os.makedirs(name = dst, exist_ok=True)
+        for pth in os.scandir(src):
+            name = pth.name
+            loc = pth.path
+            if os.path.isfile(path = loc):
+                shutil.copy(src = pth, dst = os.path.join(dst,name))
+            elif os.path.isdir(s = loc):
+                self.copyDir(src = loc, dst = os.path.join(dst,name))
+
+
     def findFilesbyExt(self,file_type:str = '', location: str = os.PathLike, dict_keys: bool = False, open_file: bool = False) -> list:
         if (not os.path.isdir(location)) and (not os.path.isfile(location)):
             if open_file == True:
@@ -35,7 +46,6 @@ class FileManager():
 
     def extractText(self,file: os.PathLike, open_file: bool = False) -> str:
         if open_file == True:
-            txt = ''
             for index, encoder in enumerate(ENCODINGS):
                 try:
                     with open(file = file, mode = 'r',encoding = encoder) as f:
@@ -44,7 +54,7 @@ class FileManager():
                         return txt
                 except:
                     pass
-            raise ValueError(f'Unable to write text file. Add additional encoder.')
+            raise ValueError(f'Unable to extract text from file. Add additional encoder.')
             
         else:
             return file

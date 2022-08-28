@@ -1,8 +1,8 @@
 import re
-from ...Utilities.logger import Logger
-from ...Utilities.file_manager import FileManager
-from ...Utilities.dev import Development
-from ...Utilities.dataframes import DataFrames
+from ...Utilities.py.logger import Logger
+from ...Utilities.py.file_manager import FileManager
+from ...Utilities.py.dev import Development
+from ...Utilities.py.dataframes import DataFrames
 import os
 FS = FileManager()
 DEV = Development()

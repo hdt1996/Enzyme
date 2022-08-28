@@ -1,6 +1,6 @@
-from ..Utilities.dataframes import *
-from ..Utilities.file_manager import *
-from ..Utilities.dev import *
+from ..Utilities.py.dataframes import *
+from ..Utilities.py.file_manager import *
+from ..Utilities.py.dev import *
 from tensor.tensor import *
 import shutil as sh
 SA = FileManager()
