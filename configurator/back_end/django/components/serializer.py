@@ -1,9 +1,9 @@
 from ...utils.utils import StringModify
-from .....modules.Utilities.py.util import *
+from ....modules.Utilities.py.util import *
 from ..templates.orm import *
 from ..templates.serializer import *
 from ...utils.utils import DjangoRegex as DR, StringModify
-from .....modules.Utilities.py.file_manager import FileManager
+from ....modules.Utilities.py.file_manager import FileManager
 FM = FileManager()
 
 class DjangoSerializer(ChoiceSerializer):

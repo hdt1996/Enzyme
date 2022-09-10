@@ -1,8 +1,8 @@
 import json
 import os
 
-from ...modules.Utilities.py.file_manager import FileManager
-from ...modules.Utilities.py.dev import Development
+from ..modules.Utilities.py.file_manager import FileManager
+from ..modules.Utilities.py.dev import Development
 from .django.django import DjangoWriter
 from .frameworks.node import Node
 from .frameworks.proxy import Proxy

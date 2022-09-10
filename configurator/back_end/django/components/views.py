@@ -1,4 +1,4 @@
-from .....modules.Utilities.py.file_manager import FileManager
+from ....modules.Utilities.py.file_manager import FileManager
 from ..components.crud import *
 from .serializer import *
 from ..templates.views import *

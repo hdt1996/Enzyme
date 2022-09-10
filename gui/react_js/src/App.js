@@ -1,77 +1,35 @@
-import logo from './logo.svg';
 import './App.css';
-import {Selenium} from './utils/elements'
-
+import {Fetch} from '../src/utils/fetch'
 function App() {
-
-  let postoptions = 
-  {
-    method: 'POST',
-    headers:{'Content-Type': 'application/json'},
-    body: JSON.stringify(
-      
-        {
-          "field_1":true,
-          "field_2":55,
-        }
-      
-    ),
-  }
+  console.log(window.__STATE__)
+  let input_value = '<button>HELLO</button>'
+  let FETCH = new Fetch("http://192.168.1.86:8001/api/api/1")
 
 
 
-  let putoptions = 
-  {
-    method: 'PUT',
-    headers:{
-      'Content-Type': 'application/json',
-      'selectors':JSON.stringify({"field_10":{"operator":"equal","value":9000}}),
-    },
-    body: JSON.stringify(
-      {
-        "field_1":true,
-        "field_10":90001
-      }
-    
-    ),
-  }
 
-  let deleteoptions = 
-  {
-    method: 'DELETE',
-    headers:{
-      'Content-Type': 'application/json',
-      'selectors':JSON.stringify({"field_10":{"operator":"equal","value":11}}),
-    }
-  }
-  let getoptions = 
-  {
-    method: 'GET',
-    headers:{
-      'Content-Type': 'application/json',
-      'selectors':JSON.stringify({"field_3":{"operator":"equal","value":"OELPAEJYVBWKDSNQZDTYIXZOEQEOLKGPLWSPQNAPYGCPLRZZFYGNPUOZYCKDKXHHBHVEFYQVEHINNTVSHYHMGFPPCYIVNQGIYJAEDKIFCWWZHAREYQEJDNSSHCPWZGVHISROUDMPONNLUJDHHGJAHSFZDCXCLELQZDCEYWMOKVTEIYLIPLKYFZCJIGKWKGSQNCMFTXBGWIEIMJCNVMYDCNQRCLDABNMDSAKIQVBHMYROYXHFEXJEYUOHNLXFYPB"}})},
-  }
 
-  let getFetch = async () =>{  
-    let response = await fetch("http://192.168.1.86:8001/api/api/1", getoptions)
-    let data = await response.json()
-    console.log(data)
-  }
 
   let postFetch = async () =>{  
-    let response = await fetch("http://192.168.1.86:8001/api/api/1", postoptions)
-    let data = await response.json()
+    FETCH.makeOption({crud:'POST',body:{"field_1":true,"field_2":55,}})
+    let data = await FETCH.fetch()
     console.log(data)
   }
 
   let putFetch = async () =>{  
-    let response = await fetch("http://192.168.1.86:8001/api/api/1", putoptions)
-    let data = await response.json()
+    FETCH.makeOption({crud:'PUT',body:{"field_1":true,"field_10":90001}, add_headers:{"selectors":{"field_10":{"operator":"equal","value":9000}}}})
+    let data = await FETCH.fetch()
+    console.log(data)
+  }
+
+  let getFetch = async () =>{  
+    FETCH.makeOption({crud:'GET',add_headers:{"selectors":{}}})
+    let data = await FETCH.fetch()
     console.log(data)
   }
   let deleteFetch = async () =>{  
-    let response = await fetch("http://192.168.1.86:8001/api/api/1", deleteoptions)
-    let data = await response.json()
+    FETCH.makeOption({crud:'DELETE',add_headers:{"selectors":{"field_10":{"operator":"equal","value":11}}}})
+    let data = await FETCH.fetch()
     console.log(data)
   }
   let field_types = 
@@ -106,6 +64,13 @@ function App() {
       <button onClick = {() => {getFetch()}}>GET</button>
       <button onClick = {() => {putFetch()}}>PUT</button>
       <button onClick = {() => {deleteFetch()}}>DELETE</button>
+      <input placeholder = 'BODY'></input>
+      <div>
+        <div>
+
+          {input_value}
+        </div>
+      </div>
       <div className = "TY_DD">
         <div onClick = {(e) =>{renderDrop(e)}}>Dropdown</div>
         <div className = "TY_DI TY_HID">
@@ -138,19 +103,3 @@ function App() {
 }
 
 export default App;
-
-
-
-
-{/* <div className = "YT_bdWH1px YT_bdDash YT_FX YT_H100vw YT_W100vw YT_bckgBL YT_OP50">
-
-<div className = "YT_FX1 YT_bdWH1px YT_bdDash YT_H100pc"></div>
-
-<div className = "YT_FX7 YT_bdWH1px YT_bdDash YT_bckgBLK YT_OP80 YT_FX YT_FXC YT_H100pc">
-  <div className = "YT_bdWH1px YT_bdDash YT_FXC YT_F1"></div>
-  <div className = "YT_bdWH1px YT_bdDash YT_FXC YT_F1"></div>
-  <div className = "YT_bdWH1px YT_bdDash YT_FXC YT_F1"></div>
-</div>
-
-<div className = "YT_FX1 YT_bdWH1px YT_bdDash YT_H100pc"></div>
-</div> */}

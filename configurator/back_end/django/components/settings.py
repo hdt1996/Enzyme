@@ -1,7 +1,7 @@
 from ..templates.settings import *
 from ...utils.utils import DjangoRegex as DR, StringModify
 import os
-from .....modules.Utilities.py.file_manager import FileManager
+from ....modules.Utilities.py.file_manager import FileManager
 FM = FileManager()
 
 class DjangoSettings():

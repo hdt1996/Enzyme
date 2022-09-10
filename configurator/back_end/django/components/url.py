@@ -1,7 +1,7 @@
 from ..templates.url import *
-from .....modules.Utilities.py.util import *
+from ....modules.Utilities.py.util import *
 import inspect
-from .....modules.Utilities.py.file_manager import FileManager
+from ....modules.Utilities.py.file_manager import FileManager
 FM = FileManager()
 
 class DjangoURLS():

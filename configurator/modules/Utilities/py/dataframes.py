@@ -1,5 +1,6 @@
 import pandas as pd
 from ...Utilities.py.util import buildDictBoolbyArr
+import numpy as np
 
 class DataFrames():
     #TODO allow multiple dataframes to be pulled and concated per arguments
@@ -63,11 +64,44 @@ class DataFrames():
     def addRow(self, data: list):
         self.df.loc[len(self.df.index)] = data
 
-    def buildDFbyList(self, data:list = [], columns: list= [], index:list = []):
-        if len(index) != 0 and len(index) == len(data):
-            self.df = pd.DataFrame(data = data, columns = columns,index = index)
-        else:
-            self.df = pd.DataFrame(data = data, columns = columns)
+    def buildDFbyNumpy(self, data: list = [], index: list = None):
+        if isinstance(data, np.ndarray):
+            def recurse(d_item: np.ndarray, index: int, mult_index: list = [], n = 0):
+                mult_index.append(index)
+                for it_index, item in enumerate(d_item):
+                    if isinstance(item,np.ndarray):
+                        recurse(d_item = item, index = it_index, n = n + 1)
+                    else:
+                        col_dict[it_index].append(item)
+                indices.append(str(mult_index))
+                mult_index.pop()
+            indices = []
+            col_dict = {}
+            if len(data.shape) == 1:
+                indices = None
+                col_dict[0] = list(data)
+            else:
+                for i in range(data.shape[len(data.shape)-1]):
+                    col_dict[i] = []
+                for index in range(data.shape[0]):
+                    recurse(d_item = data[index], index = index)
+                    indices.pop()
+                    
+            self.df = pd.DataFrame(data = col_dict, index = indices)
+            del col_dict
+            del indices
+            return self.df
+
+    def buildDFbyList(self, data:list = [], columns: list= None, index:list = None):
+        if isinstance(data, np.ndarray):
+            raise TypeError('Please use buildDFbyNumpy method for numpy objects instead.')
+        if columns and len(columns) != len(data.columns):
+            raise ValueError('Column names list must match number of columns in dataframe.')
+        if index and len(index) != len(data):
+            raise ValueError('Index list must match number of rows')
+        self.df = pd.DataFrame(data = data, columns = columns,index = index)
+        return self.df
+
 
     def stats(self, df: pd.DataFrame):
         return  df.describe()
