@@ -19,5 +19,6 @@ cd $tf_dest && bazel build --jobs=10 --local_ram_resources="HOST_RAM*.65" //tens
 ./bazel-bin/tensorflow/tools/pip_package/build_pip_package /tmp/tensorflow_pkg
 
 pip3.10 install /tmp/tensorflow_pkg/tensorflow-2.10.0.whl
+pip3.10 install tensorflow_probability pandas matplotlib
 read z
 
