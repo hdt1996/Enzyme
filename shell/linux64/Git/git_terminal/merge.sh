@@ -1,7 +1,7 @@
 #!/bin/sh
 
 #GIT COMMANDS
-#	Rebase
+#	Rebase --onto
 #		Goal: Place current "checked out" branch ahead of ahead of "onto" branch
 #		Process:
 #			1) Find common ancestor between branches
@@ -11,6 +11,25 @@
 #			5) If the result is a single linear line of commits 
 #			   We can check out the "onto" branch and call merge
 #				Head pointer simply moves -> AKA fast-forward
+#	git checkout <target>
+#	Rebase <source>
+#		Goal: Place current "checked out" branch ahead of ahead of "onto" branch
+#		Process:
+#			1) Find common ancestor between both branches
+#			2) Get diff between checked out branch and source branch
+#			3) Add diffs onto checked out branch in linear fashion
+#			4) Push changes and head pointer will fast-forward if no conflict
+#	git checkout <target>
+#	git merge <source>
+#		Goal: Create commit that combines checked out branch and source branch
+#		      at common ancester AKA where the two branches diverged
+#		Nondestructive: No commit histories modified or destroyed
+#		Process:
+#			1) Combine all commits from source branch into one commit
+#			2) Push commit onto checked-out branch
+#			3) Branches will still be attached to commit history
+#			4) git nodes will show one source branch pulled" into target
+#			NOTE: git pull always does a merge 
 #
 
 
@@ -47,21 +66,13 @@ MENU_PRE_SELECT(){
 
 Process_Options(){ 
 	echo
-	read -p "	....Default or Interactive Mode? [d/i]" mode
+	read -p "	Continue? [y/n]: " proceed
 	echo
 	git checkout "$(echo $ch_id | sed -e 's/[\*\_]//g')"
 	echo
-	if [ "$mode" = "d" ]; then
-		git rebase "$(echo $dst_id | sed -e 's/[\*\_]//g')"
+	if [ "$proceed" = "y" ]; then
+		git merge "$(echo $dst_id | sed -e 's/[\*\_]//g')"
 		echo
-		read -p "Push "$(echo $ch_id | sed -e 's/[\*\_]//g')" to Remote Repo? [y/n]: " to_push
-		if [ "$to_push" = "y" ]; then
-			$BASEDIR/push.sh
-		fi
-		echo
-	elif [ "$mode" = "i" ]; then
-		git rebase -i "$(echo $dst_id | sed -e 's/[\*\_]//g')"
-		echo 
 		read -p "Push "$(echo $ch_id | sed -e 's/[\*\_]//g')" to Remote Repo? [y/n]: " to_push
 		if [ "$to_push" = "y" ]; then
 			$BASEDIR/push.sh
@@ -75,21 +86,19 @@ BASEDIR=$(readlink -f $(dirname "$0"))
 ORIG_BRANCH="$(git branch | grep '\* ' | sed -e 's/\* //')"
 echo
 read -p "
-	..............Rebase Options..............
-	menu: Create list of branches/commits to choose TARGET and SRC for rebase
-	      NOTE: Using this will linearlize all newer branches (TODO PROMPT)
-		      Be ready to handle rebase conflicts
-		      If successful, new commits will need to be push (force?)
+	..............Merge Options..............
+	menu: Create list of branches/commits to choose TARGET and SRC for merge
+	      NOTE: Creates 
 
-	continue: Continue existing rebase operation (if dealing with conflict)
+	continue: Continue existing merge operation (if dealing with conflict)
 	
-	abort: Cancel existing rebase and restore commits to state prior
+	abort: Cancel existing merge and restore commits to state prior
 	.........................................
-	Enter Rebase Option: " r_opt
+	Enter Merge Option: " r_opt
 if [ "$r_opt" = "continue" ]; then
-	git rebase --continue
+	git merge --continue
 elif [ "$r_opt" = "abort" ]; then
-	git rebase --abort
+	git merge --abort
 elif [ "$r_opt" = "menu" ]; then
 	echo
 	read -p "	Commit or Branch Mode [c/b]: " r_mode
@@ -99,7 +108,7 @@ elif [ "$r_opt" = "menu" ]; then
 			echo "Going back to main menu"
 			return
 		fi
-		dst_id=$(MENU_PRE_SELECT "$(git log)" 'Source to Rebase With' '^commit ' '' '([^\n]*\n){5}')
+		dst_id=$(MENU_PRE_SELECT "$(git log)" 'Source to Merge With' '^commit ' '' '([^\n]*\n){5}')
 		if [ $dst_id = 0 ]; then
 			echo "Going back to main menu"
 			return
@@ -111,7 +120,7 @@ elif [ "$r_opt" = "menu" ]; then
 			echo "Going back to main menu"
 			return
 		fi
-		dst_id=$(MENU_PRE_SELECT "$(git branch)" 'Source to Rebase With' '' '' '')
+		dst_id=$(MENU_PRE_SELECT "$(git branch)" 'Source to Merge With' '' '' '')
 		if [ $dst_id = 0 ]; then
 			echo "Going back to main menu"
 			return

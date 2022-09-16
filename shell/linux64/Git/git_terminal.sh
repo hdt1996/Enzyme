@@ -97,7 +97,7 @@ INPUT_ASSIGN(){
 	"branch")
 		$BASEDIR/git_terminal/branch.sh;;
 	"merge")
-		git merge;;
+		$BASEDIR/git_terminal/merge.sh;;
 	"rebase")
 		$BASEDIR/git_terminal/rebase.sh;;
 	"stage")
@@ -121,7 +121,6 @@ INPUT_ASSIGN(){
 		read x;;
 	esac
 	echo
-	echo "--------------------------------------------------------"
 }
 
 WHILE_INPUT(){
@@ -135,8 +134,7 @@ while [ $PROMPT = 1 ]
 		echo "--------------------------------------------------------"
 		INPUT_I=1
 		echo '
-		\rNOTE: Fetch and Pull runs with each prompt
-		\r      No need to run these git commands!'
+		\rCompleted fetch and pull...'
 		echo "Current Branch: $(git branch | grep '\* ' | sed -e 's/\* //')"
 		echo "............................"
 		echo "Choose one of the following:"
@@ -147,7 +145,6 @@ while [ $PROMPT = 1 ]
 		done
 		echo "............................"
 		read -p "Enter Action : " action
-		echo
 
 		if [ "$action" = "quit" ]; then
 			break

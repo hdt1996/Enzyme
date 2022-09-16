@@ -146,27 +146,21 @@ read -p "
 	show: Show all branches
 	show l: Show Local Branches
 	show r: Show Remote Branches
-	
 	add l: Make new local branch and switch/checkout to it
 	add ln: Make new local branch without switching/checkout
 	add r: Make new remote branch and switch/checkout to it
 	add rn: Make new remote branch and go back to original
-
 	ckout: Check out branch by name
 	ckout li: Check out branch from list menu selection
-	
 	arch: Archive branch by name (If not already by PR Appr)
 	      Note: This will delete the local or (and remote branch)
 	      To Re-Access: 1) git checkout -b <name> archive/<name>
 	      		    2) Go to Pull Request -> Restore branch
 	arch li: Archive branch chosen in list menu selection
-	
 	del: Delete branch by name
 	del li: Delete branch from list menu selection
-	
 	ovwr: Overwrite existing branch with specified commit/branch
 	ovwr li: Overwrite existing branch with selection from menu
-	
 	<Enter>: Exit menu
 	.......................................................
 	Enter Branch Option: " r_opt

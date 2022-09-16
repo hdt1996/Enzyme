@@ -1,5 +1,4 @@
 #!/bin/sh
-sudo apt-get install git
 
 BASEDIR=$(readlink -f $(dirname "$0"))
 OPTIONS="-user -email -dest -backup"
