@@ -1,14 +1,5 @@
 #!/bin/bash
-#var OPTIONS -- Add Named Arguments Separated by Space
-#Declare global vars after OPTIONS for use in executed command (Last Line)
-#	Ex. USER=""
-#	Ex. --CATEGORY=""   NOTE THE -- double hyphens included in argument!
-#CASE_ASSIGN Function: 
-#	Each case is specified per each named arguments (opt) in OPTIONS
-#		Ex. USER) ...execution
-#		Ex. --CATEGORY) ...execution
-#	Execution of case: Update related global variable to $2
-#		Ex. USER=$2
+
 OPTIONS="-filename"
 filename=""
 

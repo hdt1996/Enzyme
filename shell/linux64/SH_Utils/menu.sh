@@ -4,12 +4,16 @@ SHOW_DISPLAY()
 	TEXT="$1"
 	TITLE=$2
 	SEARCH="$3"
-	REPLACE='s/'"$3"'/'"$4"'/'
+	REPLACE='s/'"$3"'/'"$4"'/' 
+	TO_REP=""
 
-
-	LIST=$(echo "$TEXT" | grep -e "$SEARCH" | sed -e "$REPLACE")
+	if [ "$SEARCH" != "" ]; then
+		LIST=$(echo "$TEXT" | grep -e "$SEARCH" | sed -e "$REPLACE" | sed -e 's/ /_/g')
+	else
+		LIST=$(echo "$TEXT" | sed -e 's/ /_/g')
+	fi
+	
 	echo
-	echo "\t..............MENU MODE............."
 	echo
 	echo "\t..............$TITLE................"
 	for opt in $LIST
@@ -23,6 +27,10 @@ SHOW_DISPLAY()
 
 CHOOSE_INDEX(){
 	opt_index=0
+	if [ "$2" = "" ]; then
+		echo
+		return 5
+	fi
 	list=$(echo "$1" | grep -E '[\t]*[0-9]{1,} ' | sed -e 's/[\t]*[0-9]\{1,\} //')
 	for opt in $list
 	do

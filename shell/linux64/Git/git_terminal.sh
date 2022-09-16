@@ -46,12 +46,12 @@
 #	Escaping
 #		To escape "\n" in echo we need at least three
 #		To escape '\n' in echo we need at least 2
-BASEDIR=$(readlink -f $(dirname "$0"))
+BASEDIR=$(readlink -f $(dirname $0))
 OPTIONS="-repo -user -branch"
 BRANCH=""
 REPO=""
-USER=$(git config user.name)
-DEST=$(git config user.destination)
+USER="$(git config user.name)"
+DEST="$(git config user.destination)"
 
 
 ARG_BOOL(){ 
@@ -76,51 +76,70 @@ KWARG_KEYEQVAL(){
 }
 
 VARS_ASSIGN(){
-	case $1 in
-	-repo)
-		REPO=$2;;
-	-user)
-		USER=$2;;
-	-branch)
-		BRANCH=$2;;
+	case "$1" in
+	"-repo")
+		REPO="$2";;
+	"-user")
+		USER="$2";;
+	"-branch")
+		BRANCH="$2";;
 	esac
 }
 
 INPUT_ASSIGN(){
-	case $1 in
-	stage)
+	case "$1" in
+	"cmd")
+		read -p "Enter your custom command: " custom_cmd
+		echo
+		$custom_cmd
+		echo
+		read -p "Press Enter to continue: " p;;
+	"branch")
+		$BASEDIR/git_terminal/branch.sh;;
+	"merge")
+		git merge;;
+	"rebase")
+		$BASEDIR/git_terminal/rebase.sh;;
+	"stage")
 		$BASEDIR/git_terminal/stage.sh;;
 		
-	unstage)
+	"unstage")
 		$BASEDIR/git_terminal/unstage.sh;;
-	commit)
+	"commit")
 		$BASEDIR/git_terminal/commit.sh;;
-	uncommit)
+	"uncommit")
 		$BASEDIR/git_terminal/uncommit.sh;;
-	push)
-		git push
-		echo
-		echo "Success --- Pushed $choice ";;
-	log)
+	"push")
+		$BASEDIR/git_terminal/push.sh;;
+	"backup")
+		$BASEDIR/git_terminal/stash.sh;;
+	"log")
 		echo "q" | git --no-pager log
 		read x;;
-	reflog)
+	"reflog")
 		echo "q" | git --no-pager reflog
 		read x;;
 	esac
 	echo
-	echo "-----------------------RESULTS--------------------------"
-	git status
+	echo "--------------------------------------------------------"
 }
 
 WHILE_INPUT(){
 PROMPT=1
 while [ $PROMPT = 1 ] 
 	do
-		INPUT_I=1
 		echo
+		git fetch > /dev/null 2>&1
+		git pull > /dev/null 2>&1
+		git status
+		echo "--------------------------------------------------------"
+		INPUT_I=1
+		echo '
+		\rNOTE: Fetch and Pull runs with each prompt
+		\r      No need to run these git commands!'
+		echo "Current Branch: $(git branch | grep '\* ' | sed -e 's/\* //')"
+		echo "............................"
 		echo "Choose one of the following:"
-		echo 
 		for opt in $1
 		do
 			echo "$INPUT_I) $opt"
@@ -133,11 +152,8 @@ while [ $PROMPT = 1 ]
 		if [ "$action" = "quit" ]; then
 			break
 		fi
-		INPUT_ASSIGN $action
+		INPUT_ASSIGN "$action"
 		echo "________________________________________________________"
-		echo
-		echo
-		echo
 	done
 }
 
@@ -158,17 +174,16 @@ do
 		echo "ERROR: Unallowed Argument ---> $var <---"
 		exit 1
 	elif [ $INDEX = 1 ]; then
-		VARS_ASSIGN $CURR_VAR $var
-		INDEX=$((0))
+		VARS_ASSIGN "$CURR_VAR" "$var"
+		INDEX=0
 	else
 		INDEX=$((INDEX+1))
 	fi
 	
 done
 
-cd $DEST/$REPO
-git checkout $BRANCH
-WHILE_INPUT "stage unstage commit uncommit push quit log reflog"
-git status
+cd "$DEST/$REPO"
+git checkout "$BRANCH"
+WHILE_INPUT "cmd branch merge rebase stage unstage commit uncommit push backup log reflog quit"
 read x
 

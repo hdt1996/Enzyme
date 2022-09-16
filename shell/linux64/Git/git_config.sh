@@ -30,15 +30,15 @@ KWARG_KEYEQVAL(){
 }
 
 VARS_ASSIGN(){
-	case $1 in
-	-dest)
-		DESTINATION=$2;;
-	-user)
-		USER=$2;;
-	-backup)
-		BACKUP=$2;;
-	-email)
-		EMAIL=$2;;
+	case "$1" in
+	"-dest")
+		DEST="$2";;
+	"-user")
+		USER="$2";;
+	"-backup")
+		BACKUP="$2";;
+	"-email")
+		EMAIL="$2";;
 	esac
 }
 
@@ -59,20 +59,17 @@ do
 		echo "ERROR: Unallowed Argument ---> $var <---"
 		exit 1
 	elif [ $INDEX = 1 ]; then
-		VARS_ASSIGN $CURR_VAR $var
+		VARS_ASSIGN "$CURR_VAR" "$var"
 		INDEX=$((0))
 	else
 		INDEX=$((INDEX+1))
 	fi
 done
 
-cd $DEST/$REPO
-git checkout $BRANCH
-
-git config --global user.name $USER
-git config --global user.email $EMAIL
-git config --global user.destination $DEST
-git config --global user.backup $BACKUP
+git config --global user.name "$USER"
+git config --global user.email "$EMAIL"
+git config --global user.destination "$DEST"
+git config --global user.backup "$BACKUP"
 git config -l
 
 read x

@@ -1,14 +1,15 @@
 #!/bin/sh
 OPTIONS="-repo -user"
 REPO=""
-USER=$(git config user.name)
-DEST=$(git config user.destination)
+USER="$(git config user.name)"
+DEST="$(git config user.destination)"
+echo "$DEST"
 CASE_ASSIGN(){
-	case $1 in
-	-repo)
-		REPO=$2;;
-	-user)
-		USER=$2;;
+	case "$1" in
+	"-repo")
+		REPO="$2";;
+	"-user")
+		USER="$2";;
 	esac
 }
 
@@ -29,7 +30,7 @@ do
 		echo "ERROR: Unallowed Argument ---> $var <---"
 		exit 1
 	elif [ $INDEX = 1 ]; then
-		CASE_ASSIGN $CURR_VAR $var
+		CASE_ASSIGN "$CURR_VAR" "$var"
 		INDEX=$((0))
 	else
 		INDEX=$((INDEX+1))
@@ -38,6 +39,6 @@ do
 done
 
 echo "clone git@github.com:$USER/$REPO.git"
-git clone git@github.com:$USER/$REPO.git $DEST/$REPO
+git clone git@github.com:$USER/$REPO.git "$DEST/$REPO"
 echo $DEST/$REPO
 

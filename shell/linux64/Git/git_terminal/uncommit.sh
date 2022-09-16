@@ -11,61 +11,61 @@
 #			5) If the result is a single linear line of commits 
 #			   We can check out the "onto" branch and call merge
 #				Head pointer simply moves -> AKA fast-forward
-#				All 
-MENU(){
-	util="/home/htran/Desktop/SH_Utils/menu.sh"
-	txt_src=$1
-	title=$2
-	search=$3
-	replace=$4
-	group_lines=$5
-	get_detail(){
-		rgx="$search$1$group_lines"
-		echo "\t............................................"
-		echo "\tChosen: $1"
-		echo "..............Details................"
-		echo "$5"
-		echo "$txt_src" | pcregrep -M "$rgx"
-		echo "....................................."
-		echo "
+#
+
+MENU_SELECT_DETAIL(){
+	echo "\t............................................"
+	echo "\tChosen: $1"
+	echo "..............Details................"
+	echo 
+	echo "$2" | pcregrep -M "$3"
+	echo
+	echo "....................................."
+	echo "
 	Options to Enter
 	.........................................
-	Y: Proceed to next step
-	Q: Go back to select menu
-	N/<Other>: Retry selection
+	y: Proceed to next step
+	q: Go back to main menu
+	<Other>: Retry selection
 	........................................."
-		echo
-		echo "\tContinue with your selection? : "
-	}
-	
+	echo
+	echo "\tContinue with your selection? : "
+}
+
+MENU_PRE_SELECT(){
+	util="/home/htran/Desktop/SH_Utils/menu.sh"
+	txt_src="$1"
+	title="$2"
+	search="$3"
+	replace="$4"
+	group_lines="$5"
 	pending=0
 	while [ $pending = 0 ]
 	do
 	
-		id=$($util "$1" "$2" "$3" "$4")
-		read -p "$(get_detail $id)" proceed
-		if [ "$proceed" = "Y" ]; then
+		id=$($util "$txt_src" "$title" "$search" "$replace")
+		rgx="$search$id$group_lines"
+		read -p "$(MENU_SELECT_DETAIL "$id" "$txt_src" "$rgx")" proceed
+		if [ "$proceed" = "y" ]; then
 			echo "$id"
 			break
-		elif [ "$proceed" = "Q" ]; then
+		elif [ "$proceed" = "q" ]; then
 			echo 0
 			break
 		fi
 	done
 }
 
-
-get_uc_type(){
-	get_mrm(){
+MENU_POST_SELECT(){
 	read -rp "
-	..............MENU RESET METHOD................
+	..............UNCOMMIT TYPE................
 
 	Options to Enter
 	.........................................
 	h - historical : Uncommit all branches after chosen branch (riskier) 
 	c - commit: Creates new commit to reverse only chosen commit (safe)
 	cr - commit rebase: Chosen commit's changes be wiped from history
-		            Useful if chosen commit shows unauthorized data
+			    Useful if chosen commit shows unauthorized data
 	    IMPORTANT: Commits created after chosen commit will have their 
 	    	       histories merged with newest revert commit. This will 
 	    	       make these commits nonexistent while the changes from 
@@ -75,45 +75,34 @@ get_uc_type(){
 	    	       of branch.
 	     		    	       
 	uc - uncommit: Reverses chosen commit but not does make new commit
-	              Allows for more modifications after reverse to commit
+		      Allows for more modifications after reverse to commit
 	q - quit : Go back to main menu
 
 	........................................
 	<Enter Menu Reset Method : " mrm
 	echo
-	if [ "$mrm" = "q" ]; then
-		echo 0
-	else
-		echo "$mrm"
+	echo "....................."
+	echo
+	if [ "$mrm" = "h" ]; then
+		return 1
+	elif [ "$mrm" = "q" ]; then
+		return 1
+	elif [ "$mrm" = "c" ]; then
+		git revert "$1"
+	elif [ "$mrm" = "cr" ]; then
+		pre_commit="$1"'^1'
+		GIT_SEQUENCE_EDITOR="sed -i -e s'/^pick $(echo $1 | cut -c1-7)/\ndrop $(echo $1 | cut -c1-7)/'" git rebase -i "$pre_commit"
+		git push origin "$ORIG_BRANCH" --force
+	elif [ "$mrm" = "uc" ]; then
+		git revert -n "$1"
 	fi
-	}
-	process_mrm(){
-		if [ "$1" = "h" ]; then
-			return 1
-		elif [ "$1" = "q" ]; then
-			return 1
-		elif [ $1 = 0 ]; then
-			:
-		elif [ "$1" = "c" ]; then
-			git revert "$2"
-		elif [ "$1" = "cr" ]; then
-		read x
-		echo "$2"
-		pre_commit="$2"'^1'
-		GIT_SEQUENCE_EDITOR="sed -i -e s'/^pick $(echo $2 | cut -c1-7)/\ndrop $(echo $2 | cut -c1-7)/'" git rebase -i "$pre_commit"
-		
-		echo "BEFORE"
-		git push origin main --force
-		read x
-		elif [ "$1" = "uc" ]; then
-			git revert -n "$2"
-		fi
-		return 0
-	}
+	return 0
+	
+}
 
+PROCESS_OPTIONS(){
 	if [ "$2" = "menu" ]; then
-		mrm="$(get_mrm)"
-		process_mrm $mrm $1
+		MENU_POST_SELECT "$1"
 		proceed=$?
 		if [ $proceed = 0 ]; then
 			return 0
@@ -130,28 +119,31 @@ get_uc_type(){
 		<blank>: Go back to main menu
 		.........................................
 		<Enter Change Type : " uct	
+	echo
 	if [ "$uct" = "d" ]; then
-		git reset --hard $1
-	elif [ "$uct" = "p" ]; then
-		git reset --soft $1
+		git reset --hard "$1"
 		echo
+		read -p "Push to Remote Repo? [y/n]: " to_push
+		if [ "$to_push" = "y" ]; then
+			$BASEDIR/push.sh
+		fi
+		echo
+		
+	elif [ "$uct" = "p" ]; then
+		git reset --soft "$1"
+		echo
+		read -p "Push to Remote Repo? [y/n]: " to_push
+		if [ "$to_push" = "y" ]; then
+			$BASEDIR/push.sh
+		fi
+		echo
+	else
 		echo "\tNo Options Selected: Going back to main menu"
 	fi
-	
-	
 }
+BASEDIR=$(readlink -f $(dirname "$0"))
+ORIG_BRANCH="$(git branch | grep '\* ' | sed -e 's/\* //')"
 
-choose_index(){
-	opt_index=0
-	for opt in $1
-	do
-		if [ $opt_index = $2 ]; then
-			echo "$opt"
-			break
-		fi
-		opt_index=$((opt_index+1))
-	done
-}
 read -rp '
 	..............UNCOMMIT MODE................
 
@@ -163,13 +155,13 @@ read -rp '
 	<Enter Option: ' choice
 
 if [ "$choice" = "last" ]; then
-	get_uc_type HEAD~1
+	PROCESS_OPTIONS HEAD~1
 	
 elif [ "$choice" = "menu" ]; then
 
-	id=$(MENU "$(git log)" 'Commit IDs' '^commit ' '' '([^\n]*\n){5}')
+	id=$(MENU_PRE_SELECT "$(git log)" 'Commit IDs' '^commit ' '' '([^\n]*\n){5}')
 	if [ $id != 0 ]; then
-		get_uc_type "$id" "$choice"
+		PROCESS_OPTIONS "$id" "$choice"
 	fi
 fi
 echo
