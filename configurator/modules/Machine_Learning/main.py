@@ -2,14 +2,12 @@ from ..Utilities.py.dataframes import *
 from ..Utilities.py.file_manager import *
 from ..Utilities.py.dev import *
 from .tensor.tensor import *
-import numpy as np
-import shutil as sh
 SA = FileManager()
 DF = DataFrames()
 PLT = Plot()
 DEV = Development()
 DEV.makeTestDir(proj_name = 'Tensor')
-
+#plt.imshow(train_df.loc['[0, 0]':'[0, 27]'].to_numpy())
 def main(model: str, train_url: str = None, test_url: str = None, label: str = None, col_names: list = None, options: dict = {}):
     if model == 'LinearBinary':
         tensor_obj = LinearClassifier(train_url = train_url, test_url = test_url, label = label, save_loc = DEV.proj_test_dir, col_names = col_names, options = options)
@@ -21,6 +19,8 @@ def main(model: str, train_url: str = None, test_url: str = None, label: str = N
         tensor_obj = Hidden_Markov(train_url = train_url, test_url = test_url, label = label, save_loc = DEV.proj_test_dir, col_names = col_names, options = options)
     elif model == 'DeeperNeuralNetwork':
         tensor_obj = DeeperNeuralNetwork(train_url = train_url, test_url = test_url, label = label, save_loc = DEV.proj_test_dir, col_names = col_names, options = options)
+    elif model == 'ConvNeuralNetwork':
+        tensor_obj = ConvNeuralNetwork(train_url = train_url, test_url = test_url, label = label, save_loc = DEV.proj_test_dir, col_names = col_names, options = options)
     tensor_obj.processModel()
 
 DEBUG = True
@@ -53,19 +53,64 @@ if DEBUG:
             'hidden_units':[30,10],
             'steps': 7
         }) """
-    train_data, test_data =  tf.keras.datasets.fashion_mnist.load_data()
-    train_df = DF.buildDFbyNumpy(data = train_data[0])
-    train_label = DF.buildDFbyNumpy(data = train_data[1])
-    test_df = DF.buildDFbyNumpy(data = test_data[0])
-    test_label = DF.buildDFbyNumpy(data = test_data[1])
-    main(   
+    #train_data, test_data =  tf.keras.datasets.fashion_mnist.load_data()
+    """main(   
         model = 'DeeperNeuralNetwork',
         label = None, 
-        train_url = pd.DataFrame(),
-        test_url = pd.DataFrame(),
+        train_url = train_data,
+        test_url = test_data,
         col_names = None,
         options = \
         {
-            'hidden_units':[30,10],
-            'steps': 7
+            'hidden_layers':
+            [
+                {'type':'Flat','input_shape':(28,28)},
+                {'type':'Dense','neurons':128, 'activation':'0 or More'},
+                {'type':'Dense','neurons':10 , 'activation': 'Sum to 1'},
+            ],
+            'label_classes':['T-Shirt','Trouser','Pull-overs','Dress','Coat','Sandal','Shirt','Sneaker','Bag','Ankle Boots'],
+            'epochs':5,
+            'loss':'sparse_categorical_crossentropy',
+            'optimizer':'adam',
+            'metrics':['accuracy'],
+            'batch_size':64,
+            'DNN_type': 'Sequential'
+        })"""
+    train_data, test_data =  tf.keras.datasets.cifar10.load_data()
+    main(   
+        model = 'ConvNeuralNetwork',
+        label = None, 
+        train_url = train_data,
+        test_url = test_data,
+        col_names = None,
+        options = \
+        {
+            'hidden_layers':
+            [
+                {'type':'Conv2D', 'filters':32, 'size':(3,3), 'input_shape':(32,32,3), 'activation':'0 or More'},
+                {'type':'MaxPooling2D', 'size':(2,2)},
+                {'type':'Conv2D', 'filters':64, 'size':(3,3), 'activation':'0 or More'},
+                {'type':'MaxPooling2D', 'size':(2,2)},
+                {'type':'Conv2D', 'filters':64, 'size':(3,3), 'activation':'0 or More'},
+                {'type':'Flat'},
+                {'type':'Dense','neurons':64, 'activation':'0 or More'},
+                {'type':'Dense','neurons':10}
+            ],
+            'label_classes':['Airplane','Automobile','Bird','Cat','Deer','Dog','Frog','Horse','Ship','Truck'],
+            'epochs':1,
+            'loss':'sparse_categorical_crossentropy',
+            'optimizer':'adam',
+            'metrics':['accuracy'],
+            'batch_size':128,
+            'DNN_type': 'Sequential',
+            'image_gen':
+            {
+                "rotation_range":40, 
+                "width_shift_range":0.2, 
+                "height_shift_range":0.2, 
+                "shear_range":0.2,
+                "zoom_range":0.2, 
+                "horizontal_flip": True, 
+                "fill_mode":"nearest"
+            }
         })

@@ -50,7 +50,6 @@ class HTML():
         nl = '\n'
         if self.main_tags.get(tag) == None:
             child = '\n\t'
-            #child_tab = '\t'
             child_tab = []
             for num in range(rec_tabs):
                 child_tab.append('\t')
@@ -59,10 +58,11 @@ class HTML():
             child = ''
             child_tab = ''
         tag_build = [f"{nl+child_tab}<{tag} {prop_str}>{nl}"]
+
         for e in elements:
             tag_build.append(f"{nl+child}{e}{nl}")
-        #tag_build.append('\n\n' if tag == 'html' else tab+nl)
         tag_build.append(f"{nl + child_tab}</{tag}>")
+
         return ''.join(tag_build)
 
     def buildBodyGrid(self, row_col_grid: list =  []):
@@ -167,13 +167,10 @@ class HTML():
                 if isinstance(data[key], dict) and data[key].get('type') == 'element':
                     ch_el_str = self.recurseBuildJSON(data[key], n = n + 1)
                     elem_list.append(ch_el_str)
-        #should be string only if it reaches here
         build = self.buildElement(elem_type= p_tag, prop_dict = p_props, css_list = p_css, fetcher = p_script, innerHTML= elem_list, style = p_style, rec_tabs = n + 1)
-        #print('Recursion Count: ', COUNT,'\n','build:\n',build)
         return build
         
 
-        
     def buildDocJSON(self,data:str = ''):
         layer_build = []
         dict_data = json.loads(s = data, strict = False)
@@ -182,8 +179,6 @@ class HTML():
             layer_build.append(l_build)
         return layer_build
         
-
-
 
     def assignAPI(self, api_endpoint: str, request_options: dict): #to be inherrited by JS
         pass

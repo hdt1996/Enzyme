@@ -2,7 +2,7 @@
 import matplotlib.pyplot as plt
 import pandas as pd
 import numpy as np
-import os
+import os, subprocess
 
 class Plotter():
     def __init__(self):
@@ -20,6 +20,25 @@ class Plotter():
                 'pie': True
 
             }
+
+    def graphImage(self, data : np.ndarray | pd.DataFrame, shape: tuple = None, df_index: int = 0, save_loc: os.PathLike = '/tmp/bit_image.png', show: bool = False):
+        if isinstance(data, np.ndarray):
+            plt.imshow(X=data)
+        elif isinstance(data, pd.DataFrame):
+            start_index=[df_index]
+            start_index.extend([0 for ncols in list(shape[1:-1])])
+            end_index=[df_index]
+            end_index.extend([ncols - 1 for ncols in list(shape[1:-1])])
+            plt.imshow(X=data.loc[str(start_index):str(end_index)].to_numpy())
+        else:
+            raise ValueError("Data needs to be pd Dataframe or numpy array")
+        plt.savefig(save_loc)
+        if show:
+            shell_cmd = f"display /{save_loc}"
+            sh_process = subprocess.Popen(shell_cmd.split(), stdout =  subprocess.PIPE)
+            output, error = sh_process.communicate()
+            print(output, error)
+
     def regLinear(self, x: list, y: list, axis: list = [], point_color:str = 'b-', save_loc: os.PathLike = None):
         #axis: [xbeginning, xend, ybeginning, yend]
         plt.plot(x, y, 'ro')

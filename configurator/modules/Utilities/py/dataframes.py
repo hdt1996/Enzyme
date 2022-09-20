@@ -64,9 +64,11 @@ class DataFrames():
     def addRow(self, data: list):
         self.df.loc[len(self.df.index)] = data
 
-    def buildDFbyNumpy(self, data: list = [], index: list = None):
+    def buildDFbyNumpy(self, data: list = [], index: list = None, to_shape: tuple = ()):
         if isinstance(data, np.ndarray):
-            def recurse(d_item: np.ndarray, index: int, mult_index: list = [], n = 0):
+            def recurse(d_item: np.ndarray, index: int, mult_index: list = [], n: int = 0):
+                # Recursion method that uses local variable mult_index to reduce heap_memory stacking
+                # For function to work properly, mult_index = [] CANNOT be passed to function call
                 mult_index.append(index)
                 for it_index, item in enumerate(d_item):
                     if isinstance(item,np.ndarray):
@@ -75,11 +77,30 @@ class DataFrames():
                         col_dict[it_index].append(item)
                 indices.append(str(mult_index))
                 mult_index.pop()
+            def recurse2(value: int, index: int, mult_index: list = [], n: int = 0, to_shape: tuple = ()):
+                mult_index.append(index)
+                curr_shape = to_shape[n]
+                for i in range(curr_shape):
+                    mult_index.append(i)
+                    if n < len(to_shape) - 1:
+                        recurse2(value = value, index = i, n = n + 1, to_shape = to_shape)
+                    else:
+                        col_dict[0].append(value)
+                        indices.append(str(mult_index)) 
+                    mult_index.pop()
+                mult_index.pop()
             indices = []
             col_dict = {}
             if len(data.shape) == 1:
-                indices = None
-                col_dict[0] = list(data)
+                col_dict[0] = []
+
+                if len(to_shape) > 2:
+                    for index in range(data.shape[0]):
+                        recurse2(value = data[index], index = index, to_shape = list(to_shape[1:-1]), mult_index = [])
+                        #indices.pop()
+                else:
+                    col_dict[0] = list(data)
+                    indices = None
             else:
                 for i in range(data.shape[len(data.shape)-1]):
                     col_dict[i] = []

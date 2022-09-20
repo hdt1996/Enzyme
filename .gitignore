@@ -5,3 +5,5 @@ gui/py_django/app_writer/migrations/
 *.msi
 *.svg
 *.pyc
+*.csv
+*.xlsx
