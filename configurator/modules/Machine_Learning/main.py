@@ -6,9 +6,10 @@ SA = FileManager()
 DF = DataFrames()
 PLT = Plot()
 DEV = Development()
+import tensorflow_datasets as tfds
 DEV.makeTestDir(proj_name = 'Tensor')
 #plt.imshow(train_df.loc['[0, 0]':'[0, 27]'].to_numpy())
-def main(model: str, train_url: str = None, test_url: str = None, label: str = None, col_names: list = None, options: dict = {}):
+def main(model: str, train_url: str = None, test_url: str = None, label: str = None, col_names: list = None, options: dict = {}, data_valid= None, metadata = None):
     if model == 'LinearBinary':
         tensor_obj = LinearClassifier(train_url = train_url, test_url = test_url, label = label, save_loc = DEV.proj_test_dir, col_names = col_names, options = options)
     elif model == 'LinearVariable':
@@ -20,7 +21,7 @@ def main(model: str, train_url: str = None, test_url: str = None, label: str = N
     elif model == 'DeeperNeuralNetwork':
         tensor_obj = DeeperNeuralNetwork(train_url = train_url, test_url = test_url, label = label, save_loc = DEV.proj_test_dir, col_names = col_names, options = options)
     elif model == 'ConvNeuralNetwork':
-        tensor_obj = ConvNeuralNetwork(train_url = train_url, test_url = test_url, label = label, save_loc = DEV.proj_test_dir, col_names = col_names, options = options)
+        tensor_obj = ConvNeuralNetwork(train_url = train_url, test_url = test_url, label = label, save_loc = DEV.proj_test_dir, col_names = col_names, options = options, metadata= metadata, data_valid = data_valid)
     tensor_obj.processModel()
 
 DEBUG = True
@@ -76,7 +77,8 @@ if DEBUG:
             'batch_size':64,
             'DNN_type': 'Sequential'
         })"""
-    train_data, test_data =  tf.keras.datasets.cifar10.load_data()
+
+    """train_data, test_data =  tf.keras.datasets.cifar10.load_data()
     main(   
         model = 'ConvNeuralNetwork',
         label = None, 
@@ -112,5 +114,50 @@ if DEBUG:
                 "zoom_range":0.2, 
                 "horizontal_flip": True, 
                 "fill_mode":"nearest"
+            }
+        })"""
+    (train_data, data_valid, test_data), metadata = tfds.load('cats_vs_dogs',split=['train[:80%]','train[80%:90%]','train[90%:]'], with_info=True, as_supervised=True)
+    main(   
+        model = 'ConvNeuralNetwork',
+        label = None, 
+        train_url = train_data,
+        test_url = test_data,
+        data_valid = data_valid,
+        metadata=metadata,
+        col_names = None,
+        options = \
+        {
+            'hidden_layers':
+            [
+                {'type':'Conv2D', 'filters':32, 'size':(3,3), 'input_shape':(32,32,3), 'activation':'0 or More'},
+                {'type':'MaxPooling2D', 'size':(2,2)},
+                {'type':'Conv2D', 'filters':64, 'size':(3,3), 'activation':'0 or More'},
+                {'type':'MaxPooling2D', 'size':(2,2)},
+                {'type':'Conv2D', 'filters':64, 'size':(3,3), 'activation':'0 or More'},
+                {'type':'Flat'},
+                {'type':'Dense','neurons':64, 'activation':'0 or More'},
+                {'type':'Dense','neurons':10}
+            ],
+            'label_classes':['Airplane','Automobile','Bird','Cat','Deer','Dog','Frog','Horse','Ship','Truck'],
+            'epochs':1,
+            'loss':'sparse_categorical_crossentropy',
+            'optimizer':'adam',
+            'metrics':['accuracy'],
+            'batch_size':128,
+            'DNN_type': 'Sequential',
+            'image_gen':
+            {
+                "rotation_range":40, 
+                "width_shift_range":0.2, 
+                "height_shift_range":0.2, 
+                "shear_range":0.2,
+                "zoom_range":0.2, 
+                "horizontal_flip": True, 
+                "fill_mode":"nearest"
+            },
+            'image_conform':
+            {
+                'size':160,
+                'padded':True
             }
         })

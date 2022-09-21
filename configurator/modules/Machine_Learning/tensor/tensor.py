@@ -1,14 +1,18 @@
 from __future__ import absolute_import, division, print_function, unicode_literals
 import tensorflow as tf
 import tensorflow_probability as tfp
+from tensorflow.python.data.ops.dataset_ops import PrefetchDataset, MapDataset
+
 from tensorflow import keras
 import pandas as pd
 from ...Utilities.py.plotter import Plotter as Plot
 from ...Utilities.py.dataframes import DataFrames
-from keras.preprocessing import image
+
 import os
 import numpy as np
-from random import randrange
+
+from .data.data import DataManager
+
 PLT = Plot()
 DF = DataFrames()
 
@@ -60,7 +64,8 @@ class TensorFlow():
         Session:
             To evaluate tensors
      """
-    def __init__(self, train_url: str = None, test_url: str = None, label:str = None, save_loc: os.PathLike = None, col_names: list = None):
+    def __init__(self, train_url: str = None, test_url: str = None, data_valid = None, metadata = None, label:str = None, 
+                col_names: list = None, image_conform: dict = None, image_gen: dict = None, save_loc: os.PathLike = None):
         self.data_types = \
         {
             'string':tf.string,
@@ -71,35 +76,8 @@ class TensorFlow():
             'float32':tf.float32,
             'float64':tf.float64,
         }
-        if isinstance(train_url,str):
-            self.train_df = pd.read_csv(train_url,names = col_names, header = 0)
-            self.train_label = self.train_df.pop(label)
-        elif isinstance(train_url, pd.DataFrame):
-            self.train_df = train_url
-        elif isinstance(train_url, tuple) and any(isinstance(i, np.ndarray) for i in train_url):
-            self.train_df = train_url[0]
-            self.train_label = train_url[1]
-            #self.train_df = DF.buildDFbyNumpy(data = train_url[0])
-            #self.train_label = DF.buildDFbyNumpy(data = train_url[1], to_shape = train_url[0].shape)
-            #test_fig = PLT.graphImage(data = self.train_df, shape = train_url[0].shape, df_index=3, show = True)
-
-        if isinstance(test_url,str):
-            self.test_df = pd.read_csv(test_url, names = col_names, header = 0)
-            self.test_label = self.test_df.pop(label)
-        elif isinstance(test_url, pd.DataFrame):
-            self.test_df = test_url
-
-        elif isinstance(test_url, tuple) and any(isinstance(i, np.ndarray) for i in test_url):  
-            #self.test_df = DF.buildDFbyNumpy(data = test_url[0])
-            #self.test_label = DF.buildDFbyNumpy(data = test_url[1], to_shape = test_url[0].shape)
-            self.test_df = test_url[0]
-            self.test_label = test_url[1]
-        if save_loc != None:
-            self.save_loc = save_loc
-            #self.train_df.to_csv(os.path.join(save_loc, 'train_df.csv'))
-            #self.test_df.to_csv(os.path.join(save_loc, 'test_df.csv'))
-            """ self.train_label.to_csv(os.path.join(save_loc, 'train_label.csv'))
-            self.test_label.to_csv(os.path.join(save_loc, 'test_label.csv')) """
+        self.DM= DataManager(train_url = train_url, test_url = test_url, data_valid = data_valid, metadata=metadata, 
+                                    label=label, col_names = col_names, image_conform=image_conform, image_gen = image_gen, save_loc = save_loc)
 
     def isolateNPValue(self, nparray: np.ndarray):
         if not isinstance(nparray, np.ndarray):
@@ -141,33 +119,47 @@ class TensorFlow():
         tf_dict['rank'] = f"Nested Levels: {int(tf.rank(var))}"
         return tf_dict
 
-    def genDataVisuals(self):
-        PLT.plotHistogram(self.train_df, 'age',save_loc = os.path.join(self.save_loc,'histogram.png'))
 
-        PLT.plotGroupMeans(col_names = ['sex'], output_col = 'survived', graph_type = 'barh',
-                            dfs = [self.train_df, self.train_label],labels = ['',f"% survive"],
-                            save_loc = os.path.join(self.save_loc,'group_means.png'))
+
+    def conformIMGSize(self, img, label):
+        """
+        Reshape image to self.img_size
+        """
+        img = tf.cast(img, tf.float32)
+        img = (img/255.0)
+        img=tf.image.resize(images=img, size=(self.image_conform['size'], self.image_conform['size']),preserve_aspect_ratio=False)
+        return img, label
+
+    def conformIMGSizePad(self, img, label):
+        """
+        Reshape image to self.img_size
+        """
+        img = tf.cast(img, tf.float32)
+        img = (img/255.0)
+        #img = tf.image.convert_image_dtype(image=img,dtype=tf.float32) THIS IS SAME AS LAST TWO COMMANDS IN ONE
+        img=tf.image.resize_with_pad(image=img, target_height=self.image_conform['size'], target_width= self.image_conform['size'])
+        return img, label
+
     def processModel(self):
-        self.prepareData()
+        self.processData()
         self.estimateModel()
-
 
 
 class LinearClassifier(TensorFlow): #Supervised
     def __init__(self, train_url: str = None, test_url: str = None, label:str = None, save_loc: os.PathLike = None, col_names: list = None, options: dict = {}):
         super().__init__(train_url = train_url, test_url = test_url, label = label, save_loc = save_loc, col_names = col_names)
         self.features = []
-    def prepareData(self):
+    def processData(self):
         categories = []
         numericals = []
-        for col in self.train_df.columns:
-            val = self.train_df.loc[0][col]
+        for col in self.DM.train_df.columns:
+            val = self.DM.train_df.loc[0][col]
             if isinstance(val,str) or np.issubdtype(type(val),np.integer):
                 categories.append(col)
             else:
                 numericals.append(col)
         for fname in categories:
-            vocab = self.train_df[fname].unique()
+            vocab = self.DM.train_df[fname].unique()
             self.features.append(tf.feature_column.categorical_column_with_vocabulary_list(key = fname, vocabulary_list = vocab))
         for fname in numericals:
             self.features.append(tf.feature_column.numeric_column(key = fname, dtype = tf.float32))
@@ -182,17 +174,19 @@ class LinearClassifier(TensorFlow): #Supervised
         return inputFunction
 
     def estimateModel(self):
-        train_function = self.genInputFunction(feature_df = self.train_df, label_df = self.train_label)
-        test_function = self.genInputFunction(feature_df = self.test_df, label_df = self.test_label, shuffle = False, epochs = 1)
+        train_function = self.genInputFunction(feature_df = self.DM.train_df, label_df = self.DM.train_label)
+        test_function = self.genInputFunction(feature_df = self.DM.test_df, label_df = self.DM.test_label, shuffle = False, epochs = 1)
         estimator = tf.estimator.LinearClassifier(feature_columns = self.features)
         estimator.train(train_function)
         test_results = estimator.evaluate(test_function)
         predictions = estimator.predict(test_function)
         print(test_results['accuracy'])
 
+
 class LinearVariable(TensorFlow):
     def __init__(self, train_url: str = None, test_url: str = None, label:str = None, save_loc: os.PathLike = None, col_names: list = None, options: dict = {}):
         super().__init__(train_url = train_url, test_url = test_url, label = label, save_loc = save_loc, col_names = col_names)
+
 
 class DeepNeuralNetwork(TensorFlow): #Supervised
 
@@ -213,7 +207,7 @@ class DeepNeuralNetwork(TensorFlow): #Supervised
         return tf.data.Dataset.from_tensor_slices(dict(feature_df)).batch(batch_size)
 
     def toPredictPrompt(self):
-        for feature_col in self.train_df.columns:
+        for feature_col in self.DM.train_df.columns:
             valid = True
             while valid:
                 val = input(feature_col + ": ")
@@ -222,8 +216,8 @@ class DeepNeuralNetwork(TensorFlow): #Supervised
 
             self.predictions[feature_col] = [float(val)]
 
-    def prepareData(self):
-        for col in self.train_df.columns:
+    def processData(self):
+        for col in self.DM.train_df.columns:
             self.features.append(tf.feature_column.numeric_column(key = col))
 
     def estimateModel(self):
@@ -231,8 +225,8 @@ class DeepNeuralNetwork(TensorFlow): #Supervised
         print(estimator)
 
 
-        estimator.train(input_fn = lambda: self.inputFunction(feature_df = self.train_df, label_df = self.train_label, training = True),steps = 5000)
-        test_results = estimator.evaluate(input_fn = lambda: self.inputFunction(feature_df = self.test_df, label_df = self.test_label, training = False))
+        estimator.train(input_fn = lambda: self.inputFunction(feature_df = self.DM.train_df, label_df = self.DM.train_label, training = True),steps = 5000)
+        test_results = estimator.evaluate(input_fn = lambda: self.inputFunction(feature_df = self.DM.test_df, label_df = self.DM.test_label, training = False))
         print(test_results)
 
 
@@ -283,7 +277,7 @@ class Hidden_Markov(TensorFlow):
         self.trans_dist = self.tfd.Categorical(probs = [[.5,.5],[.2,.8]])
         self.obs_dist = self.tfd.Normal(loc = [0.,15.], scale=[5.,10.]) #loc is mean for states (hot and cold) | scale is standard deviation for states (hot and cold)
         self.steps = options['steps'] #How many days to predict for or how many cycles to run through probability model
-    def prepareData(self):
+    def processData(self):
         pass
         print('Done...')
     def estimateModel(self):
@@ -448,9 +442,10 @@ class DeeperNeuralNetwork(TensorFlow):
         self.dnn_type = options['DNN_type']
         self.predictions = []
 
-    def prepareData(self):
-        self.train_df = self.train_df / 255.0
-        self.test_df = self.test_df / 255.0
+    def processData(self):
+
+        self.DM.train_df = self.DM.train_df / 255.0
+        self.DM.test_df = self.DM.test_df / 255.0
 
 
     def processHiddenLayers(self,layer_choice: dict) -> keras.layers:
@@ -476,21 +471,21 @@ class DeeperNeuralNetwork(TensorFlow):
     def estimateModel(self):
         model = self.prepareModel()
         model.compile(optimizer=self.optimizer, loss = self.loss, metrics= self.metrics)
-        model.fit(self.train_df, self.train_label, epochs = self.epochs, batch_size = self.batch_size)
+        model.fit(self.DM.train_df, self.DM.train_label, epochs = self.epochs, batch_size = self.batch_size)
 
-        test_loss, test_acc = model.evaluate(self.test_df, self.test_label, verbose = 1) #Verbose - are we looking at output or not (How much printed to console)
+        test_loss, test_acc = model.evaluate(self.DM.test_df, self.DM.test_label, verbose = 1) #Verbose - are we looking at output or not (How much printed to console)
         print('Test Accuracy: ', test_acc)
-        predictions = model.predict(self.test_df) #Gives us probability distribution of items on output layer
+        predictions = model.predict(self.DM.test_df) #Gives us probability distribution of items on output layer
 
         self.toPredictPrompt()
         for requested in self.predictions:
             requested = int(requested)
-            prediction=model.predict(self.test_df[requested])
+            prediction=model.predict(self.DM.test_df[requested])
             pred_val = self.label_classes[np.argmax(prediction)] #np.argmax Gives us maximum value
-            act_val = self.label_classes[self.test_label[requested]]
+            act_val = self.label_classes[self.DM.test_label[requested]]
             print('Prediction is :',pred_val)
             print('Actual Result is :', act_val)
-            PLT.graphImage(data = self.test_df[requested], show = True)
+            PLT.graphImage(data = self.DM.test_df[requested], show = True)
 
     def toPredictPrompt(self):
         valid = False
@@ -571,8 +566,9 @@ class ConvNeuralNetwork(TensorFlow):
 
 
     """
-    def __init__(self, train_url: str = None, test_url: str = None, label:str = None, save_loc: os.PathLike = None, col_names: list = None, options: dict = {}):
-        super().__init__(train_url = train_url, test_url = test_url, label = label, save_loc = save_loc, col_names = col_names)
+    def __init__(self, train_url: str = None, test_url: str = None, label:str = None, save_loc: os.PathLike = None, col_names: list = None, options: dict = {}, metadata = None, data_valid = None):
+        super().__init__(train_url = train_url, test_url = test_url, label = label, save_loc = save_loc, col_names = col_names, metadata = metadata, data_valid = data_valid, 
+                            image_conform = options['image_conform'], image_gen = options['image_gen'])
         self.hidden_layers = options['hidden_layers']
         self.input_size = None #How many filters we will have
         self.filters = None #How many filters; def: some pattern of pixels such as straight line in bitmap
@@ -586,7 +582,7 @@ class ConvNeuralNetwork(TensorFlow):
         self.loss = options['loss']
         self.metrics = options['metrics']
         self.batch_size = options['batch_size']
-        self.image_gen = options['image_gen']
+        self.dnn_type = options['DNN_type']
         self.layer_options =\
         {
             'Dense':{"neurons":int},#"activation":str},
@@ -601,12 +597,14 @@ class ConvNeuralNetwork(TensorFlow):
             '0 to 1': 'sigmoid', #Used to squish values between zero and one
             '-1 to 1': 'tanh' #Used to squish values between -1 and 1
         }
-        self.dnn_type = options['DNN_type']
+
         self.predictions = []
 
-    def prepareData(self):
-        self.train_df = self.train_df / 255.0
-        self.test_df = self.test_df / 255.0
+
+    def processData(self):
+        self.DM.cleanData()
+        self.DM.renderImages(num_entries = 15)
+        print('Done')
 
     
 
@@ -652,11 +650,11 @@ class ConvNeuralNetwork(TensorFlow):
     def estimateModel(self):
         model = self.prepareModel()
         model.compile(optimizer=self.optimizer, loss = tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True), metrics= self.metrics)
-        model.fit(self.train_df, self.train_label, epochs = self.epochs, batch_size = self.batch_size, validation_data=(self.test_df, self.test_label))
+        model.fit(self.DM.train_df, self.DM.train_label, epochs = self.epochs, batch_size = self.batch_size, validation_data=(self.DM.test_df, self.DM.test_label))
 
-        test_loss, test_acc = model.evaluate(self.test_df, self.test_label, verbose = 2) #Verbose - are we looking at output or not (How much printed to console)
+        test_loss, test_acc = model.evaluate(self.DM.test_df, self.DM.test_label, verbose = 2) #Verbose - are we looking at output or not (How much printed to console)
         print('Test Accuracy: ', test_acc)
-        predictions = model.predict(self.test_df) #Gives us probability distribution of items on output layer
+        predictions = model.predict(self.DM.test_df) #Gives us probability distribution of items on output layer
         self.generateImages(num_images = 20)
         self.toPredictPrompt()
         for requested in self.predictions:
@@ -665,9 +663,9 @@ class ConvNeuralNetwork(TensorFlow):
             #image data will be stored as multiple np arrays
             #All need to be housed within one np array for model to predict properly
             #Will use np.expand_dims to place all nested_arrays within one large np_array
-            raw_data = self.test_df[requested]
+            raw_data = self.DM.test_df[requested]
             img_array = np.expand_dims(raw_data,0)
-            label_index = self.isolateNPValue(nparray=self.test_label[requested])
+            label_index = self.isolateNPValue(nparray=self.DM.test_label[requested])
             prediction=model.predict(img_array)
             pred_val = self.label_classes[np.argmax(prediction)] #np.argmax Gives us maximum value
             act_val = self.label_classes[label_index]
@@ -684,19 +682,4 @@ class ConvNeuralNetwork(TensorFlow):
             proceed = input("Keep choosing? [Y/N]: ")
             if proceed == "N":
                 valid = True
-    def generateImages(self, num_images: int = 1):
-        img_generator=image.ImageDataGenerator(**self.image_gen)
-        new_images=[]
-        random_int = randrange(start= 0, stop = self.train_df.shape[0])
-        img = self.train_df[random_int]
-        img = image.image_utils.img_to_array(img = img)
-        new_shape = [1]
-        new_shape.extend(img.shape)
-        img = img.reshape(tuple(new_shape))
-        index = 0
-        for batch in img_generator.flow(x = img, save_prefix='TD',save_format='.png'):
-            PLT.graphImage(data = batch[0], show = True)
-            index += 1
-            if index > num_images:
-                break
-            new_images.append(batch[0])
+
