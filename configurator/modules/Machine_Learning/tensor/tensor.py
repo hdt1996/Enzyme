@@ -82,6 +82,16 @@ class TensorFlow():
             '0 to 1': 'sigmoid', #Used to squish values between zero and one
             '-1 to 1': 'tanh' #Used to squish values between -1 and 1
         }
+
+        self.layer_options =\
+        {
+            'Dense':{"neurons":int},#"activation":str},
+            'Flat':{}, #"input_shape":tuple},
+            'Conv2D':{"filters":int, "size":tuple, "activation":str}, #"input_shape": tuple}
+            'MaxPooling2D':{"size":tuple},
+            'GlobalAveragePooling2D':{},
+            'PreTrain':{"src_name":str, 'input_shape':tuple, 'include_top': bool, 'weights':str}
+        }
     def isolateNPValue(self, nparray: np.ndarray):
         if not isinstance(nparray, np.ndarray):
             return nparray
@@ -124,6 +134,49 @@ class TensorFlow():
     def processModel(self):
         self.processData()
         self.estimateModel()
+    
+    def processPreTrain(self, name: str,  opts: dict):
+        if name == 'MobileNetV2':
+            model_layer = tf.keras.applications.MobileNetV2(**opts)
+        return model_layer
+
+    def processHiddenLayers(self,layer_choice: dict) -> keras.layers:
+        layer_type = layer_choice.pop('type')
+        for key in self.layer_options[layer_type]:
+            if not key in layer_choice:
+                raise KeyError (f"You are missing {key} in your layer inputs")
+            if not isinstance(layer_choice[key],self.layer_options[layer_type][key]):
+                raise TypeError (f"Please correct type for {key} to {self.layer_options[layer_type][key]}")
+        if layer_type == 'Flat':
+            kwargs={}
+            if layer_choice.get('input_shape'):
+                kwargs['input_shape']= layer_choice['input_shape']
+            layer_item = keras.layers.Flatten(**kwargs)
+        elif layer_type == 'Dense':
+            kwargs={}
+            neurons = layer_choice['neurons']
+            if layer_choice.get('activation'):
+                kwargs['activation']=self.activation_options[layer_choice['activation']]
+            layer_item = keras.layers.Dense(units=neurons, **kwargs)
+        elif layer_type == 'Conv2D':
+            kwargs={}
+            if layer_choice.get('input_shape'):
+                kwargs['input_shape'] = layer_choice['input_shape']
+            filters = layer_choice['filters']
+            size = layer_choice['size']
+            activation = self.activation_options[layer_choice['activation']]
+            layer_item = keras.layers.Conv2D(filters=filters, kernel_size=size, activation=activation, **kwargs)
+        elif layer_type == 'MaxPooling2D':
+            size = layer_choice['size']
+            layer_item = keras.layers.MaxPooling2D(pool_size= size)
+
+        elif layer_type == 'PreTrain':
+            name = layer_choice.pop('src_name')
+            layer_item = self.processPreTrain(name = name, opts = layer_choice)
+
+        elif layer_type == 'GlobalAveragePooling2D':
+            layer_item = tf.keras.layers.GlobalAveragePooling2D()
+        return layer_item
 
 class LinearClassifier(TensorFlow): #Supervised
     def __init__(self, train_url: str = None, test_url: str = None, label:str = None, save_loc: os.PathLike = None, col_names: list = None, options: dict = {}):
@@ -414,21 +467,6 @@ class DeeperNeuralNetwork(TensorFlow):
         self.DM.train_df = self.DM.train_df / 255.0
         self.DM.test_df = self.DM.test_df / 255.0
 
-
-    def processHiddenLayers(self,layer_choice: dict) -> keras.layers:
-        layer_type = layer_choice['type']
-        for key in self.layer_options[layer_type]:
-            if not key in layer_choice:
-                raise KeyError (f"You are missing {key} in your layer inputs")
-        if layer_type == 'Flat':
-            input_shape = layer_choice['input_shape']
-            layer_item = keras.layers.Flatten(input_shape = input_shape)
-        elif layer_type == 'Dense':
-            neurons = layer_choice['neurons']
-            activation = self.activation_options[layer_choice['activation']]
-            layer_item = keras.layers.Dense(units=neurons, activation=activation)
-        return layer_item
-
     def prepareModel(self):
         #Define the architecture
         if self.dnn_type == 'Sequential':
@@ -547,62 +585,46 @@ class ConvNeuralNetwork(TensorFlow):
         self.metrics = options['metrics']
         self.batch_size = options['batch_size']
         self.dnn_type = options['DNN_type']
-        self.layer_options =\
+        '''self.layer_options =\
         {
             'Dense':{"neurons":int},#"activation":str},
             'Flat':{}, #"input_shape":tuple},
             'Conv2D':{"filters":int, "size":tuple, "activation":str}, #"input_shape": tuple}
             'MaxPooling2D':{"size":tuple}
-        }
+        }'''
         self.predictions = []
 
     def processData(self):
         self.DM.cleanData()
-        self.DM.renderImages(num_entries = 15)
-        self.prepareModel()
+        #self.DM.renderImages(num_entries = 15)
+        #self.prepareModel()
         print('Done')
 
-    def processHiddenLayers(self,layer_choice: dict) -> keras.layers:
-        layer_type = layer_choice['type']
-        for key in self.layer_options[layer_type]:
-            if not key in layer_choice:
-                raise KeyError (f"You are missing {key} in your layer inputs")
-            if not isinstance(layer_choice[key],self.layer_options[layer_type][key]):
-                raise TypeError (f"Please correct type for {key} to {self.layer_options[layer_type][key]}")
-        if layer_type == 'Flat':
-            kwargs={}
-            if layer_choice.get('input_shape'):
-                kwargs['input_shape']= layer_choice['input_shape']
-            layer_item = keras.layers.Flatten(**kwargs)
-        elif layer_type == 'Dense':
-            kwargs={}
-            neurons = layer_choice['neurons']
-            if layer_choice.get('activation'):
-                kwargs['activation']=self.activation_options[layer_choice['activation']]
-            layer_item = keras.layers.Dense(units=neurons, **kwargs)
-        elif layer_type == 'Conv2D':
-            kwargs={}
-            if layer_choice.get('input_shape'):
-                kwargs['input_shape'] = layer_choice['input_shape']
-            filters = layer_choice['filters']
-            size = layer_choice['size']
-            activation = self.activation_options[layer_choice['activation']]
-            layer_item = keras.layers.Conv2D(filters=filters, kernel_size=size, activation=activation, **kwargs)
-        elif layer_type == 'MaxPooling2D':
-            size = layer_choice['size']
-            layer_item = keras.layers.MaxPooling2D(pool_size= size)
-        return layer_item
 
     def prepareModel(self):
         #Define the architecture
         if self.dnn_type == 'Sequential':
             model = keras.Sequential([self.processHiddenLayers(layer_choice = choice) for choice in self.hidden_layers])
-            print(model.summary())
+            model.summary()
+            base_learning_rate = .0001
+            model.compile(optimizer=tf.keras.optimizers.RMSprop(lr=base_learning_rate), loss = tf.keras.losses.BinaryCrossentropy(from_logits=True), metrics = self.metrics)
+            #We use BinaryCrossEntropy because we only have 1 final output neuron to decide between two LABELS
+
+            initial_epochs = 1
+            validation_steps = 20
+            train_results = model.fit(self.DM.train_df, epochs = initial_epochs, validation_data = self.DM.data_valid)
+            train_acc = train_results.history['accuracy']
+            print('\n\nTrain Accuracy: ',train_acc,'\n')
+            eval_loss, eval_acc = model.evaluate(self.DM.data_valid, steps = validation_steps)
+            print('\n\nEvaluation Accuracy: ',eval_acc)
+            print('Evaluation Loss: ',eval_loss,'\n')
+            self.DM.predictTestData(model = model, num_entries = 10)
+            model.save("dogs_vs_cats.h5")
         return model
 
 
     def setPreTrainModel(self):
-        shape = self.DM.image_conform['size']
+        shape = self.DM.preprocessor.image_conform['size']
         shape = (shape, shape, 3)
         #include_top: Do we include the classifier that comes with network
         #We will be retraining parts of network to only use for our example: Dogs vs Cats.
@@ -616,56 +638,23 @@ class ConvNeuralNetwork(TensorFlow):
 
         base_model.trainable=False
         base_model.summary()
-
         global_average_layer = tf.keras.layers.GlobalAveragePooling2D()
         prediction_layer = keras.layers.Dense(units = 1, activation = 'sigmoid')
 
         model = tf.keras.Sequential([base_model, global_average_layer, prediction_layer])
         model.summary()
-        base_learning_rate = .0001
-        model.compile(optimizer=tf.keras.optimizers.RMSprop(lr=base_learning_rate), loss = tf.keras.losses.BinaryCrossentropy(from_logits=True), metrics = self.metrics)
-        #We use BinaryCrossEntropy because we only have 1 final output neuron to decide between two LABELS
 
-        initial_epochs = 1
-        validation_steps = 20
-        loss0, accuracy0 = model.evaluate(self.DM.data_valid, steps = validation_steps)
-
-        history = model.fit(self.DM.train_df, epochs = initial_epochs, validation_data = self.DM.data_valid)
-        acc = history.history['accuracy']
-        print(acc)
-        labels = self.DM.metadata.features['label'].names
-        for batch in self.DM.test_df.take(10):
-
-            prediction=model.predict(x=batch[0])
-
-            for index, value in enumerate(prediction):
-                if value >= .5:
-                    value = 1
-                else:
-                    value = 0
-                pred_label = labels[value]
-                act_label = labels[batch[1][index]]
-                if pred_label == act_label:
-                    print('Correct\n')
-                else:
-                    print('Wrong\n')
-                #PLT.graphImage(data = batch[0][index], show = True)
-            print('Done')
-
-        #model.predict(x = self.test_df[0])
-        print('Done')
-        model.save("dogs_vs_cats.h5")
         #new_model = tf.keras.models.load_model('dogs_vs_cats.h5")
 
     def estimateModel(self):
-        self.setPreTrainModel()
+        #self.setPreTrainModel()
         model = self.prepareModel()
-        model.compile(optimizer=self.optimizer, loss = tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True), metrics= self.metrics)
-        model.fit(self.DM.train_df, self.DM.train_label, epochs = self.epochs, batch_size = self.batch_size, validation_data=(self.DM.test_df, self.DM.test_label))
+        #model.compile(optimizer=self.optimizer, loss = tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True), metrics= self.metrics)
+        #model.fit(self.DM.train_df, self.DM.train_label, epochs = self.epochs, batch_size = self.batch_size, validation_data=(self.DM.test_df, self.DM.test_label))
         test_loss, test_acc = model.evaluate(self.DM.test_df, self.DM.test_label, verbose = 2) #Verbose - are we looking at output or not (How much printed to console)
         print('Test Accuracy: ', test_acc)
         predictions = model.predict(self.DM.test_df) #Gives us probability distribution of items on output layer
-        self.DM.generateImages(num_images = 20)
+        #self.DM.generateImages(num_images = 20)
         self.toPredictPrompt()
         for requested in self.predictions:
             requested = int(requested)
@@ -698,9 +687,61 @@ class RecurrentNeuralNetworks(TensorFlow):
     """
     Good for understanding textual data
 
-    Sentiment Analysis:
+
+    Recurrent: Has internal loop, diff from dense/convolution neural network
+        Does not process entire data at once (input)
+        Process inputs at different time steps and maintains internal memory/state
+        When it looks at new input, it will remember what it saw previously.
+        Place current input in context of last viewed input
+        Formula: Xt + A = Ht starting from 0 at first word/first understanding to last
+    RNN Layer:
+        If text is "Hi I am ..."
+            0: X0 = "Hi" -> H0 "Context of Hi"
+            1: X1 = "I" -> H1 = H0 + Context of "I"
+        Note: Previous output at each step is used to calculate current step's output
+    LSTM: Long Short Term Memory
+        Since RNN layer builds "recursively", long sentences can pose problems
+        LSTM is solution.. ->
+        Another component that keeps track of internal state to access any previous state (Not just last)
+        Natively, RNN only stores last processed output.
+
+
+
+    Sentiment Analysis: See if review is positive or negative
 
     Character Generation:
+
     """
-    def __init__(self):
+    def __init__(self, train_url: str = None, test_url: str = None, label:str = None, save_loc: os.PathLike = None, col_names: list = None, options: dict = {}, metadata = None, data_valid = None):
+        super().__init__(train_url = train_url, test_url = test_url, label = label, save_loc = save_loc, col_names = col_names, metadata = metadata, data_valid = data_valid, 
+                            image_conform = options['image_conform'], image_gen = options['image_gen'])
+        self.hidden_layers = options['hidden_layers']
+        self.input_size = None #How many filters we will have
+        self.filters = None #How many filters; def: some pattern of pixels such as straight line in bitmap
+                            #Usually use x32 filters up to x64
+                            #Filter is trainiable parameter, amount of filters and what they are as training
+        self.sample_size = None #Sample size of filters, How big our filter is i.e. 3x3
+        self.label_classes = options['label_classes']
+        self.epochs = options['epochs']
+        self.optimizer = options['optimizer']
+        self.loss = options['loss']
+        self.metrics = options['metrics']
+        self.batch_size = options['batch_size']
+        self.dnn_type = options['DNN_type']
+        self.layer_options =\
+        {
+            'Dense':{"neurons":int},#"activation":str},
+            'Flat':{}, #"input_shape":tuple},
+            'Conv2D':{"filters":int, "size":tuple, "activation":str}, #"input_shape": tuple}
+            'MaxPooling2D':{"size":tuple}
+        }
+        self.predictions = []
+
+    def processData(self):
+        self.DM.renderImages(num_entries = 15)
+        self.prepareModel()
+        print('Done')
+
+
+    def prepareModel(self):
         pass

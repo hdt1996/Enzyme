@@ -21,8 +21,16 @@ class PreProcess():
     
     
     """
-    def __init__(self, **kwargs):
-        pass
+    def __init__(self, train_url: str = None, test_url: str = None, data_valid = None, label:str = None, 
+                col_names: list = None, image_conform: dict = None, image_gen: dict = None, save_loc: os.PathLike = None, **kwargs):
+        self.train_url = train_url
+        self.test_url = test_url
+        self.data_valid = data_valid
+        self.label = label
+        self.col_names = col_names
+        self.image_conform = image_conform
+        self.image_gen = image_gen
+        self.save_loc = save_loc
 
 
     def processSource(self):
@@ -38,7 +46,7 @@ class PreProcess():
             train_df = self.train_url[0]
             train_label = self.train_url[1]
         elif isinstance(self.train_url, PrefetchDataset): 
-            train_df = self.checkImageConform(data=self.train_url)
+            train_df = self.train_url
 
         if isinstance(self.test_url,str) and validators.url(self.test_url):
             test_df = pd.read_csv(self.test_url, names = self.col_names, header = 0)
@@ -51,10 +59,10 @@ class PreProcess():
             test_df = self.test_url[0]
             test_label = self.test_url[1]
         elif isinstance(self.test_url, PrefetchDataset):
-            test_df = self.checkImageConform(data=self.test_url)
+            test_df = self.test_url
 
         if self.data_valid:
-            data_valid = self.data_valid.map(self.conformIMGSizePad)
+            data_valid = self.data_valid
         
         return train_df, train_label, test_df, test_label, data_valid
 
@@ -76,8 +84,8 @@ class PreProcess():
     def normalizeData(self, data):
         if self.image_conform != None:
             data = self.checkImageConform(data=data)
-        else:
-            data = data/255.0
+        #else:
+            #data = data/255.0
 
 
         return data
@@ -118,3 +126,9 @@ class PreProcess():
             if index > num_images:
                 break
             new_images.append(batch[0])
+
+
+
+class TFImages(PreProcess):
+    def __init__(self):
+        pass
