@@ -2,15 +2,12 @@ from __future__ import absolute_import, division, print_function, unicode_litera
 import tensorflow as tf
 import tensorflow_probability as tfp
 from tensorflow.python.data.ops.dataset_ops import PrefetchDataset, MapDataset
-
 from tensorflow import keras
 import pandas as pd
 from ...Utilities.py.plotter import Plotter as Plot
 from ...Utilities.py.dataframes import DataFrames
-
 import os
 import numpy as np
-
 from .data.data import DataManager
 
 PLT = Plot()
@@ -78,7 +75,13 @@ class TensorFlow():
         }
         self.DM= DataManager(train_url = train_url, test_url = test_url, data_valid = data_valid, metadata=metadata, 
                                     label=label, col_names = col_names, image_conform=image_conform, image_gen = image_gen, save_loc = save_loc)
-
+        self.activation_options=\
+        {
+            '0 or More': 'relu', #Used for setting negative values to zero and leaving positive alone
+            'Sum to 1': 'softmax', #Used for probability distribution where all neurons sum to one/ All values nonnegative
+            '0 to 1': 'sigmoid', #Used to squish values between zero and one
+            '-1 to 1': 'tanh' #Used to squish values between -1 and 1
+        }
     def isolateNPValue(self, nparray: np.ndarray):
         if not isinstance(nparray, np.ndarray):
             return nparray
@@ -86,7 +89,6 @@ class TensorFlow():
         if len(nparray) == 1:
             nparray = nparray[0]
         return nparray
-
 
     def createTensor(self, d_type: str, init_value : list|str, rank:int = 0) -> dict:
         if not isinstance(rank, int):
@@ -119,31 +121,9 @@ class TensorFlow():
         tf_dict['rank'] = f"Nested Levels: {int(tf.rank(var))}"
         return tf_dict
 
-
-
-    def conformIMGSize(self, img, label):
-        """
-        Reshape image to self.img_size
-        """
-        img = tf.cast(img, tf.float32)
-        img = (img/255.0)
-        img=tf.image.resize(images=img, size=(self.image_conform['size'], self.image_conform['size']),preserve_aspect_ratio=False)
-        return img, label
-
-    def conformIMGSizePad(self, img, label):
-        """
-        Reshape image to self.img_size
-        """
-        img = tf.cast(img, tf.float32)
-        img = (img/255.0)
-        #img = tf.image.convert_image_dtype(image=img,dtype=tf.float32) THIS IS SAME AS LAST TWO COMMANDS IN ONE
-        img=tf.image.resize_with_pad(image=img, target_height=self.image_conform['size'], target_width= self.image_conform['size'])
-        return img, label
-
     def processModel(self):
         self.processData()
         self.estimateModel()
-
 
 class LinearClassifier(TensorFlow): #Supervised
     def __init__(self, train_url: str = None, test_url: str = None, label:str = None, save_loc: os.PathLike = None, col_names: list = None, options: dict = {}):
@@ -182,11 +162,9 @@ class LinearClassifier(TensorFlow): #Supervised
         predictions = estimator.predict(test_function)
         print(test_results['accuracy'])
 
-
 class LinearVariable(TensorFlow):
     def __init__(self, train_url: str = None, test_url: str = None, label:str = None, save_loc: os.PathLike = None, col_names: list = None, options: dict = {}):
         super().__init__(train_url = train_url, test_url = test_url, label = label, save_loc = save_loc, col_names = col_names)
-
 
 class DeepNeuralNetwork(TensorFlow): #Supervised
 
@@ -197,6 +175,7 @@ class DeepNeuralNetwork(TensorFlow): #Supervised
         self.label_classes = options['label_classes']
         self.steps = options['steps']
         self.predictions = {}
+
     def inputFunction(self,feature_df: pd.DataFrame, label_df: pd.DataFrame, training: bool = True, shuffle: int = 1000, batch_size: int = 256):
         data_obj = tf.data.Dataset.from_tensor_slices((dict(feature_df),label_df))
         if training:
@@ -213,7 +192,6 @@ class DeepNeuralNetwork(TensorFlow): #Supervised
                 val = input(feature_col + ": ")
                 if not val.isdigit():
                     valid = False
-
             self.predictions[feature_col] = [float(val)]
 
     def processData(self):
@@ -224,11 +202,9 @@ class DeepNeuralNetwork(TensorFlow): #Supervised
         estimator = tf.estimator.DNNClassifier(feature_columns=self.features, hidden_units=self.hidden_units, n_classes = len(self.label_classes))
         print(estimator)
 
-
         estimator.train(input_fn = lambda: self.inputFunction(feature_df = self.DM.train_df, label_df = self.DM.train_label, training = True),steps = 5000)
         test_results = estimator.evaluate(input_fn = lambda: self.inputFunction(feature_df = self.DM.test_df, label_df = self.DM.test_label, training = False))
         print(test_results)
-
 
         self.toPredictPrompt()
         predictions = estimator.predict(input_fn = lambda: self.inputPredictFunction(self.predictions))
@@ -422,7 +398,6 @@ class DeeperNeuralNetwork(TensorFlow):
         """
         self.label_classes = options['label_classes']
         self.epochs = options['epochs']
-        self.predictions = {}
         self.optimizer = options['optimizer']
         self.loss = options['loss']
         self.metrics = options['metrics']
@@ -432,18 +407,10 @@ class DeeperNeuralNetwork(TensorFlow):
             'Dense':{"neurons":int, "activation":str},
             'Flat':{"input_shape":tuple},
         }
-        self.activation_options=\
-        {
-            '0 or More': 'relu', #Used for setting negative values to zero and leaving positive alone
-            'Sum to 1': 'softmax', #Used for probability distribution where all neurons sum to one/ All values nonnegative
-            '0 to 1': 'sigmoid', #Used to squish values between zero and one
-            '-1 to 1': 'tanh' #Used to squish values between -1 and 1
-        }
         self.dnn_type = options['DNN_type']
         self.predictions = []
 
     def processData(self):
-
         self.DM.train_df = self.DM.train_df / 255.0
         self.DM.test_df = self.DM.test_df / 255.0
 
@@ -472,11 +439,9 @@ class DeeperNeuralNetwork(TensorFlow):
         model = self.prepareModel()
         model.compile(optimizer=self.optimizer, loss = self.loss, metrics= self.metrics)
         model.fit(self.DM.train_df, self.DM.train_label, epochs = self.epochs, batch_size = self.batch_size)
-
         test_loss, test_acc = model.evaluate(self.DM.test_df, self.DM.test_label, verbose = 1) #Verbose - are we looking at output or not (How much printed to console)
         print('Test Accuracy: ', test_acc)
         predictions = model.predict(self.DM.test_df) #Gives us probability distribution of items on output layer
-
         self.toPredictPrompt()
         for requested in self.predictions:
             requested = int(requested)
@@ -577,7 +542,6 @@ class ConvNeuralNetwork(TensorFlow):
         self.sample_size = None #Sample size of filters, How big our filter is i.e. 3x3
         self.label_classes = options['label_classes']
         self.epochs = options['epochs']
-        self.predictions = {}
         self.optimizer = options['optimizer']
         self.loss = options['loss']
         self.metrics = options['metrics']
@@ -590,24 +554,13 @@ class ConvNeuralNetwork(TensorFlow):
             'Conv2D':{"filters":int, "size":tuple, "activation":str}, #"input_shape": tuple}
             'MaxPooling2D':{"size":tuple}
         }
-        self.activation_options=\
-        {
-            '0 or More': 'relu', #Used for setting negative values to zero and leaving positive alone
-            'Sum to 1': 'softmax', #Used for probability distribution where all neurons sum to one/ All values nonnegative
-            '0 to 1': 'sigmoid', #Used to squish values between zero and one
-            '-1 to 1': 'tanh' #Used to squish values between -1 and 1
-        }
-
         self.predictions = []
-
 
     def processData(self):
         self.DM.cleanData()
         self.DM.renderImages(num_entries = 15)
+        self.prepareModel()
         print('Done')
-
-    
-
 
     def processHiddenLayers(self,layer_choice: dict) -> keras.layers:
         layer_type = layer_choice['type']
@@ -647,15 +600,72 @@ class ConvNeuralNetwork(TensorFlow):
             print(model.summary())
         return model
 
+
+    def setPreTrainModel(self):
+        shape = self.DM.image_conform['size']
+        shape = (shape, shape, 3)
+        #include_top: Do we include the classifier that comes with network
+        #We will be retraining parts of network to only use for our example: Dogs vs Cats.
+        #So we do not need ALL of the classifiers the pre-trained offers
+        base_model = tf.keras.applications.MobileNetV2(input_shape = shape, include_top = False, weights='imagenet')
+        base_model.summary()
+        for image, _ in self.DM.train_df.take(1):
+            pass
+            feature_batch = base_model(image)
+            print(feature_batch.shape)
+
+        base_model.trainable=False
+        base_model.summary()
+
+        global_average_layer = tf.keras.layers.GlobalAveragePooling2D()
+        prediction_layer = keras.layers.Dense(units = 1, activation = 'sigmoid')
+
+        model = tf.keras.Sequential([base_model, global_average_layer, prediction_layer])
+        model.summary()
+        base_learning_rate = .0001
+        model.compile(optimizer=tf.keras.optimizers.RMSprop(lr=base_learning_rate), loss = tf.keras.losses.BinaryCrossentropy(from_logits=True), metrics = self.metrics)
+        #We use BinaryCrossEntropy because we only have 1 final output neuron to decide between two LABELS
+
+        initial_epochs = 1
+        validation_steps = 20
+        loss0, accuracy0 = model.evaluate(self.DM.data_valid, steps = validation_steps)
+
+        history = model.fit(self.DM.train_df, epochs = initial_epochs, validation_data = self.DM.data_valid)
+        acc = history.history['accuracy']
+        print(acc)
+        labels = self.DM.metadata.features['label'].names
+        for batch in self.DM.test_df.take(10):
+
+            prediction=model.predict(x=batch[0])
+
+            for index, value in enumerate(prediction):
+                if value >= .5:
+                    value = 1
+                else:
+                    value = 0
+                pred_label = labels[value]
+                act_label = labels[batch[1][index]]
+                if pred_label == act_label:
+                    print('Correct\n')
+                else:
+                    print('Wrong\n')
+                #PLT.graphImage(data = batch[0][index], show = True)
+            print('Done')
+
+        #model.predict(x = self.test_df[0])
+        print('Done')
+        model.save("dogs_vs_cats.h5")
+        #new_model = tf.keras.models.load_model('dogs_vs_cats.h5")
+
     def estimateModel(self):
+        self.setPreTrainModel()
         model = self.prepareModel()
         model.compile(optimizer=self.optimizer, loss = tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True), metrics= self.metrics)
         model.fit(self.DM.train_df, self.DM.train_label, epochs = self.epochs, batch_size = self.batch_size, validation_data=(self.DM.test_df, self.DM.test_label))
-
         test_loss, test_acc = model.evaluate(self.DM.test_df, self.DM.test_label, verbose = 2) #Verbose - are we looking at output or not (How much printed to console)
         print('Test Accuracy: ', test_acc)
         predictions = model.predict(self.DM.test_df) #Gives us probability distribution of items on output layer
-        self.generateImages(num_images = 20)
+        self.DM.generateImages(num_images = 20)
         self.toPredictPrompt()
         for requested in self.predictions:
             requested = int(requested)
@@ -683,3 +693,14 @@ class ConvNeuralNetwork(TensorFlow):
             if proceed == "N":
                 valid = True
 
+
+class RecurrentNeuralNetworks(TensorFlow):
+    """
+    Good for understanding textual data
+
+    Sentiment Analysis:
+
+    Character Generation:
+    """
+    def __init__(self):
+        pass

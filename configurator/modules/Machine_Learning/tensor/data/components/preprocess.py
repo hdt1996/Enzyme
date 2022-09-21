@@ -78,6 +78,8 @@ class PreProcess():
             data = self.checkImageConform(data=data)
         else:
             data = data/255.0
+
+
         return data
 
 

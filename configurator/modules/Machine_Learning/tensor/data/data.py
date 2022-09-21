@@ -18,7 +18,15 @@ class DataManager(PreProcess, PreAnalyze, PostAnalyze):
         self.train_df, self.train_label, self.test_df, self.test_label, self.data_valid = self.processSource()
 
     def cleanData(self):
+        BATCH_SIZE = 32
+        SHUFFLE_BUFFER_SIZE = 1000
+
+
 
         self.train_df = self.normalizeData(data = self.train_df)
         self.test_df = self.normalizeData(data = self.test_df)
         self.data_valid = self.normalizeData(data = self.data_valid)
+
+        self.train_df = self.train_df.shuffle(SHUFFLE_BUFFER_SIZE).batch(BATCH_SIZE)
+        self.data_valid = self.data_valid.batch(BATCH_SIZE)
+        self.test_df = self.test_df.batch(BATCH_SIZE)
