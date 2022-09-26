@@ -89,11 +89,13 @@ VARS_ASSIGN(){
 INPUT_ASSIGN(){
 	case "$1" in
 	"cmd")
-		read -p "Enter your custom command: " custom_cmd
+		read -rp "Enter your custom command: " custom_cmd
 		echo
 		$custom_cmd
 		echo
 		read -p "Press Enter to continue: " p;;
+	"repo")
+		$BASEDIR/git_terminal/repo.sh;;
 	"branch")
 		$BASEDIR/git_terminal/branch.sh;;
 	"merge")
@@ -181,6 +183,6 @@ done
 
 cd "$DEST/$REPO"
 git checkout "$BRANCH"
-WHILE_INPUT "cmd branch merge rebase stage unstage commit uncommit push backup log reflog quit"
+WHILE_INPUT "cmd repo branch merge rebase stage unstage commit uncommit push backup log reflog quit"
 read x
 

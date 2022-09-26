@@ -4,7 +4,7 @@ HANDLE_ERROR(){
 	read -p "
 	Create upstream remote? [y/n]: " to_create
 	echo
-	if [ "$to_create" ]; then
+	if [ "$to_create" = "y" ]; then
 		git push --set-upstream origin $1
 	fi
 }

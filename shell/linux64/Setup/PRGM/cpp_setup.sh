@@ -1,2 +1,2 @@
 #!/bin/sh
-sudo apt install g++
+sudo apt-get install g++
