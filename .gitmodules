@@ -1,3 +1,9 @@
 [submodule "configurator/modules/Utilities"]
 	path = configurator/modules/Utilities
 	url = git@github.com:hdt1996/Utils.git
+[submodule "configurator/modules/Utils"]
+	path = configurator/modules/Utils
+	url = git@github.com:hdt1996/Utils.git
+[submodule "configurator/Utilities"]
+	path = configurator/Utilities
+	url = git@github.com:hdt1996/Utils.git
