@@ -58,8 +58,8 @@ do
 	git rm -r --cached $loc$custom_name
 	#rm -r $loc$sm_repo
 	echo
-	git submodule add git@github.com:$USER/$sm_repo.git $loc$custom_name ||\
-	echo && read -p "Force? This will overwrite ALL files in sub-repo directory [y/n] :" ovw
+	git submodule add git@github.com:$USER/$sm_repo.git $loc$custom_name || read -p "
+	Force? This will overwrite ALL files in sub-repo directory [y/n] :" ovw
 	if [ "$ovw" = "y" ]; then
 		git submodule add --force git@github.com:$USER/$sm_repo.git $loc$custom_name
 	fi
