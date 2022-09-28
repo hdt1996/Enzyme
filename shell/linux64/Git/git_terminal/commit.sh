@@ -7,5 +7,6 @@ read -rp '
 	<Commit MSG> : Message of your commit
 	.........................................
 	<Enter Commit MSG : ' choice
-git commit -m "$choice"
 echo
+git commit -m "$choice"
+
