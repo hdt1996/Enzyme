@@ -88,10 +88,18 @@ VARS_ASSIGN(){
 
 INPUT_ASSIGN(){
 	case "$1" in
-	"untrack")
+	
+	"submodule")
+		$BASEDIR/git_terminal/submodule.sh;;
+	"autopull")
+		echo
+		read -p "Auto-Pull for this $REPO and submodules? [y/n]: " setauto;;
+	"retrack")
 		git rm -r --cached . > /dev/null 2>&1
 		read -p "Stage all? [y/n] :" p
-		if [ "$p" = "y" ]; then
+		if [ "$p" = "n" ]; then
+			:
+		else
 			git add --all
 			git restore --staged .
 		fi
@@ -133,20 +141,25 @@ INPUT_ASSIGN(){
 	echo
 }
 
+setauto=""
 WHILE_INPUT(){
 PROMPT=1
 while [ $PROMPT = 1 ] 
 	do
 		echo
-		git fetch > /dev/null 2>&1
-		git pull > /dev/null 2>&1
+		if [ "$setauto" = "y" ]; then
+			git pull > /dev/null 2>&1
+			git submodule update --recursive --remote > /dev/null 2>&1
+			echo
+			echo '\rCompleted fetch and pull...'
+		fi
+		echo "--------------------------------------------------------"
 		git status
 		echo "--------------------------------------------------------"
 		INPUT_I=1
-		echo '
-		\rCompleted fetch and pull...'
+
 		current_branch="$(git branch -a | grep '\* ' | sed -e 's/\* //')"
-		
+		echo "Repo: $REPO" 
 		if [ "$current_branch" = "" ]; then
 			echo "Created Local Branch: dev"
 		else
@@ -198,6 +211,7 @@ done
 
 cd "$DEST/$REPO"
 git checkout -b "$BRANCH" > /dev/null 2>&1
-WHILE_INPUT "untrack cmd repo branch merge rebase stage unstage commit uncommit push backup log reflog quit"
+echo
+WHILE_INPUT "autopull submodule retrack cmd repo branch merge rebase stage unstage commit uncommit push backup log reflog quit"
 read x
 
