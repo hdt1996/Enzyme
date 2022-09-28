@@ -1,4 +1,5 @@
 #!/bin/sh
+
 OPTIONS="-repo -user"
 REPO=""
 USER="$(git config user.name)"
@@ -40,5 +41,28 @@ done
 
 echo "clone git@github.com:$USER/$REPO.git"
 git clone git@github.com:$USER/$REPO.git "$DEST/$REPO"
-echo $DEST/$REPO
+
+#SCAN FOR SUBMODULES
+cd "$DEST/$REPO"
+SUBMODULES="$(find . -type f -iname "*.sm.sh")"
+for smf in $SUBMODULES
+do
+	loc=$(echo $smf | sed -e 's/[a-zA-Z0-9]\{1,\}\.sm\.sh//')
+	custom_name=$(echo $smf | rev | cut -d '/' -f1 | rev | sed -e 's/\.sm\.sh//')
+	echo $custom_name
+	read x
+	sm_repo="$($smf)"
+	echo
+	echo "Removing Index -> $loc$custom_name"
+	echo
+	git rm -r --cached $loc$custom_name
+	#rm -r $loc$sm_repo
+	echo
+	git submodule add git@github.com:$USER/$sm_repo.git $loc$custom_name ||\
+	echo && read -p "Force? This will overwrite ALL files in sub-repo directory [y/n] :" ovw
+	if [ "$ovw" = "y" ]; then
+		git submodule add --force git@github.com:$USER/$sm_repo.git $loc$custom_name
+	fi
+	echo
+done
 

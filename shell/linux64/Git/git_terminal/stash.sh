@@ -132,7 +132,7 @@ elif [ "$choice" = "menu" ]; then
 else
 	:
 fi
-echo
+
 
 
 

@@ -88,6 +88,14 @@ VARS_ASSIGN(){
 
 INPUT_ASSIGN(){
 	case "$1" in
+	"untrack")
+		git rm -r --cached . > /dev/null 2>&1
+		read -p "Stage all? [y/n] :" p
+		if [ "$p" = "y" ]; then
+			git add --all
+			git restore --staged .
+		fi
+		;;
 	"cmd")
 		read -rp "Enter your custom command: " custom_cmd
 		echo
@@ -137,7 +145,14 @@ while [ $PROMPT = 1 ]
 		INPUT_I=1
 		echo '
 		\rCompleted fetch and pull...'
-		echo "Current Branch: $(git branch | grep '\* ' | sed -e 's/\* //')"
+		current_branch="$(git branch -a | grep '\* ' | sed -e 's/\* //')"
+		
+		if [ "$current_branch" = "" ]; then
+			echo "Created Local Branch: dev"
+		else
+			echo "Current Branch: $current_branch"
+		fi
+		
 		echo "............................"
 		echo "Choose one of the following:"
 		for opt in $1
@@ -182,7 +197,7 @@ do
 done
 
 cd "$DEST/$REPO"
-git checkout "$BRANCH"
-WHILE_INPUT "cmd repo branch merge rebase stage unstage commit uncommit push backup log reflog quit"
+git checkout -b "$BRANCH" > /dev/null 2>&1
+WHILE_INPUT "untrack cmd repo branch merge rebase stage unstage commit uncommit push backup log reflog quit"
 read x
 

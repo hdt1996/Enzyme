@@ -164,7 +164,6 @@ elif [ "$choice" = "menu" ]; then
 		PROCESS_OPTIONS "$id" "$choice"
 	fi
 fi
-echo
 
 
 

@@ -16,5 +16,3 @@ else
 	#git checkout -- $choice DEPRECATED
 	git restore --staged "$choice"
 fi
-echo 
-echo "Success --- Unstaged $choice "

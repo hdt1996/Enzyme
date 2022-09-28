@@ -8,10 +8,9 @@ read -rp "
 	all : Stage all modified in repository
 	.........................................
 	<Enter Option : " choice
-echo
+
 if [ "$choice" = "all" ]; then
 	git add --all
 else
 	git add $choice
 fi
-echo 
