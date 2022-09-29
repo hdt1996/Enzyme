@@ -59,9 +59,11 @@ while [ $PROMPT = 1 ]
 		echo
 		if [ "$conf" = "y" ]; then
 		
-			git submodule add git@github.com:$user/$sm_repo.git $sm_loc || read -p "
-			\r\t\tForce? This will overwrite ALL files in sub-repo directory [y/n] :" ovw
+			git submodule add git@github.com:$user/$sm_repo.git $sm_loc || \
+			read -p "
+			Force? This will overwrite ALL files in sub-repo directory [y/n] :" ovw
 			if [ "$ovw" = "y" ]; then
+				#git rm -r --cached $sm_loc
 				git submodule add --force git@github.com:$user/$sm_repo.git $sm_loc
 			fi
 			break

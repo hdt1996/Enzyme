@@ -26,7 +26,6 @@ elif [ "$p_target" = "q" ]; then
 	echo "	Returning to main menu"
 	return
 fi
-echo
 read -p "	Force? [y/n]: " force
 echo
 if [ "$force" = "y" ]; then

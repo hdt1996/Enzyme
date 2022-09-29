@@ -141,7 +141,7 @@ INPUT_ASSIGN(){
 	echo
 }
 
-setauto=""
+setauto="y"
 WHILE_INPUT(){
 PROMPT=1
 while [ $PROMPT = 1 ] 
