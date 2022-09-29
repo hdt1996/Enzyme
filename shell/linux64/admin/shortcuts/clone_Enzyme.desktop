@@ -1,0 +1,13 @@
+
+[Desktop Entry]
+Version=1.0
+Exec=/home/htran/Desktop/Git/execs/clone_Enzyme.sh
+Name=clone_Enzyme
+GenericName=clone_Enzyme
+Comment=clone_Enzyme
+Encoding=UTF-8
+Terminal=true
+Type=Application
+Icon=/home/htran/Desktop/admin/src/git.png
+Categories=Application;Network;TEST
+

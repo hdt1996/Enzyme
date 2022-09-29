@@ -1,0 +1,13 @@
+
+[Desktop Entry]
+Version=1.0
+Exec=/home/htran/Desktop/Git/execs/config_git.sh
+Name=config_git
+GenericName=config_git
+Comment=config_git
+Encoding=UTF-8
+Terminal=true
+Type=Application
+Icon=/home/htran/Desktop/admin/src/git.png
+Categories=Application;Network;TEST
+
