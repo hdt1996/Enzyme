@@ -1,0 +1,13 @@
+
+[Desktop Entry]
+Version=1.0
+Exec=/home/htran/Desktop/admin/Create_Shortcut.sh
+Name=Create_Shortcut
+GenericName=Create_Shortcut
+Comment=Create_Shortcut
+Encoding=UTF-8
+Terminal=true
+Type=Application
+Icon=/home/htran/Desktop/admin/src/exec_icon.jpg
+Categories=Application;Network;TEST
+

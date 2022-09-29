@@ -2,7 +2,8 @@
 
 sudo apt-get update && time sudo apt-get dist-upgrade
 sudo add-apt-repository universe
-sudo apt-get install unzip dpkg git imagemagick #gnome-shell-extensions gnome-tweaks
+sudo apt-get install unzip dpkg git imagemagick #--no-install-recommends gnome-panel
+#gnome-shell-extensions gnome-tweaks
 
 #################################################### DOCKER #############################################################
 sudo apt-get install ca-certificates curl gnupg lsb-release
