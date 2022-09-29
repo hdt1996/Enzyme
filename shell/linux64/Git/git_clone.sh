@@ -40,6 +40,20 @@ do
 done
 BASEDIR=$(readlink -f $(dirname $0))
 echo "clone git@github.com:$USER/$REPO.git"
+
+read -p "
+....................................
+Are you sure you want to clone?
+You may overwrite existing local repo.
+.....................................
+Enter [y/n]: " proceed
+
+if [ "$proceed" = "y" ]; then
+	:
+else
+	return 1
+fi
+
 git clone git@github.com:$USER/$REPO.git "$DEST/$REPO"
 
 #SCAN FOR SUBMODULES
