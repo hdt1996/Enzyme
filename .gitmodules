@@ -10,3 +10,6 @@
 [submodule "web_services/Utils"]
 	path = web_services/Utils
 	url = git@github.com:hdt1996/Utils.git
+[submodule "shell"]
+	path = shell
+	url = git@github.com:hdt1996/Virtual_Machines.git
