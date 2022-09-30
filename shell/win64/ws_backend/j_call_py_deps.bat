@@ -1,1 +1,0 @@
-call %~dp0set_py_deps.bat True
