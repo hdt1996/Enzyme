@@ -1,0 +1,13 @@
+
+[Desktop Entry]
+Version=1.0
+Exec=/home/htran/Desktop/Docker/downpose_hdt1996.sh
+Name=downpose_hdt1996
+GenericName=downpose_hdt1996
+Comment=downpose_hdt1996
+Encoding=UTF-8
+Terminal=true
+Type=Application
+Icon=/home/htran/Desktop/admin/src/web.png
+Categories=Application;Network;TEST
+

@@ -1,0 +1,13 @@
+
+[Desktop Entry]
+Version=1.0
+Exec=/home/htran/Desktop/Docker/compose_hdt1996.sh
+Name=compose_hdt1996
+GenericName=compose_hdt1996
+Comment=compose_hdt1996
+Encoding=UTF-8
+Terminal=true
+Type=Application
+Icon=/home/htran/Desktop/admin/src/web.png
+Categories=Application;Network;TEST
+

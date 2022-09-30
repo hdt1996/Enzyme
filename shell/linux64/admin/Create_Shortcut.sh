@@ -5,12 +5,15 @@ read -p \
 .......................
 1) git
 2) standard
+3) web
 ......................
 Enter name: " icon
 
 case "$icon" in
 	"git")
 	icon=$(readlink -f ./admin/src/git.png);;
+	"web")
+	icon=$(readlink -f ./admin/src/web.png);;
 	"standard")
 	icon=$(readlink -f ./admin/src/exec_icon.jpg);;
 esac
