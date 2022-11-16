@@ -1,24 +1,22 @@
 {
-    "Root_Path":"C:\\IT\\",
-    "Back_End_Path":"C:\\IT\\Back_End",
-    "Front_End_Path":"C:\\IT\\Front_End",
+    "Root_Path":"/home/htran/Desktop/TimeSheet/",
+    "Back_End_Path":"/home/htran/Desktop/TimeSheet",
+    "Front_End_Path":"/home/htran/Desktop/TimeSheet/Front_End",
     "Server_Locations":
     {
-        "server_01":"C:\\IT\\Back_End\\server_01",
-        "node_01":"C:\\IT\\Back_End\\node_01",
-        "node_02":"C:\\IT\\Back_End\\node_02"
+        "Server":"/home/htran/Desktop/TimeSheet/Server"
     },
     "App_Locations":
     {
-        "server_01":
+        "Server":
         {
-            "app_01":"C:\\IT\\Back_End\\App_01"
+            "Payroll":"/home/htran/Desktop/TimeSheet/Payroll"
         }
     },
 
     "Server_Settings":
     {
-        "server_01":
+        "Server":
         {
             "port":8000,
             "framework":"python django",
@@ -26,24 +24,19 @@
             "oauth":true,
             "auth_type":"session|token",
             "csrf":true,
-            "allowed_hosts":["localhost","192.168.1.86","127.0.0.1"],
+            "allowed_hosts":["localhost","192.168.1.17","127.0.0.1"],
             "containers":false,
             "socket":false,
             "storage":
             {
                 "media":
                 {
-                    "location":"C:\\IT\\Back_End\\server_01\\media",
+                    "location":"/home/htran/Desktop/TimeSheet/Server/media",
                     "url":"media/"
                 },
                 "static":
                 {
-                    "location":"C:\\IT\\Back_End\\server_01\\static",
-                    "url":"static/"
-                },
-                "users":
-                {
-                    "location":"C:\\IT\\Back_End\\node_02\\static",
+                    "location":"/home/htran/Desktop/TimeSheet/Server/static",
                     "url":"static/"
                 }
             }
@@ -53,47 +46,54 @@
     "Front_End_Settings":
     {
         "Framework":"React",
-        "allowed_hosts":["localhost","192.168.1.86","127.0.0.1"],
+        "allowed_hosts":["localhost","192.168.1.17","127.0.0.1"],
         "containers":false,
         "Hosted_Server":
         {
-            "http://192.168.1.86:8001":false,
-            "http://192.168.1.86:8002":true
+            "http://192.168.1.17:8001":false,
+            "http://192.168.1.17:8002":true
         }
     },
     "Proxy_Settings": 
     {
         "Status":false,
-        "Load_Balance_IPs":["http://192.168.1.86:8001","http://192.168.1.86:8002"],
+        "Load_Balance_IPs":["http://192.168.1.17:8001","http://192.168.1.17:8002"],
         "Django_WSGI":false,
         "Certificate":false
     },
     "Database_Settings":
     {
-        "server_01":
+        "Server":
         {
             "engine":"django.db.backends.postgresql_psycopg2",
             "name":"ws_generator",
             "user":"postgres",
             "password":"MrPho1219@",
-            "host": "192.168.1.86",
+            "host": "192.168.1.17",
             "port":5432,
             "tables":
             {
-                "app_01":
+                "Payroll":
                 {
-                    "Customers":
+                    "Employees":
                     {
-                        "field_1":{"type":"bool","null":true,"blank":true, "default":false },
-                        "field_3":{"type":"char","null":false,"blank":false,"length":255,"random":true, "pk":true, "default":"..."},
-                        "field_8":{"type":"text","null":true,"blank":true,"length":1000,"random":false, "pk":false, "default":""},
-                        "field_2":{"type":"int","null":true,"blank":true,"length":1000,"random":false, "pk":false, "default":5},
-                        "field_10":{"type":"float","null":true,"blank":true,"length":1000,"random":false, "pk":false, "default":5.55},
-                        "field_4":{"type":"img","null":true,"blank":true, "max_size":"100mb", "upload_to":"media", "structure":"user", "servable":true},
-                        "field_7":{"type":"file","null":true,"blank":true,"max_size":"100mb", "upload_to":"media", "structure":"user", "servable":true},
-                        "user":{"type":"fk", "null":true,"blank":true, "to_field":null, "attached":"User","on_delete":"CASCADE"},
-                        "field_6":{"type":"time", "auto_now_add":false, "auto_now":true},
-                        "field_9":{"type":"json", "default":"dict","null":true,"blank":true}
+                        "id":{"type":"int","null":false,"blank":false,"length":20,"random":false, "default":0,"pk":true},
+                        "hourly":{"type":"bool","null":true,"blank":true, "default":false },
+                        "name":{"type":"text","null":true,"blank":true,"length":50,"random":false, "pk":false, "default":""},
+                        "department":{"type":"text","null":true,"blank":true,"length":50,"random":false, "pk":false, "default":""},
+                        "pay_rate":{"type":"float","null":true,"blank":true,"length":20,"random":false, "pk":false, "default":0.00},
+                        "photo":{"type":"img","null":true,"blank":true, "max_size":"100mb", "upload_to":"media", "structure":"user", "servable":true},
+                        "onboard_docs":{"type":"file","null":true,"blank":true,"max_size":"100mb", "upload_to":"media", "structure":"user", "servable":true},
+                        "user":{"type":"fk", "null":true,"blank":true, "to_field":null, "attached":"User","on_delete":"PROTECT"}
+                    },
+                    "Timesheet":
+                    {
+                        "employee":{"type":"fk", "null":true,"blank":true, "to_field":null, "attached":"Employees","on_delete":"PROTECT"},
+                        "late":{"type":"float","null":true,"blank":true,"length":10,"random":false, "pk":false, "default":0.00},
+                        "clock_in":{"type":"time", "auto_now_add":true, "auto_now":false},
+                        "lunch_in":{"type":"time", "auto_now_add":false, "auto_now":false},
+                        "lunch_out":{"type":"time", "auto_now_add":false, "auto_now":false},
+                        "clockout":{"type":"time", "auto_now_add":false, "auto_now":false}
                     }
                 }
             }
@@ -102,20 +102,20 @@
     },
     "API_Settings":
     {
-        "server_01":
+        "Server":
         {
-            "app_01":
+            "Payroll":
             {
                 "oauth":true,
                 "auth_type":"session|token",
                 "csrf":true,
                 "apis":
                 {
-                    "API_1":
+                    "getEmployees":
                     {
                         "url":"api/1",
                         "auth_required": false,
-                        "table":"Customers",
+                        "table":"Employees",
                         "GET":
                         {
                             "entry_limit":500,
@@ -123,11 +123,11 @@
                             "csrf":"protect",
                             "auth_type":"session",
                             "verify_fields":"include",
-                            "response_fields":["field_1","field_3"],
+                            "response_fields":["id","name"],
                             "query_fields":
                             {
-                                "field_1":{"operator":"equal","value":true},
-                                "field_3":{}
+                                "id":{},
+                                "name":{}
                             },
                             "limit_to_user":false,
                             "unique":

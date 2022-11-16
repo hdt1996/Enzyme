@@ -1,15 +1,7 @@
 import re
-from ...Utilities.py.logger import Logger
-from ...Utilities.py.file_manager import FileManager
-from ...Utilities.py.dev import Development
-from ...Utilities.py.dataframes import DataFrames
+from ...Utilities.py.file_manager import FileManager as FS
+from ..debugger import *
 import os
-FS = FileManager()
-DEV = Development()
-DEV.makeTestDir('String_Scanner')
-DEV.makeTestDir('String_Scanner/Test_Scans')
-LOGGER = Logger()
-
 
 class StringParser():
     def parse(self,txt: str, file: str):
@@ -77,6 +69,9 @@ class RegexMatch(StringParser):
                 if match_result != None:
                     match_list.append(match_result)
             elif len(matches) > 1:
+                if not self.unique:
+                    match_list.extend(self.isolateMatches(matches,keyword = kw, choose_group = self.choose_group))
+                    continue
                 match_result = self.checkDuplicates(matches = self.isolateMatches(matches,keyword = kw, choose_group = self.choose_group))
                 filtered_result = []
                 for mr in match_result:
@@ -145,9 +140,9 @@ class RegexMatch(StringParser):
         if choose_group != '':
             group_index = int(choose_group)
         if isinstance(match,tuple) or isinstance(match,list):
-            match = match[group_index] #first index of tuple is the whole match
-        elif isinstance(match,str):
-            pass 
+            match = match[group_index] #first index of tuple is the whole match. All indices are groups from regex
+        #elif isinstance(match,str):
+        #    pass 
         match_dict['match'] = match
         return match_dict
 
@@ -174,10 +169,10 @@ class RegexMatch(StringParser):
         
 
 class Scan(RegexMatch): #has Category properties Category.__dict__
-    def __init__(self,categ_attribs:dict, multiple: bool):
-        print('\n\n Init Scan')
+    def __init__(self,categ_attribs:dict, multiple: bool, unique: bool):
         self.mode = 'Scan'
         self.categ_attribs = categ_attribs # to store for debugging
+        self.unique = unique
         RegexMatch.__init__(self,categ_attribs = categ_attribs, multiple = multiple)
 
         
@@ -208,7 +203,7 @@ class Scan(RegexMatch): #has Category properties Category.__dict__
 
 class Replace(RegexMatch):
     do_multiple = False
-    def __init__(self,categ_attribs:dict, multiple: bool, replace_all: bool, repl_vals: list, overwrite: bool):
+    def __init__(self,categ_attribs:dict, multiple: bool, replace_all: bool, repl_vals: list, overwrite: bool, unique:bool):
         print('\n\n Init Replace')
         self.mode =  'Replace'
         self.categ_attribs = categ_attribs # to store for debugging
@@ -216,6 +211,7 @@ class Replace(RegexMatch):
         self.repl_vals = repl_vals
         self.repl_map = {}
         self.overwrite = overwrite
+        self.unique = unique
         for index, keyw in enumerate(categ_attribs['keywords']):
             try:
                 self.repl_map[keyw]= self.repl_vals[index]

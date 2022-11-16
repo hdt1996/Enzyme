@@ -1,4 +1,4 @@
-from msilib.schema import File
+
 from configurator.modules.Utilities.py.util import *
 from configurator.modules.Utilities.py.file_manager import FileManager
 from ..utils.utils import DjangoRegex

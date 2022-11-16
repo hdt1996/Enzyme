@@ -1,18 +1,11 @@
 from .locals.globals_config import CATEG_MAP, CLI_ORDER
 from ..Utilities.py.util import kwargsReturnValues, splitStringbyDelim
-from ..Utilities.py.dev import Development
-from ..Utilities.py.logger import Logger
+
 from .modes.modes import Scan, Replace
 from ..Utilities.py.dataframes import DataFrames
 import click, traceback
 import os
-import pandas as pd
-
-DEV = Development()
-DEV.makeTestDir('String_Scanner')
-DEV.makeTestDir('String_Scanner/Test_Scans')
-LOGGER = Logger()
-
+from .debugger import *
 
 """
 Author: Hung Tran
@@ -39,6 +32,22 @@ CLI Args:
     Open_File: Bool, if file is active file, open to extract text
     Choose_Group: Str, represents group number in regex match of string
     Overwrite: Bool, chooses whether to overwrite text with replacements or make a copy in same directory with _COPY suffix
+    Rename: Bool, Specific for Scan Mode: renaming files, only compatible with open_file option as False
+    Export: Bool, Specific for Scan Mode: export matches
+    Export_loc: Str, Specific for Scan Mode: export location of matches. Can end in any extension desired... .py .txt etc.
+    Unique: Bool, Specific for Scan Mode: modifies export of matches to have only unique entries
+    Dataframe: Bool, Allows taking matches and placing them into dataframe for database use. Requiries df_* CLI args below
+    Df_Col_Names: Str, Set column names for each match in order of list passed in
+    Df_Index: Str, Set index/identifier for dataframe based on Column name. Useful for comparing data from database or mapping column values to file_number.. etc.
+    Df_Mult_Override: Bool, #TODO
+
+    NOTE
+    ---------------------------------------------------------------------------------
+    For database solutions, I recommend using the native category classes that have defined regex and keywords. If modification is needed. You make changes there! If you use keywords
+    and custom regex argument, the category classes properties are overriden, so be careful if you intend to use the native category classes.
+
+    If rewrite and rename are both desired, this main function should be called two times with Scan and Replace Mode in any order desired. Combining both Scan and Replace
+    into one super module for the case above would decrease legibility. If a custom module was desired, there is a cases folder for custom cases for building new super'd classes.
 
 Return: None
 """
@@ -77,16 +86,13 @@ class MainProcessor():
                         self.DataFrame.col_dict[self.df_col_names[col_index]].append(match_results['match'])
                 else:
                     self.DataFrame.col_dict[self.df_col_names[col_index]].append(data['results']['match'])
-        #LOGGER.debug_dict = {}
-        #LOGGER.addArrDBVars(arr = self.scan_data)
-        #LOGGER.logVars(save = True,to_terminal = False, title = f"_{mode}_")
 
     def processModes(self):
         for mode in self.modes:
             if mode == 'Scan':
                 for categ_index, category in enumerate(self.categories):
                     self.regex_category = CATEG_MAP[category](choose_group = self.choose_group, keywords = self.keywords, custom_regex = self.custom_regex)
-                    self.parser = Scan(categ_attribs = self.regex_category.__dict__, multiple = self.multiple)
+                    self.parser = Scan(categ_attribs = self.regex_category.__dict__, multiple = self.multiple, unique = self.unique)
                     self.processCategory(col_index = categ_index, mode = mode)
                 if len(self.DataFrame.col_dict) != 0:
                     self.DataFrame.buildDFbyDict()
@@ -96,7 +102,7 @@ class MainProcessor():
                 for categ_index, category in enumerate(self.categories):
                     self.regex_category = CATEG_MAP[category](choose_group = self.choose_group, keywords = self.keywords, custom_regex = self.custom_regex)
                     self.parser = Replace(categ_attribs = self.regex_category.__dict__, multiple = self.multiple, replace_all = self.replace_all, 
-                    repl_vals = self.repl_vals, overwrite=self.overwrite)
+                    repl_vals = self.repl_vals, overwrite=self.overwrite, unique = self.unique)
                     self.processCategory(col_index = categ_index, mode = mode)
             else:
                 raise ValueError(f'Mode does not exist. Please change to one of the following\n------1)\nScan\n2)\nReplace\n3)\nScan&Replace')
@@ -121,33 +127,26 @@ class MainProcessor():
 @click.option("--export",type = bool, default = False) #Specific for Scan Mode: export matches
 @click.option("--export_loc",type = str, default = '') #Specific for Scan Mode: export location of matches. Can end in any extension desired... .py .txt etc.
 @click.option("--unique", type = bool, default = False) #Specific for Scan Mode: modifies export of matches to have only unique entries
-
-#_---------------------------------------------------DATAFRAME NOTES ____________________________________________________________________#
 @click.option("--dataframe", type = bool, default = False) #Allows taking matches and placing them into dataframe for database use. Requiries df_* CLI args below
 @click.option("--df_col_names", multiple = True, default = []) #Set column names for each match in order of list passed in
-@click.option("--df_index", type = str, default = '') #Set index/identifier for dataframe. Useful for comparing data from database or mapping column values to file_number.. etc.
-@click.option("--df_mult_override", type = bool, default = False) #Set index/identifier for dataframe. Useful for comparing data from database or mapping column values to file_number.. etc.
-#NOTE
-# Dataframes usually only have one datatype in there, not an object with length such as list or JSON. IF this is what you need, set multiple to False to only find first match.
+@click.option("--df_index", type = str, default = '') #Set index/identifier for dataframe by column name.
+@click.option("--df_mult_override", type = bool, default = False) #TODO
 
-# ALSO, make sure there are no keywords set. For database solutions, I recommend using the native category classes. If modification is needed. You make changes there!
-
-# The most important reason for using the default classes is to allow recursion of the keyword and custom_regex arguments. If keyword or custom_regex arguments are passed
-# the keywords and custom_regex will not change.
-
-# If rewrite and rename was desired, this main function should be called two times with Scan and Replace Mode in any order desired. Combining both Scan and Replace
-# into one super module for the case above would decrease legibility. If a custom module was desired, there is a cases folder for custom cases for building new super'd classes.
 def main(modes: list, categories: list, location:str, dataframe: bool, **kwargs:dict) -> None:
     try:
         main_processor = MainProcessor(modes = modes, categories = categories, location = location, dataframe = dataframe, kwargs = kwargs)
         if main_processor.overwrite == True and main_processor.open_file == False:
             raise ValueError('Overwrite CLI Argument cannot be True while open_file is False')
         main_processor.processModes()
-    except BaseException:
-        error_log = traceback.format_exc()
-        LOGGER.traceRelevantErrors(error_log = error_log.split('File "'), script_loc =  DEV.proj_dir, latest = False)
+    except Exception as e:
+        relevant_errors = DEV.traceRelevantErrors(error_log = traceback.format_exc().split('File "'), script_loc =  DEV.PROJ_DIR, latest = False)
+        if relevant_errors == None:
+            print(e)
+        else:
+            print(relevant_errors)
+
         
-if __name__ == '__main__' or __name__ == 'configurator.apis.String_Scanner.main':
+if __name__ == '__main__' or __name__ == 'configurator.modules.String_Scanner.main':
     T= True
     if T:
         main(\
@@ -159,22 +158,22 @@ if __name__ == '__main__' or __name__ == 'configurator.apis.String_Scanner.main'
                 #"--keywords", 'NOT TESTING',
                 #"--keywords", r'logger',
                 #"--keywords",r"",
-                "--location", os.path.join(DEV.proj_test_dir),#,"encodings.txt"),#__file__,
+                "--location", os.path.join(DEV.PROJ_DIR),#,"encodings.txt"),#__file__,
                 #"--location", "C:\\Users\\hduon\\Documents\\Tests\\String_Scanner\\Test_Scans\\Admin_RESULTS_1_RESULTS_1.css",
                 "--modes", 'Scan',
                 #"--modes", 'Replace',
                 "--categories", "CSS",
-                "--categories", "Balance",
-                "--categories", "CSS",
-                "--categories", "Balance",
-                "--categories", "CSS",
-                "--categories", "Balance",
-                "--categories", "CSS",
-                "--categories", "Balance",
+                #"--categories", "Balance",
+                #"--categories", "CSS",
+                #"--categories", "Balance",
+                #"--categories", "CSS",
+                #"--categories", "Balance",
+                #"--categories", "CSS",
+                #"--categories", "Balance",
                 #"--custom_regex",r".*",
                 "--file_type", '.css',
                 #"--file_type", '.scss',
-                #"--multiple", True,
+                "--multiple", True,
                 #"--replace_all", True,
                 #"--repl_vals","OVERRIDE",
                 #"--repl_vals","TESTING",
@@ -188,14 +187,15 @@ if __name__ == '__main__' or __name__ == 'configurator.apis.String_Scanner.main'
                 #"--unique", False,
                 "--dataframe", True,
                 "--df_col_names", "CSS",
-                "--df_col_names", "Balance",
-                "--df_col_names", "Test_0",
-                "--df_col_names", "Test_1",
-                "--df_col_names", "Test_2",
-                "--df_col_names", "Test_3",
-                "--df_col_names", "Test_4",
-                "--df_col_names", "Test_5",
-                "--df_index", "Balance"
+                #"--df_col_names", "Balance",
+                #"--df_col_names", "Test_0",
+                #"--df_col_names", "Test_1",
+                #"--df_col_names", "Test_2",
+                #"--df_col_names", "Test_3",
+                #"--df_col_names", "Test_4",
+                #"--df_col_names", "Test_5",
+                "--df_mult_override", True
+                #"--df_index", "Balance"
 
             ])
     else:

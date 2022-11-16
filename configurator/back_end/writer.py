@@ -35,7 +35,7 @@ class WebServerWriter():
     def processProxy(self):
         self.parser = Proxy(config_data = self.config_data)
 
-def main(config_loc: os.PathLike = "C:\\Users\\hduon\\Documents\\Enzyme\\conf\\server_config.json"):
+def main(config_loc: os.PathLike = "./conf/server_config.json"):
     writer = WebServerWriter(config_loc=config_loc)
     writer.processBackEnds()
 

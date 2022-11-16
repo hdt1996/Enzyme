@@ -25,6 +25,8 @@ class DjangoGET(DjangoORM):
     def getRequestData(self):
         return inspect.cleandoc(
         """
+            if request.headers.get('selectors') == None:
+                return Response('No headers')
             selectors =  json.loads(request.headers.get('selectors'))
             {validateSelector}
         """),['import json']

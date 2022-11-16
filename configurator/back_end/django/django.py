@@ -107,7 +107,7 @@ class DjangoWriter():
 
 
     def processAPIs(self):
-        curr_util_dir = 'configurator\\modules'
+        curr_util_dir = './configurator/modules'
         new_util_dir = os.path.join(self.be_root,'modules')
         FM.copyDir(src = curr_util_dir, dst = new_util_dir)
 
