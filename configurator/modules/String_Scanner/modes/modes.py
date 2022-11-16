@@ -84,6 +84,7 @@ class RegexMatch(StringParser):
     def findUniques(dicts_in_array: list, target_key = str, sub_key = str) -> list:
         matches = []
         unique_map = {}
+        print("HERE \n\n\n")
         for data in dicts_in_array:
             if isinstance(data[target_key], list):
                 for match in data[target_key]:
@@ -187,7 +188,7 @@ class Scan(RegexMatch): #has Category properties Category.__dict__
         """
     def exportResults(self, processed_data: list,  export_loc: os.PathLike, key: str = 'results', unique: bool = False):
         matches = []
-
+        print("EXPORT")
         if unique:
             matches.extend(self.findUniques(dicts_in_array= processed_data, target_key = key, sub_key = 'match'))
         else:

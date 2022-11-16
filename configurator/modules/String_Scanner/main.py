@@ -139,11 +139,8 @@ def main(modes: list, categories: list, location:str, dataframe: bool, **kwargs:
             raise ValueError('Overwrite CLI Argument cannot be True while open_file is False')
         main_processor.processModes()
     except Exception as e:
-        relevant_errors = DEV.traceRelevantErrors(error_log = traceback.format_exc().split('File "'), script_loc =  DEV.PROJ_DIR, latest = False)
-        if relevant_errors == None:
-            print(e)
-        else:
-            print(relevant_errors)
+        relevant_errors = DEV.traceRelevantErrors(error_log = traceback.format_exc().split('File "'), script_loc =  DEV.PROJ_DIR, latest = False, exception = e)
+        print(relevant_errors)
 
         
 if __name__ == '__main__' or __name__ == 'configurator.modules.String_Scanner.main':
@@ -182,9 +179,9 @@ if __name__ == '__main__' or __name__ == 'configurator.modules.String_Scanner.ma
                 "--open_file", True,
                 #"--choose_group", 2,
                 #"--overwrite", False,
-                #"--export", True,
-                #"--export_loc", DEV.proj_test_dir,
-                #"--unique", False,
+                "--export", True,
+                "--export_loc", '/home/htran/Desktop/TimeSheet/react_debug/css'
+                "--unique", True,
                 "--dataframe", True,
                 "--df_col_names", "CSS",
                 #"--df_col_names", "Balance",
