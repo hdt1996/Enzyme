@@ -81,10 +81,9 @@ class RegexMatch(StringParser):
                 match_list.extend(filtered_result) #TODO check duplicates too
         return match_list
 
-    def findUniques(dicts_in_array: list, target_key = str, sub_key = str) -> list:
+    def findUniques(self, dicts_in_array: list, target_key = str, sub_key = str) -> list:
         matches = []
         unique_map = {}
-        print("HERE \n\n\n")
         for data in dicts_in_array:
             if isinstance(data[target_key], list):
                 for match in data[target_key]:
@@ -188,7 +187,6 @@ class Scan(RegexMatch): #has Category properties Category.__dict__
         """
     def exportResults(self, processed_data: list,  export_loc: os.PathLike, key: str = 'results', unique: bool = False):
         matches = []
-        print("EXPORT")
         if unique:
             matches.extend(self.findUniques(dicts_in_array= processed_data, target_key = key, sub_key = 'match'))
         else:
@@ -205,7 +203,6 @@ class Scan(RegexMatch): #has Category properties Category.__dict__
 class Replace(RegexMatch):
     do_multiple = False
     def __init__(self,categ_attribs:dict, multiple: bool, replace_all: bool, repl_vals: list, overwrite: bool, unique:bool):
-        print('\n\n Init Replace')
         self.mode =  'Replace'
         self.categ_attribs = categ_attribs # to store for debugging
         self.replace_all = replace_all

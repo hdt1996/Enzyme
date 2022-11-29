@@ -106,8 +106,9 @@ class CSS(Categories):
             [
                 ''
             ]
-        self.custom_regex = fr"((?!{NONGREEDY_WILD}+\n*\{{)([{ANY_CH_HY_SP}]+(?<!(http))\:{NONGREEDY_WILD}+))"
+        self.custom_regex = fr"((?!{NONGREEDY_WILD}+\n*\{{)([{ANY_CH_HY_SP}]+(?<!(\-\-))(?<!(http))(?<!(https))\:{NONGREEDY_WILD_NO_SEMC}+))"
         self.choose_group = ''
+        print(self.custom_regex)
         super().__init__()
         self.checkAttribs(choose_group = choose_group, keywords = keywords, custom_regex = custom_regex)
 

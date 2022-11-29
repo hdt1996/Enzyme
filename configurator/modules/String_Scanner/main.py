@@ -155,7 +155,7 @@ if __name__ == '__main__' or __name__ == 'configurator.modules.String_Scanner.ma
                 #"--keywords", 'NOT TESTING',
                 #"--keywords", r'logger',
                 #"--keywords",r"",
-                "--location", os.path.join(DEV.PROJ_DIR),#,"encodings.txt"),#__file__,
+                "--location", '/home/htran/Desktop/hdt1996-portfolio.net/web_frontend/frontend_django/src',#,"encodings.txt"),#__file__,
                 #"--location", "C:\\Users\\hduon\\Documents\\Tests\\String_Scanner\\Test_Scans\\Admin_RESULTS_1_RESULTS_1.css",
                 "--modes", 'Scan',
                 #"--modes", 'Replace',
@@ -180,7 +180,7 @@ if __name__ == '__main__' or __name__ == 'configurator.modules.String_Scanner.ma
                 #"--choose_group", 2,
                 #"--overwrite", False,
                 "--export", True,
-                "--export_loc", '/home/htran/Desktop/TimeSheet/react_debug/css'
+                "--export_loc", '/home/htran/Desktop/TimeSheet/react_debug/css',
                 "--unique", True,
                 "--dataframe", True,
                 "--df_col_names", "CSS",
